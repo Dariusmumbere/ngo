@@ -1,1 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 80px;
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            transition: margin-left var(--transition-speed);
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background-color: var(--dark-color);
+            color: white;
+            transition: width var(--transition-speed);
+            overflow: hidden;
+            z-index: 99;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            position: relative;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--light-color);
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu li a.active {
+            background-color: var(--primary-color);
+        }
+
+        .sidebar-menu li a i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a span {
+            transition: opacity var(--transition-speed);
+        }
+
+        .sidebar.collapsed .sidebar-menu li a span {
+            opacity: 0;
+            width: 0;
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-menu li a {
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .sidebar.collapsed .sidebar-menu li a i {
+            margin-right: 0;
+        }
+
+        .submenu {
+            list-style: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .submenu.show {
+            max-height: 500px;
+        }
+
+        .submenu li a {
+            padding-left: 50px !important;
+            font-size: 0.9rem;
+        }
+
+        .sidebar.collapsed .submenu li a {
+            padding-left: 0 !important;
+            justify-content: center;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            transition: margin-left var(--transition-speed);
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Dashboard Styles */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .stat-title {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .stat-card .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-card .stat-change.negative {
+            color: var(--accent-color);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .dashboard-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .section-link {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .recent-activities {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .project-progress {
+            margin-top: 20px;
+        }
+
+        .project-item {
+            margin-bottom: 15px;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .project-name {
+            font-weight: 600;
+        }
+
+        .project-percent {
+            color: var(--primary-color);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .donation-chart {
+            height: 250px;
+            margin-top: 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -100%;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.collapsed ~ .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1>NGO Connect</h1>
+        </div>
+        <div class="user-profile">
+            <div class="user-info">
+                <span class="user-name">Sarah Johnson</span>
+                <span class="user-role">Program Manager</span>
+            </div>
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Profile">
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#" class="active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-comments"></i>
+                        <span>Chat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Notice Board</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Fundraising Documents</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="has-submenu" id="reportsMenu">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Reports</span>
+                        <i class="fas fa-chevron-down ml-auto" id="reportsArrow"></i>
+                    </a>
+                    <ul class="submenu" id="reportsSubmenu">
+                        <li><a href="#"><span>Create New Project</span></a></li>
+                        <li><a href="#"><span>Implement Project</span></a></li>
+                        <li><a href="#"><span>Project Report</span></a></li>
+                        <li><a href="#"><span>Staff</span></a></li>
+                        <li><a href="#"><span>Budget</span></a></li>
+                        <li><a href="#"><span>Payments</span></a></li>
+                        <li><a href="#"><span>Accountability</span></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-users"></i>
+                        <span>Beneficiaries</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <span>Collect Donations</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <h1 class="page-title">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </h1>
+
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-title">Total Donations</div>
+                    <div class="stat-value">$24,580</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> 12% from last month
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Active Projects</div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> 2 new this month
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Beneficiaries</div>
+                    <div class="stat-value">1,245</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> 5% from last quarter
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Volunteers</div>
+                    <div class="stat-value">42</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i> 2 left this month
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Activities</h2>
+                        <a href="#" class="section-link">View All</a>
+                    </div>
+                    <ul class="recent-activities">
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-donate"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">New donation received from ABC Foundation</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">3 new volunteers joined the team</div>
+                                <div class="activity-time">Yesterday</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Education project phase 1 completed</div>
+                                <div class="activity-time">2 days ago</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Upcoming fundraising event scheduled</div>
+                                <div class="activity-time">3 days ago</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Monthly report submitted to board</div>
+                                <div class="activity-time">1 week ago</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Project Progress</h2>
+                        <a href="#" class="section-link">View All</a>
+                    </div>
+                    <div class="project-progress">
+                        <div class="project-item">
+                            <div class="project-header">
+                                <span class="project-name">Clean Water Initiative</span>
+                                <span class="project-percent">75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="project-item">
+                            <div class="project-header">
+                                <span class="project-name">Education for All</span>
+                                <span class="project-percent">42%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 42%"></div>
+                            </div>
+                        </div>
+                        <div class="project-item">
+                            <div class="project-header">
+                                <span class="project-name">Women Empowerment</span>
+                                <span class="project-percent">90%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="project-item">
+                            <div class="project-header">
+                                <span class="project-name">Healthcare Outreach</span>
+                                <span class="project-percent">28%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 28%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header" style="margin-top: 30px;">
+                        <h2 class="section-title">Donation Sources</h2>
+                    </div>
+                    <div class="donation-chart">
+                        <!-- This would be replaced with an actual chart in a real implementation -->
+                        <div style="display: flex; height: 100%; align-items: flex-end; justify-content: space-around;">
+                            <div style="width: 15%; background-color: var(--primary-color); height: 70%; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 15%; background-color: var(--success-color); height: 40%; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 15%; background-color: var(--accent-color); height: 60%; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 15%; background-color: var(--warning-color); height: 30%; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 15%; background-color: var(--secondary-color); height: 80%; border-radius: 5px 5px 0 0;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-around; margin-top: 10px;">
+                            <span style="font-size: 0.8rem;">Individuals</span>
+                            <span style="font-size: 0.8rem;">Corporates</span>
+                            <span style="font-size: 0.8rem;">Grants</span>
+                            <span style="font-size: 0.8rem;">Events</span>
+                            <span style="font-size: 0.8rem;">Other</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const reportsMenu = document.getElementById('reportsMenu');
+            const reportsSubmenu = document.getElementById('reportsSubmenu');
+            const reportsArrow = document.getElementById('reportsArrow');
+
+            // Toggle sidebar collapse/expand
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                
+                // Change icon based on state
+                const icon = menuToggle.querySelector('i');
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-indent');
+                } else {
+                    icon.classList.remove('fa-indent');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            // Toggle reports submenu
+            reportsMenu.addEventListener('click', function(e) {
+                e.preventDefault();
+                reportsSubmenu.classList.toggle('show');
+                reportsArrow.classList.toggle('fa-chevron-down');
+                reportsArrow.classList.toggle('fa-chevron-up');
+            });
+
+            // Mobile menu toggle
+            function handleMobileMenu() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('collapsed');
+                    sidebar.classList.add('show');
+                    menuToggle.querySelector('i').classList.add('fa-times');
+                    menuToggle.querySelector('i').classList.remove('fa-bars');
+                } else {
+                    sidebar.classList.remove('show');
+                }
+            }
+
+            menuToggle.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('show');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-times');
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('show');
+                    menuToggle.querySelector('i').classList.add('fa-bars');
+                    menuToggle.querySelector('i').classList.remove('fa-times');
+                }
+            });
+
+            // Set active menu item
+            const menuItems = document.querySelectorAll('.sidebar-menu li a');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (!this.classList.contains('has-submenu')) {
+                        menuItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
