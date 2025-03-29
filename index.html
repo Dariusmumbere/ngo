@@ -66,9 +66,10 @@
         }
 
         .logo h1 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: var(--dark-color);
             font-weight: 700;
+            white-space: nowrap;
         }
 
         .user-profile {
@@ -382,10 +383,137 @@
             margin-top: 20px;
         }
 
+        /* File Upload Section Styles */
+        .file-upload-container {
+            display: none;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .file-upload-container.show {
+            display: block;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            margin-bottom: 10px;
+            color: #777;
+        }
+
+        .upload-area .browse-btn {
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .file-action-btn {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        .file-action-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .logo h1 {
+                font-size: 1rem;
             }
         }
 
@@ -405,6 +533,10 @@
             .sidebar.collapsed ~ .main-content {
                 margin-left: 0;
             }
+            
+            .logo h1 {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -414,6 +546,7 @@
             <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
             </button>
+            <img src="logo.jpg" alt="RWENZORI COMMUNITY DEVELOPMENT NETWORK Logo">
             <h1>RWENZORI COMMUNITY DEVELOPMENT NETWORK</h1>
         </div>
         <div class="user-profile">
@@ -429,7 +562,7 @@
         <aside class="sidebar" id="sidebar">
             <ul class="sidebar-menu">
                 <li>
-                    <a href="#" class="active">
+                    <a href="#" class="active" id="dashboardLink">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
@@ -447,7 +580,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="#" id="fundraisingLink">
                         <i class="fas fa-file-invoice-dollar"></i>
                         <span>Fundraising Documents</span>
                     </a>
@@ -490,162 +623,230 @@
         </aside>
 
         <main class="main-content" id="mainContent">
-            <h1 class="page-title">
-                <i class="fas fa-tachometer-alt"></i>
-                Dashboard
-            </h1>
+            <!-- Dashboard Content -->
+            <div id="dashboardContent">
+                <h1 class="page-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </h1>
 
-            <div class="stats-cards">
-                <div class="stat-card">
-                    <div class="stat-title">Total Donations</div>
-                    <div class="stat-value">UGX 20000000</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> 12% from last month
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-title">Total Donations</div>
+                        <div class="stat-value">UGX 20,000,000</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 12% from last month
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Active Projects</div>
+                        <div class="stat-value">8</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 2 new this month
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Beneficiaries</div>
+                        <div class="stat-value">1,500</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 5% from last quarter
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Volunteers</div>
+                        <div class="stat-value">42</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i> 2 left this month
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-title">Active Projects</div>
-                    <div class="stat-value">8</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> 2 new this month
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Recent Activities</h2>
+                            <a href="#" class="section-link">View All</a>
+                        </div>
+                        <ul class="recent-activities">
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-donate"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">New donation received from KELA Foundation</div>
+                                    <div class="activity-time">2 hours ago</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">3 new volunteers joined the team</div>
+                                    <div class="activity-time">Yesterday</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Education project phase 1 completed</div>
+                                    <div class="activity-time">2 days ago</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Upcoming fundraising event scheduled</div>
+                                    <div class="activity-time">3 days ago</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Monthly report submitted to board</div>
+                                    <div class="activity-time">1 week ago</div>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Beneficiaries</div>
-                    <div class="stat-value">1500</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> 5% from last quarter
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Volunteers</div>
-                    <div class="stat-value">42</div>
-                    <div class="stat-change negative">
-                        <i class="fas fa-arrow-down"></i> 2 left this month
+
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Project Progress</h2>
+                            <a href="#" class="section-link">View All</a>
+                        </div>
+                        <div class="project-progress">
+                            <div class="project-item">
+                                <div class="project-header">
+                                    <span class="project-name">Clean Water Initiative</span>
+                                    <span class="project-percent">75%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="project-item">
+                                <div class="project-header">
+                                    <span class="project-name">Education for All</span>
+                                    <span class="project-percent">42%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 42%"></div>
+                                </div>
+                            </div>
+                            <div class="project-item">
+                                <div class="project-header">
+                                    <span class="project-name">Women Empowerment</span>
+                                    <span class="project-percent">90%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="project-item">
+                                <div class="project-header">
+                                    <span class="project-name">Healthcare Outreach</span>
+                                    <span class="project-percent">28%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 28%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-header" style="margin-top: 30px;">
+                            <h2 class="section-title">Donation Sources</h2>
+                        </div>
+                        <div class="donation-chart">
+                            <!-- This would be replaced with an actual chart in a real implementation -->
+                            <div style="display: flex; height: 100%; align-items: flex-end; justify-content: space-around;">
+                                <div style="width: 15%; background-color: var(--primary-color); height: 70%; border-radius: 5px 5px 0 0;"></div>
+                                <div style="width: 15%; background-color: var(--success-color); height: 40%; border-radius: 5px 5px 0 0;"></div>
+                                <div style="width: 15%; background-color: var(--accent-color); height: 60%; border-radius: 5px 5px 0 0;"></div>
+                                <div style="width: 15%; background-color: var(--warning-color); height: 30%; border-radius: 5px 5px 0 0;"></div>
+                                <div style="width: 15%; background-color: var(--secondary-color); height: 80%; border-radius: 5px 5px 0 0;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-around; margin-top: 10px;">
+                                <span style="font-size: 0.8rem;">Individuals</span>
+                                <span style="font-size: 0.8rem;">Corporates</span>
+                                <span style="font-size: 0.8rem;">Grants</span>
+                                <span style="font-size: 0.8rem;">Events</span>
+                                <span style="font-size: 0.8rem;">Other</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="dashboard-grid">
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Recent Activities</h2>
-                        <a href="#" class="section-link">View All</a>
-                    </div>
-                    <ul class="recent-activities">
-                        <li class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-donate"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">New donation received from kELA Foundation</div>
-                                <div class="activity-time">2 hours ago</div>
-                            </div>
-                        </li>
-                        <li class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">3 new volunteers joined the team</div>
-                                <div class="activity-time">Yesterday</div>
-                            </div>
-                        </li>
-                        <li class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Education project phase 1 completed</div>
-                                <div class="activity-time">2 days ago</div>
-                            </div>
-                        </li>
-                        <li class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Upcoming fundraising event scheduled</div>
-                                <div class="activity-time">3 days ago</div>
-                            </div>
-                        </li>
-                        <li class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Monthly report submitted to board</div>
-                                <div class="activity-time">1 week ago</div>
-                            </div>
-                        </li>
-                    </ul>
+            <!-- Fundraising Documents Content -->
+            <div id="fundraisingContent" class="file-upload-container">
+                <h1 class="page-title">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    Fundraising Documents
+                </h1>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop files here or <span class="browse-btn">browse</span></p>
+                    <p class="small">Supported formats: PDF, DOCX, XLSX, PPTX, JPG, PNG</p>
+                    <input type="file" id="fileInput" multiple>
                 </div>
-
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Project Progress</h2>
-                        <a href="#" class="section-link">View All</a>
-                    </div>
-                    <div class="project-progress">
-                        <div class="project-item">
-                            <div class="project-header">
-                                <span class="project-name">Clean Water Initiative</span>
-                                <span class="project-percent">75%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%"></div>
-                            </div>
-                        </div>
-                        <div class="project-item">
-                            <div class="project-header">
-                                <span class="project-name">Education for All</span>
-                                <span class="project-percent">42%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 42%"></div>
-                            </div>
-                        </div>
-                        <div class="project-item">
-                            <div class="project-header">
-                                <span class="project-name">Women Empowerment</span>
-                                <span class="project-percent">90%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="project-item">
-                            <div class="project-header">
-                                <span class="project-name">Healthcare Outreach</span>
-                                <span class="project-percent">28%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 28%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-header" style="margin-top: 30px;">
-                        <h2 class="section-title">Donation Sources</h2>
-                    </div>
-                    <div class="donation-chart">
-                        <!-- This would be replaced with an actual chart in a real implementation -->
-                        <div style="display: flex; height: 100%; align-items: flex-end; justify-content: space-around;">
-                            <div style="width: 15%; background-color: var(--primary-color); height: 70%; border-radius: 5px 5px 0 0;"></div>
-                            <div style="width: 15%; background-color: var(--success-color); height: 40%; border-radius: 5px 5px 0 0;"></div>
-                            <div style="width: 15%; background-color: var(--accent-color); height: 60%; border-radius: 5px 5px 0 0;"></div>
-                            <div style="width: 15%; background-color: var(--warning-color); height: 30%; border-radius: 5px 5px 0 0;"></div>
-                            <div style="width: 15%; background-color: var(--secondary-color); height: 80%; border-radius: 5px 5px 0 0;"></div>
-                        </div>
-                        <div style="display: flex; justify-content: space-around; margin-top: 10px;">
-                            <span style="font-size: 0.8rem;">Individuals</span>
-                            <span style="font-size: 0.8rem;">Corporates</span>
-                            <span style="font-size: 0.8rem;">Grants</span>
-                            <span style="font-size: 0.8rem;">Events</span>
-                            <span style="font-size: 0.8rem;">Other</span>
-                        </div>
-                    </div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Uploaded Files</h2>
+                    <button class="upload-btn" id="uploadBtn">Upload Files</button>
                 </div>
+                
+                <ul class="file-list" id="fileList">
+                    <li class="file-item">
+                        <div class="file-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Annual_Report_2023.pdf</div>
+                            <div class="file-size">2.4 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <button class="file-action-btn" title="Download"><i class="fas fa-download"></i></button>
+                            <button class="file-action-btn" title="Share"><i class="fas fa-share-alt"></i></button>
+                            <button class="file-action-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <div class="file-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Donations_Q1_2024.xlsx</div>
+                            <div class="file-size">1.1 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <button class="file-action-btn" title="Download"><i class="fas fa-download"></i></button>
+                            <button class="file-action-btn" title="Share"><i class="fas fa-share-alt"></i></button>
+                            <button class="file-action-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                    <li class="file-item">
+                        <div class="file-icon">
+                            <i class="fas fa-file-word"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Grant_Proposal.docx</div>
+                            <div class="file-size">850 KB</div>
+                        </div>
+                        <div class="file-actions">
+                            <button class="file-action-btn" title="Download"><i class="fas fa-download"></i></button>
+                            <button class="file-action-btn" title="Share"><i class="fas fa-share-alt"></i></button>
+                            <button class="file-action-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </main>
     </div>
@@ -657,6 +858,14 @@
             const reportsMenu = document.getElementById('reportsMenu');
             const reportsSubmenu = document.getElementById('reportsSubmenu');
             const reportsArrow = document.getElementById('reportsArrow');
+            const dashboardLink = document.getElementById('dashboardLink');
+            const fundraisingLink = document.getElementById('fundraisingLink');
+            const dashboardContent = document.getElementById('dashboardContent');
+            const fundraisingContent = document.getElementById('fundraisingContent');
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            const uploadBtn = document.getElementById('uploadBtn');
 
             // Toggle sidebar collapse/expand
             menuToggle.addEventListener('click', function() {
@@ -679,6 +888,146 @@
                 reportsSubmenu.classList.toggle('show');
                 reportsArrow.classList.toggle('fa-chevron-down');
                 reportsArrow.classList.toggle('fa-chevron-up');
+            });
+
+            // Navigation between dashboard and fundraising
+            dashboardLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                dashboardContent.style.display = 'block';
+                fundraisingContent.classList.remove('show');
+                setActiveNavItem(dashboardLink);
+            });
+
+            fundraisingLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                dashboardContent.style.display = 'none';
+                fundraisingContent.classList.add('show');
+                setActiveNavItem(fundraisingLink);
+            });
+
+            function setActiveNavItem(activeItem) {
+                const menuItems = document.querySelectorAll('.sidebar-menu li a');
+                menuItems.forEach(item => {
+                    item.classList.remove('active');
+                });
+                activeItem.classList.add('active');
+            }
+
+            // File upload functionality
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = var('--primary-color');
+                this.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                this.style.borderColor = '#ccc';
+                this.style.backgroundColor = 'transparent';
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#ccc';
+                this.style.backgroundColor = 'transparent';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    handleFiles(this.files);
+                }
+            });
+
+            function handleFiles(files) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                        alert(`File ${file.name} is too large (max 10MB)`);
+                        continue;
+                    }
+                    
+                    addFileToList(file);
+                }
+            }
+
+            function addFileToList(file) {
+                const fileItem = document.createElement('li');
+                fileItem.className = 'file-item';
+                
+                const fileType = getFileType(file.name);
+                const fileSize = formatFileSize(file.size);
+                
+                fileItem.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas ${getFileIcon(fileType)}"></i>
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${fileSize}</div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="file-action-btn" title="Download"><i class="fas fa-download"></i></button>
+                        <button class="file-action-btn" title="Share"><i class="fas fa-share-alt"></i></button>
+                        <button class="file-action-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                fileList.insertBefore(fileItem, fileList.firstChild);
+                
+                // Add delete functionality
+                const deleteBtn = fileItem.querySelector('.fa-trash').parentNode;
+                deleteBtn.addEventListener('click', function() {
+                    fileList.removeChild(fileItem);
+                });
+            }
+
+            function getFileType(filename) {
+                const extension = filename.split('.').pop().toLowerCase();
+                switch(extension) {
+                    case 'pdf': return 'pdf';
+                    case 'doc':
+                    case 'docx': return 'word';
+                    case 'xls':
+                    case 'xlsx': return 'excel';
+                    case 'ppt':
+                    case 'pptx': return 'powerpoint';
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                    case 'gif': return 'image';
+                    default: return 'file';
+                }
+            }
+
+            function getFileIcon(fileType) {
+                switch(fileType) {
+                    case 'pdf': return 'fa-file-pdf';
+                    case 'word': return 'fa-file-word';
+                    case 'excel': return 'fa-file-excel';
+                    case 'powerpoint': return 'fa-file-powerpoint';
+                    case 'image': return 'fa-file-image';
+                    default: return 'fa-file';
+                }
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            uploadBtn.addEventListener('click', function() {
+                alert('Files uploaded successfully!');
+                // In a real implementation, this would send files to the server
             });
 
             // Mobile menu toggle
@@ -709,17 +1058,6 @@
                     menuToggle.querySelector('i').classList.add('fa-bars');
                     menuToggle.querySelector('i').classList.remove('fa-times');
                 }
-            });
-
-            // Set active menu item
-            const menuItems = document.querySelectorAll('.sidebar-menu li a');
-            menuItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    if (!this.classList.contains('has-submenu')) {
-                        menuItems.forEach(i => i.classList.remove('active'));
-                        this.classList.add('active');
-                    }
-                });
             });
         });
     </script>
