@@ -775,256 +775,6 @@
             margin-top: 20px;
         }
 
-        /* Fundraising Documents Styles */
-        .fundraising-container {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
-        
-        .fundraising-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .fundraising-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .fundraising-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .fundraising-btn:hover {
-            background-color: var(--secondary-color);
-        }
-        
-        .fundraising-btn.secondary {
-            background-color: #f0f0f0;
-            color: var(--dark-color);
-        }
-        
-        .fundraising-btn.secondary:hover {
-            background-color: #e0e0e0;
-        }
-        
-        .fundraising-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .fundraising-card {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-            transition: all 0.2s;
-        }
-        
-        .fundraising-card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-3px);
-        }
-        
-        .fundraising-card-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .fundraising-card-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--dark-color);
-        }
-        
-        .fundraising-card-status {
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .status-draft {
-            background-color: #f0f0f0;
-            color: #777;
-        }
-        
-        .status-submitted {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-        
-        .status-approved {
-            background-color: #e8f5e9;
-            color: #388e3c;
-        }
-        
-        .status-rejected {
-            background-color: #ffebee;
-            color: #d32f2f;
-        }
-        
-        .fundraising-card-body {
-            margin-bottom: 15px;
-        }
-        
-        .fundraising-card-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #777;
-            margin-bottom: 5px;
-        }
-        
-        .fundraising-card-description {
-            font-size: 0.9rem;
-            color: #555;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .fundraising-card-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        
-        .fundraising-card-btn {
-            background: none;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .fundraising-card-btn.view {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-        
-        .fundraising-card-btn.edit {
-            background-color: #fff8e1;
-            color: #ff8f00;
-        }
-        
-        .fundraising-card-btn.delete {
-            background-color: #ffebee;
-            color: #d32f2f;
-        }
-        
-        /* Fundraising Modal Styles */
-        .fundraising-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-        
-        .fundraising-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .fundraising-modal-content {
-            background-color: white;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        .fundraising-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .fundraising-modal-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .fundraising-modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #777;
-        }
-        
-        .fundraising-form-group {
-            margin-bottom: 15px;
-        }
-        
-        .fundraising-form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .fundraising-form-input,
-        .fundraising-form-textarea,
-        .fundraising-form-select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        
-        .fundraising-form-textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-        
-        .fundraising-form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
         /* Responsive adjustments */
         @media (max-width: 992px) {
             .dashboard-grid {
@@ -1069,14 +819,6 @@
             .file-manager-actions {
                 flex-direction: column;
                 align-items: flex-end;
-            }
-            
-            .fundraising-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .fundraising-card-footer {
-                justify-content: center;
             }
         }
     </style>
@@ -1160,6 +902,7 @@
                         <span>Reports</span>
                     </a>
                 </li>
+                
             </ul>
         </aside>
 
@@ -1324,156 +1067,116 @@
                 </div>
             </div>
 
-            <!-- Fundraising Documents Content -->
-            <div id="fundraisingContent" class="fundraising-container" style="display: none;">
-                <div class="fundraising-header">
+            <!-- Enhanced File Manager Content -->
+            <div id="fileManagerContent" class="file-manager-container">
+                <div class="file-manager-header">
                     <h1 class="page-title">
-                        <i class="fas fa-file-invoice-dollar"></i>
+                        <i class="fas fa-folder-open"></i>
                         Fundraising Documents
                     </h1>
-                    <div class="fundraising-actions">
-                        <button class="fundraising-btn" id="createFundraisingBtn">
-                            <i class="fas fa-plus"></i> New Document
+                    <div class="file-manager-actions">
+                        <button class="file-manager-btn" id="uploadFilesBtn">
+                            <i class="fas fa-upload"></i> Upload
                         </button>
-                        <div class="fundraising-btn secondary" id="fundraisingFilterBtn">
-                            <i class="fas fa-filter"></i> Filter
-                        </div>
+                        <button class="file-manager-btn secondary" id="createFolderBtn">
+                            <i class="fas fa-folder-plus"></i> New Folder
+                        </button>
                     </div>
                 </div>
-                
-                <div class="fundraising-grid" id="fundraisingGrid">
-                    <!-- Documents will be loaded here -->
+
+                <div class="breadcrumb" id="breadcrumb">
+                    <span class="breadcrumb-item" data-path="">Fundraising Documents</span>
+                </div>
+
+                <div class="file-manager-grid" id="fileManagerGrid">
+                    <!-- Folders will be added here -->
+                    <div class="folder-item" data-folder-id="1" data-folder-name="Proposals">
+                        <div class="folder-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="folder-name">Proposals</div>
+                        <div class="file-actions-menu" onclick="toggleFolderActions(event, 1)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="folder-actions-1">
+                            <div class="file-action-item" onclick="renameFolder(1, 'Proposals')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFolder(1)">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="folder-item" data-folder-id="2" data-folder-name="Reports">
+                        <div class="folder-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="folder-name">Reports</div>
+                        <div class="file-actions-menu" onclick="toggleFolderActions(event, 2)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="folder-actions-2">
+                            <div class="file-action-item" onclick="renameFolder(2, 'Reports')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFolder(2)">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Files will be added here -->
+                    <div class="file-item" data-file-id="1" data-file-name="Annual_Report_2023.pdf">
+                        <div class="file-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="file-name">Annual_Report_2023.pdf</div>
+                        <div class="file-actions-menu" onclick="toggleFileActions(event, 1)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="file-actions-1">
+                            <div class="file-action-item" onclick="previewFile(1, 'Annual_Report_2023.pdf', 'pdf')">
+                                <i class="fas fa-eye"></i> Preview
+                            </div>
+                            <div class="file-action-item" onclick="downloadFile(1, 'Annual_Report_2023.pdf')">
+                                <i class="fas fa-download"></i> Download
+                            </div>
+                            <div class="file-action-item" onclick="renameFile(1, 'Annual_Report_2023.pdf')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFile(1, 'Annual_Report_2023.pdf')">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-item" data-file-id="2" data-file-name="Budget_2024.xlsx">
+                        <div class="file-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="file-name">Budget_2024.xlsx</div>
+                        <div class="file-actions-menu" onclick="toggleFileActions(event, 2)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="file-actions-2">
+                            <div class="file-action-item" onclick="previewFile(2, 'Budget_2024.xlsx', 'xlsx')">
+                                <i class="fas fa-eye"></i> Preview
+                            </div>
+                            <div class="file-action-item" onclick="downloadFile(2, 'Budget_2024.xlsx')">
+                                <i class="fas fa-download"></i> Download
+                            </div>
+                            <div class="file-action-item" onclick="renameFile(2, 'Budget_2024.xlsx')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFile(2, 'Budget_2024.xlsx')">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- File Manager Content -->
-            <div id="fileManagerContent" class="file-manager-container">
-                <!-- Previous file manager content remains the same -->
-            </div>
-            
-            <!-- Fundraising Document Modal -->
-            <div class="fundraising-modal" id="fundraisingModal">
-                <div class="fundraising-modal-content">
-                    <div class="fundraising-modal-header">
-                        <h2 class="fundraising-modal-title" id="fundraisingModalTitle">New Fundraising Document</h2>
-                        <button class="fundraising-modal-close" id="fundraisingModalClose">&times;</button>
-                    </div>
-                    
-                    <form id="fundraisingForm">
-                        <input type="hidden" id="documentId">
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentTitle" class="fundraising-form-label">Title</label>
-                            <input type="text" id="documentTitle" class="fundraising-form-input" required>
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentType" class="fundraising-form-label">Type</label>
-                            <select id="documentType" class="fundraising-form-select" required>
-                                <option value="">Select type</option>
-                                <option value="proposal">Proposal</option>
-                                <option value="grant_application">Grant Application</option>
-                                <option value="donor_report">Donor Report</option>
-                                <option value="budget">Budget</option>
-                                <option value="financial_report">Financial Report</option>
-                            </select>
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentStatus" class="fundraising-form-label">Status</label>
-                            <select id="documentStatus" class="fundraising-form-select" required>
-                                <option value="draft">Draft</option>
-                                <option value="submitted">Submitted</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentDate" class="fundraising-form-label">Date</label>
-                            <input type="date" id="documentDate" class="fundraising-form-input" required>
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentAmount" class="fundraising-form-label">Amount Requested (UGX)</label>
-                            <input type="number" id="documentAmount" class="fundraising-form-input" min="0" step="1000">
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentDonor" class="fundraising-form-label">Donor/Organization</label>
-                            <input type="text" id="documentDonor" class="fundraising-form-input">
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentDescription" class="fundraising-form-label">Description</label>
-                            <textarea id="documentDescription" class="fundraising-form-textarea"></textarea>
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="documentFile" class="fundraising-form-label">Attach File</label>
-                            <input type="file" id="documentFile" class="fundraising-form-input">
-                            <small class="file-info" id="currentFileInfo" style="display: none;"></small>
-                        </div>
-                        
-                        <div class="fundraising-form-actions">
-                            <button type="button" class="fundraising-btn secondary" id="cancelFundraisingBtn">Cancel</button>
-                            <button type="submit" class="fundraising-btn" id="saveFundraisingBtn">Save Document</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- Filter Modal -->
-            <div class="fundraising-modal" id="filterModal">
-                <div class="fundraising-modal-content">
-                    <div class="fundraising-modal-header">
-                        <h2 class="fundraising-modal-title">Filter Documents</h2>
-                        <button class="fundraising-modal-close" id="filterModalClose">&times;</button>
-                    </div>
-                    
-                    <form id="filterForm">
-                        <div class="fundraising-form-group">
-                            <label for="filterType" class="fundraising-form-label">Type</label>
-                            <select id="filterType" class="fundraising-form-select">
-                                <option value="">All Types</option>
-                                <option value="proposal">Proposal</option>
-                                <option value="grant_application">Grant Application</option>
-                                <option value="donor_report">Donor Report</option>
-                                <option value="budget">Budget</option>
-                                <option value="financial_report">Financial Report</option>
-                            </select>
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="filterStatus" class="fundraising-form-label">Status</label>
-                            <select id="filterStatus" class="fundraising-form-select">
-                                <option value="">All Statuses</option>
-                                <option value="draft">Draft</option>
-                                <option value="submitted">Submitted</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="filterDateFrom" class="fundraising-form-label">Date From</label>
-                            <input type="date" id="filterDateFrom" class="fundraising-form-input">
-                        </div>
-                        
-                        <div class="fundraising-form-group">
-                            <label for="filterDateTo" class="fundraising-form-label">Date To</label>
-                            <input type="date" id="filterDateTo" class="fundraising-form-input">
-                        </div>
-                        
-                        <div class="fundraising-form-actions">
-                            <button type="button" class="fundraising-btn secondary" id="resetFilterBtn">Reset</button>
-                            <button type="submit" class="fundraising-btn" id="applyFilterBtn">Apply Filters</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Previous modals (file preview, folder create, upload) remain the same -->
             <!-- File Preview Modal -->
             <div class="file-preview-modal" id="filePreviewModal">
                 <div class="file-preview-content">
@@ -1558,13 +1261,18 @@
             const dashboardLink = document.getElementById('dashboardLink');
             const fundraisingLink = document.getElementById('fundraisingLink');
             const dashboardContent = document.getElementById('dashboardContent');
-            const fundraisingContent = document.getElementById('fundraisingContent');
             const fileManagerContent = document.getElementById('fileManagerContent');
-            
-            // Initialize by showing dashboard and hiding other content
+            const uploadFilesBtn = document.getElementById('uploadFilesBtn');
+            const createFolderBtn = document.getElementById('createFolderBtn');
+            const browseFilesBtn = document.getElementById('browseFilesBtn');
+            const fileUploadInput = document.getElementById('fileUploadInput');
+            const startUploadBtn = document.getElementById('startUploadBtn');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const progressBarFill = document.getElementById('progressBarFill');
+
+            // Initialize by showing dashboard and hiding file manager
             dashboardContent.style.display = 'block';
             fileManagerContent.classList.remove('show');
-            fundraisingContent.style.display = 'none';
 
             // Toggle sidebar collapse/expand
             menuToggle.addEventListener('click', function() {
@@ -1589,22 +1297,19 @@
                 reportsArrow.classList.toggle('fa-chevron-up');
             });
 
-            // Navigation between dashboard, fundraising, and file manager
+            // Navigation between dashboard and file manager
             dashboardLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 dashboardContent.style.display = 'block';
                 fileManagerContent.classList.remove('show');
-                fundraisingContent.style.display = 'none';
                 setActiveNavItem(dashboardLink);
             });
 
             fundraisingLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 dashboardContent.style.display = 'none';
-                fileManagerContent.classList.remove('show');
-                fundraisingContent.style.display = 'block';
+                fileManagerContent.classList.add('show');
                 setActiveNavItem(fundraisingLink);
-                loadFundraisingDocuments();
             });
 
             function setActiveNavItem(activeItem) {
@@ -1615,364 +1320,440 @@
                 activeItem.classList.add('active');
             }
 
-            // Initialize fundraising documents functionality
-            initFundraisingDocuments();
+            // Initialize file manager
+            initFileManager();
 
-            function initFundraisingDocuments() {
-                // Setup create document button
-                document.getElementById('createFundraisingBtn').addEventListener('click', openFundraisingModal);
-                
-                // Setup modal close buttons
-                document.getElementById('fundraisingModalClose').addEventListener('click', closeFundraisingModal);
-                document.getElementById('cancelFundraisingBtn').addEventListener('click', closeFundraisingModal);
-                document.getElementById('filterModalClose').addEventListener('click', closeFilterModal);
-                
-                // Setup filter button
-                document.getElementById('fundraisingFilterBtn').addEventListener('click', openFilterModal);
-                document.getElementById('resetFilterBtn').addEventListener('click', resetFilters);
-                document.getElementById('applyFilterBtn').addEventListener('click', applyFilters);
-                
-                // Setup form submission
-                document.getElementById('fundraisingForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    saveFundraisingDocument();
-                });
-                
-                // Set default date to today
-                document.getElementById('documentDate').value = new Date().toISOString().split('T')[0];
-            }
-            
-            function openFundraisingModal() {
-                // Reset form
-                document.getElementById('fundraisingForm').reset();
-                document.getElementById('fundraisingModalTitle').textContent = 'New Fundraising Document';
-                document.getElementById('documentId').value = '';
-                document.getElementById('documentDate').value = new Date().toISOString().split('T')[0];
-                document.getElementById('currentFileInfo').style.display = 'none';
-                
-                // Show modal
-                document.getElementById('fundraisingModal').classList.add('show');
-            }
-            
-            function closeFundraisingModal() {
-                document.getElementById('fundraisingModal').classList.remove('show');
-            }
-            
-            function openFilterModal() {
-                document.getElementById('filterModal').classList.add('show');
-            }
-            
-            function closeFilterModal() {
-                document.getElementById('filterModal').classList.remove('show');
-            }
-            
-            function resetFilters() {
-                document.getElementById('filterForm').reset();
-                loadFundraisingDocuments();
-                closeFilterModal();
-            }
-            
-            function applyFilters(e) {
-                e.preventDefault();
-                loadFundraisingDocuments();
-                closeFilterModal();
-            }
-            
-            function loadFundraisingDocuments() {
-                // Get filter values
-                const typeFilter = document.getElementById('filterType').value;
-                const statusFilter = document.getElementById('filterStatus').value;
-                const dateFrom = document.getElementById('filterDateFrom').value;
-                const dateTo = document.getElementById('filterDateTo').value;
-                
-                // Build query parameters
-                const params = new URLSearchParams();
-                if (typeFilter) params.append('type', typeFilter);
-                if (statusFilter) params.append('status', statusFilter);
-                if (dateFrom) params.append('date_from', dateFrom);
-                if (dateTo) params.append('date_to', dateTo);
-                
-                // Fetch documents from API
-                fetch(`/api/fundraising/documents?${params.toString()}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(data => {
-                        renderFundraisingDocuments(data);
-                    })
-                    .catch(error => {
-                        console.error('Error loading fundraising documents:', error);
-                        // For demo purposes, we'll create some sample data
-                        createSampleFundraisingDocuments();
+            // File manager functions
+            let currentPath = [];
+            let currentFileId = null;
+            let currentFileName = null;
+            let currentFileType = null;
+            let filesToUpload = [];
+
+            function initFileManager() {
+                // Setup breadcrumb navigation
+                setupBreadcrumb();
+
+                // Setup folder click handlers
+                document.querySelectorAll('.folder-item').forEach(folder => {
+                    folder.addEventListener('click', function(e) {
+                        if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                            const folderId = this.getAttribute('data-folder-id');
+                            const folderName = this.getAttribute('data-folder-name');
+                            navigateToFolder(folderId, folderName);
+                        }
                     });
+                });
+
+                // Setup create folder button
+                createFolderBtn.addEventListener('click', openCreateFolderModal);
+
+                // Setup upload files button
+                uploadFilesBtn.addEventListener('click', openUploadModal);
+
+                // Setup file upload handlers
+                browseFilesBtn.addEventListener('click', () => fileUploadInput.click());
+                fileUploadInput.addEventListener('change', handleFileSelection);
+                startUploadBtn.addEventListener('click', startFileUpload);
+
+                // Setup drag and drop for upload area
+                const uploadArea = document.getElementById('uploadArea');
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = 'var(--primary-color)';
+                    uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                });
+
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.style.borderColor = '#ccc';
+                    uploadArea.style.backgroundColor = 'transparent';
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#ccc';
+                    uploadArea.style.backgroundColor = 'transparent';
+                    
+                    if (e.dataTransfer.files.length) {
+                        handleFileSelection({ target: { files: e.dataTransfer.files } });
+                    }
+                });
             }
-            
-            function renderFundraisingDocuments(documents) {
-                const grid = document.getElementById('fundraisingGrid');
-                grid.innerHTML = '';
+
+            function setupBreadcrumb() {
+                const breadcrumb = document.getElementById('breadcrumb');
+                breadcrumb.innerHTML = '';
                 
-                if (documents.length === 0) {
-                    grid.innerHTML = '<p>No fundraising documents found matching your criteria.</p>';
+                // Add root item
+                const rootItem = document.createElement('span');
+                rootItem.className = 'breadcrumb-item';
+                rootItem.setAttribute('data-path', '');
+                rootItem.textContent = 'Fundraising Documents';
+                rootItem.addEventListener('click', () => navigateToFolder('', ''));
+                breadcrumb.appendChild(rootItem);
+                
+                // Add current path items
+                currentPath.forEach((folder, index) => {
+                    const separator = document.createElement('span');
+                    separator.className = 'breadcrumb-separator';
+                    separator.textContent = '›';
+                    breadcrumb.appendChild(separator);
+                    
+                    const item = document.createElement('span');
+                    item.className = 'breadcrumb-item';
+                    item.setAttribute('data-path', folder.id);
+                    item.textContent = folder.name;
+                    item.addEventListener('click', () => {
+                        // Navigate to this folder level
+                        const newPath = currentPath.slice(0, index + 1);
+                        navigateToPath(newPath);
+                    });
+                    breadcrumb.appendChild(item);
+                });
+            }
+
+            function navigateToFolder(folderId, folderName) {
+                if (folderId) {
+                    currentPath.push({ id: folderId, name: folderName });
+                } else {
+                    currentPath = [];
+                }
+                
+                // In a real app, we would fetch the folder contents from the server here
+                setupBreadcrumb();
+                loadFolderContents(folderId);
+            }
+
+            function navigateToPath(path) {
+                currentPath = path;
+                const folderId = path.length > 0 ? path[path.length - 1].id : '';
+                setupBreadcrumb();
+                loadFolderContents(folderId);
+            }
+
+            function loadFolderContents(folderId) {
+                // In a real implementation, this would fetch files and subfolders from the server
+                console.log(`Loading contents for folder ${folderId}`);
+                // For demo, we'll just show a message
+                alert(`Loading contents for folder: ${folderId || 'Root'}`);
+            }
+
+            function toggleFileActions(event, fileId) {
+                event.stopPropagation();
+                const dropdown = document.getElementById(`file-actions-${fileId}`);
+                document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                dropdown.classList.toggle('show');
+            }
+
+            function toggleFolderActions(event, folderId) {
+                event.stopPropagation();
+                const dropdown = document.getElementById(`folder-actions-${folderId}`);
+                document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                dropdown.classList.toggle('show');
+            }
+
+            function previewFile(fileId, fileName, fileType) {
+                currentFileId = fileId;
+                currentFileName = fileName;
+                currentFileType = fileType;
+                
+                document.getElementById('previewFileName').textContent = fileName;
+                const previewContent = document.getElementById('previewFileContent');
+                previewContent.innerHTML = '';
+                
+                // Create appropriate preview based on file type
+                if (fileType === 'pdf') {
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'file-preview-iframe';
+                    iframe.src = `path/to/files/${fileName}`; // In real app, use actual file path
+                    previewContent.appendChild(iframe);
+                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+                    const img = document.createElement('img');
+                    img.className = 'file-preview-image';
+                    img.src = `path/to/files/${fileName}`; // In real app, use actual file path
+                    img.alt = fileName;
+                    previewContent.appendChild(img);
+                } else {
+                    // For unsupported preview types, show a message
+                    const message = document.createElement('div');
+                    message.textContent = 'Preview not available for this file type. Please download to view.';
+                    previewContent.appendChild(message);
+                }
+                
+                document.getElementById('filePreviewModal').classList.add('show');
+            }
+
+            function closePreview() {
+                document.getElementById('filePreviewModal').classList.remove('show');
+            }
+
+            function downloadCurrentFile() {
+                downloadFile(currentFileId, currentFileName);
+                closePreview();
+            }
+
+            function downloadFile(fileId, fileName) {
+                alert(`Downloading file: ${fileName}`);
+                // In a real implementation, this would trigger a download
+                // window.location.href = `/api/files/download/${fileId}`;
+            }
+
+            function renameFile(fileId, currentName) {
+                const newName = prompt('Enter new file name:', currentName);
+                if (newName && newName !== currentName) {
+                    alert(`File renamed from ${currentName} to ${newName}`);
+                    // In real app, make API call to rename file
+                    // Then update the UI
+                    const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                    if (fileItem) {
+                        fileItem.setAttribute('data-file-name', newName);
+                        fileItem.querySelector('.file-name').textContent = newName;
+                    }
+                }
+            }
+
+            function deleteFile(fileId, fileName) {
+                if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
+                    alert(`File "${fileName}" deleted`);
+                    // In real app, make API call to delete file
+                    // Then remove from UI
+                    const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                    if (fileItem) {
+                        fileItem.remove();
+                    }
+                }
+            }
+
+            function openCreateFolderModal() {
+                document.getElementById('newFolderName').value = '';
+                document.getElementById('folderCreateModal').classList.add('show');
+            }
+
+            function closeCreateFolderModal() {
+                document.getElementById('folderCreateModal').classList.remove('show');
+            }
+
+            function createNewFolder() {
+                const folderName = document.getElementById('newFolderName').value.trim();
+                if (!folderName) {
+                    alert('Please enter a folder name');
                     return;
                 }
                 
-                documents.forEach(doc => {
-                    const card = createFundraisingCard(doc);
-                    grid.appendChild(card);
-                });
-            }
-            
-            function createFundraisingCard(doc) {
-                const card = document.createElement('div');
-                card.className = 'fundraising-card';
+                // In a real app, this would make an API call to create the folder
+                // For demo, we'll just create a new folder in the UI
+                const folderId = Date.now(); // Temporary ID
+                const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
                 
-                // Determine status class
-                let statusClass = 'status-draft';
-                if (doc.status === 'submitted') statusClass = 'status-submitted';
-                else if (doc.status === 'approved') statusClass = 'status-approved';
-                else if (doc.status === 'rejected') statusClass = 'status-rejected';
+                alert(`Folder "${folderName}" created in ${currentFolderId || 'root'}`);
                 
-                // Format amount with commas
-                const formattedAmount = doc.amount ? new Intl.NumberFormat('en-US').format(doc.amount) : 'Not specified';
-                
-                // Format date
-                const formattedDate = new Date(doc.date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                
-                card.innerHTML = `
-                    <div class="fundraising-card-header">
-                        <div class="fundraising-card-title">${doc.title}</div>
-                        <div class="fundraising-card-status ${statusClass}">${doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}</div>
+                // Create the new folder element
+                const folderItem = document.createElement('div');
+                folderItem.className = 'folder-item';
+                folderItem.setAttribute('data-folder-id', folderId);
+                folderItem.setAttribute('data-folder-name', folderName);
+                folderItem.innerHTML = `
+                    <div class="folder-icon">
+                        <i class="fas fa-folder"></i>
                     </div>
-                    <div class="fundraising-card-body">
-                        <div class="fundraising-card-meta">
-                            <span><i class="fas fa-file-alt"></i> ${doc.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
-                            <span><i class="fas fa-calendar-alt"></i> ${formattedDate}</span>
-                        </div>
-                        <div class="fundraising-card-meta">
-                            <span><i class="fas fa-hand-holding-usd"></i> UGX ${formattedAmount}</span>
-                            <span><i class="fas fa-building"></i> ${doc.donor || 'Not specified'}</span>
-                        </div>
-                        <div class="fundraising-card-description">
-                            ${doc.description || 'No description provided'}
-                        </div>
+                    <div class="folder-name">${folderName}</div>
+                    <div class="file-actions-menu" onclick="toggleFolderActions(event, ${folderId})">
+                        <i class="fas fa-ellipsis-v"></i>
                     </div>
-                    <div class="fundraising-card-footer">
-                        <button class="fundraising-card-btn view" data-id="${doc.id}">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="fundraising-card-btn edit" data-id="${doc.id}">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="fundraising-card-btn delete" data-id="${doc.id}">
+                    <div class="file-actions-dropdown" id="folder-actions-${folderId}">
+                        <div class="file-action-item" onclick="renameFolder(${folderId}, '${folderName}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFolder(${folderId})">
                             <i class="fas fa-trash"></i> Delete
-                        </button>
+                        </div>
                     </div>
                 `;
                 
-                // Add event listeners to buttons
-                card.querySelector('.view').addEventListener('click', () => viewFundraisingDocument(doc.id));
-                card.querySelector('.edit').addEventListener('click', () => editFundraisingDocument(doc.id));
-                card.querySelector('.delete').addEventListener('click', () => deleteFundraisingDocument(doc.id));
-                
-                return card;
-            }
-            
-            function viewFundraisingDocument(id) {
-                fetch(`/api/fundraising/documents/${id}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(doc => {
-                        // In a real app, you might open a preview modal or download the file
-                        if (doc.file_url) {
-                            window.open(doc.file_url, '_blank');
-                        } else {
-                            alert(`Viewing document: ${doc.title}\nType: ${doc.type}\nStatus: ${doc.status}\nAmount: UGX ${doc.amount || 'Not specified'}`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error viewing document:', error);
-                        alert('Error viewing document. See console for details.');
-                    });
-            }
-            
-            function editFundraisingDocument(id) {
-                fetch(`/api/fundraising/documents/${id}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(doc => {
-                        // Populate the form
-                        document.getElementById('fundraisingModalTitle').textContent = 'Edit Fundraising Document';
-                        document.getElementById('documentId').value = doc.id;
-                        document.getElementById('documentTitle').value = doc.title;
-                        document.getElementById('documentType').value = doc.type;
-                        document.getElementById('documentStatus').value = doc.status;
-                        document.getElementById('documentDate').value = doc.date;
-                        document.getElementById('documentAmount').value = doc.amount || '';
-                        document.getElementById('documentDonor').value = doc.donor || '';
-                        document.getElementById('documentDescription').value = doc.description || '';
-                        
-                        // Show current file info if exists
-                        const fileInfo = document.getElementById('currentFileInfo');
-                        if (doc.file_url) {
-                            const fileName = doc.file_url.split('/').pop();
-                            fileInfo.textContent = `Current file: ${fileName}`;
-                            fileInfo.style.display = 'block';
-                        } else {
-                            fileInfo.style.display = 'none';
-                        }
-                        
-                        // Show modal
-                        document.getElementById('fundraisingModal').classList.add('show');
-                    })
-                    .catch(error => {
-                        console.error('Error editing document:', error);
-                        alert('Error editing document. See console for details.');
-                    });
-            }
-            
-            function deleteFundraisingDocument(id) {
-                if (confirm('Are you sure you want to delete this fundraising document?')) {
-                    fetch(`/api/fundraising/documents/${id}`, {
-                        method: 'DELETE'
-                    })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        loadFundraisingDocuments();
-                        alert('Document deleted successfully');
-                    })
-                    .catch(error => {
-                        console.error('Error deleting document:', error);
-                        alert('Error deleting document. See console for details.');
-                    });
-                }
-            }
-            
-            function saveFundraisingDocument() {
-                const formData = new FormData();
-                const documentId = document.getElementById('documentId').value;
-                const isEdit = !!documentId;
-                
-                // Collect form data
-                formData.append('title', document.getElementById('documentTitle').value);
-                formData.append('type', document.getElementById('documentType').value);
-                formData.append('status', document.getElementById('documentStatus').value);
-                formData.append('date', document.getElementById('documentDate').value);
-                formData.append('amount', document.getElementById('documentAmount').value);
-                formData.append('donor', document.getElementById('documentDonor').value);
-                formData.append('description', document.getElementById('documentDescription').value);
-                
-                // Add file if selected
-                const fileInput = document.getElementById('documentFile');
-                if (fileInput.files.length > 0) {
-                    formData.append('file', fileInput.files[0]);
-                }
-                
-                // Determine the API endpoint and method
-                const url = isEdit 
-                    ? `/api/fundraising/documents/${documentId}`
-                    : '/api/fundraising/documents';
-                
-                const method = isEdit ? 'PUT' : 'POST';
-                
-                // Show loading state
-                const saveBtn = document.getElementById('saveFundraisingBtn');
-                saveBtn.disabled = true;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                
-                // Send to backend
-                fetch(url, {
-                    method: method,
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    closeFundraisingModal();
-                    loadFundraisingDocuments();
-                    alert(`Document ${isEdit ? 'updated' : 'created'} successfully!`);
-                })
-                .catch(error => {
-                    console.error('Error saving document:', error);
-                    alert('Error saving document. See console for details.');
-                })
-                .finally(() => {
-                    saveBtn.disabled = false;
-                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Document';
-                });
-            }
-            
-            // For demo purposes - create sample data if API is not available
-            function createSampleFundraisingDocuments() {
-                const sampleData = [
-                    {
-                        id: 1,
-                        title: 'Education Project Proposal',
-                        type: 'proposal',
-                        status: 'submitted',
-                        date: '2023-06-15',
-                        amount: 5000000,
-                        donor: 'Global Education Fund',
-                        description: 'Proposal for funding our new education initiative in rural communities.',
-                        file_url: '/uploads/sample_proposal.pdf'
-                    },
-                    {
-                        id: 2,
-                        title: 'Q1 Financial Report',
-                        type: 'financial_report',
-                        status: 'approved',
-                        date: '2023-04-10',
-                        amount: null,
-                        donor: null,
-                        description: 'Financial report for the first quarter of 2023 showing our expenditures and donations.',
-                        file_url: '/uploads/financial_report_q1.pdf'
-                    },
-                    {
-                        id: 3,
-                        title: 'Women Empowerment Grant',
-                        type: 'grant_application',
-                        status: 'draft',
-                        date: '2023-07-01',
-                        amount: 3000000,
-                        donor: 'Women Empowerment Foundation',
-                        description: 'Draft application for grant funding to support our women empowerment programs.'
-                    },
-                    {
-                        id: 4,
-                        title: 'Annual Donor Report 2022',
-                        type: 'donor_report',
-                        status: 'approved',
-                        date: '2023-01-20',
-                        amount: null,
-                        donor: null,
-                        description: 'Comprehensive report to our donors about our activities and impact in 2022.',
-                        file_url: '/uploads/annual_report_2022.pdf'
-                    },
-                    {
-                        id: 5,
-                        title: 'Health Clinic Budget',
-                        type: 'budget',
-                        status: 'rejected',
-                        date: '2023-05-05',
-                        amount: 7500000,
-                        donor: 'Ministry of Health',
-                        description: 'Budget proposal for establishing a new health clinic in the region. Needs revision.'
+                // Add click handler for navigation
+                folderItem.addEventListener('click', function(e) {
+                    if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                        navigateToFolder(folderId, folderName);
                     }
-                ];
+                });
                 
-                renderFundraisingDocuments(sampleData);
+                // Add to the grid
+                document.getElementById('fileManagerGrid').prepend(folderItem);
+                closeCreateFolderModal();
             }
-            
+
+            function renameFolder(folderId, currentName) {
+                const newName = prompt('Enter new folder name:', currentName);
+                if (newName && newName !== currentName) {
+                    alert(`Folder renamed from ${currentName} to ${newName}`);
+                    // In real app, make API call to rename folder
+                    // Then update the UI
+                    const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+                    if (folderItem) {
+                        folderItem.setAttribute('data-folder-name', newName);
+                        folderItem.querySelector('.folder-name').textContent = newName;
+                        
+                        // Update in currentPath if needed
+                        currentPath = currentPath.map(folder => {
+                            if (folder.id === folderId) {
+                                return { ...folder, name: newName };
+                            }
+                            return folder;
+                        });
+                        
+                        // Update breadcrumb if needed
+                        setupBreadcrumb();
+                    }
+                }
+            }
+
+            function deleteFolder(folderId) {
+                const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+                const folderName = folderItem ? folderItem.getAttribute('data-folder-name') : '';
+                
+                if (confirm(`Are you sure you want to delete the folder "${folderName}" and all its contents?`)) {
+                    alert(`Folder "${folderName}" deleted`);
+                    // In real app, make API call to delete folder
+                    // Then remove from UI
+                    if (folderItem) {
+                        folderItem.remove();
+                    }
+                }
+            }
+
+            function openUploadModal() {
+                filesToUpload = [];
+                fileUploadInput.value = '';
+                startUploadBtn.disabled = true;
+                uploadProgress.style.display = 'none';
+                document.getElementById('uploadModal').classList.add('show');
+            }
+
+            function closeUploadModal() {
+                document.getElementById('uploadModal').classList.remove('show');
+            }
+
+            function handleFileSelection(event) {
+                filesToUpload = Array.from(event.target.files);
+                if (filesToUpload.length > 0) {
+                    startUploadBtn.disabled = false;
+                    alert(`Selected ${filesToUpload.length} file(s) for upload`);
+                }
+            }
+
+            function startFileUpload() {
+                if (filesToUpload.length === 0) return;
+                
+                uploadProgress.style.display = 'block';
+                startUploadBtn.disabled = true;
+                
+                // Simulate upload progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressBarFill.style.width = `${Math.min(progress, 100)}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            alert('Files uploaded successfully!');
+                            closeUploadModal();
+                            
+                            // In a real app, we would add the uploaded files to the UI
+                            filesToUpload.forEach(file => {
+                                addFileToUI(file.name, file.size);
+                            });
+                        }, 500);
+                    }
+                }, 200);
+            }
+
+            function addFileToUI(fileName, fileSize) {
+                const fileType = getFileType(fileName);
+                const fileSizeFormatted = formatFileSize(fileSize);
+                const fileId = Date.now(); // Temporary ID
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.setAttribute('data-file-id', fileId);
+                fileItem.setAttribute('data-file-name', fileName);
+                fileItem.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas ${getFileIcon(fileType)}"></i>
+                    </div>
+                    <div class="file-name">${fileName}</div>
+                    <div class="file-actions-menu" onclick="toggleFileActions(event, ${fileId})">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="file-actions-dropdown" id="file-actions-${fileId}">
+                        <div class="file-action-item" onclick="previewFile(${fileId}, '${fileName}', '${fileType}')">
+                            <i class="fas fa-eye"></i> Preview
+                        </div>
+                        <div class="file-action-item" onclick="downloadFile(${fileId}, '${fileName}')">
+                            <i class="fas fa-download"></i> Download
+                        </div>
+                        <div class="file-action-item" onclick="renameFile(${fileId}, '${fileName}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFile(${fileId}, '${fileName}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('fileManagerGrid').appendChild(fileItem);
+            }
+
+            function getFileType(filename) {
+                const extension = filename.split('.').pop().toLowerCase();
+                switch(extension) {
+                    case 'pdf': return 'pdf';
+                    case 'doc':
+                    case 'docx': return 'word';
+                    case 'xls':
+                    case 'xlsx': return 'excel';
+                    case 'ppt':
+                    case 'pptx': return 'powerpoint';
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                    case 'gif': return 'image';
+                    default: return 'file';
+                }
+            }
+
+            function getFileIcon(fileType) {
+                switch(fileType) {
+                    case 'pdf': return 'fa-file-pdf';
+                    case 'word': return 'fa-file-word';
+                    case 'excel': return 'fa-file-excel';
+                    case 'powerpoint': return 'fa-file-powerpoint';
+                    case 'image': return 'fa-file-image';
+                    default: return 'fa-file';
+                }
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Close dropdowns when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                    document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                        d.classList.remove('show');
+                    });
+                }
+            });
+
             // Mobile menu toggle
             function handleMobileMenu() {
                 if (window.innerWidth <= 768) {
