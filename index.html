@@ -775,6 +775,13 @@
             margin-top: 20px;
         }
 
+        .loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 992px) {
             .dashboard-grid {
@@ -1169,9 +1176,10 @@
     </div>
 
     <script>
-        // Add this at the top of your script
+        // API Configuration
         const API_BASE_URL = "https://man-m681.onrender.com";
-        const UPLOAD_DIR = "fundraising"; // This should match your backend's UPLOAD_DIR
+        const UPLOAD_DIR = "fundraising";
+        
         document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
@@ -1243,7 +1251,7 @@
             // Initialize file manager
             initFileManager();
 
-            // File manager functions
+            // File manager state
             let currentPath = [];
             let currentFileId = null;
             let currentFileName = null;
@@ -1251,421 +1259,551 @@
             let filesToUpload = [];
 
             async function initFileManager() {
-    // Setup breadcrumb navigation
-    setupBreadcrumb();
+                // Setup breadcrumb navigation
+                setupBreadcrumb();
 
-    try {
-        // Load initial folder contents from backend
-        await loadFolderContents('');
-    } catch (error) {
-        console.error("Error initializing file manager:", error);
-        alert("Failed to load documents. Please try again later.");
-    }
-
-    // Setup folder click handlers
-    document.querySelectorAll('.folder-item').forEach(folder => {
-        folder.addEventListener('click', function(e) {
-            if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
-                const folderId = this.getAttribute('data-folder-id');
-                const folderName = this.getAttribute('data-folder-name');
-                navigateToFolder(folderId, folderName);
-            }
-        });
-    });
-
-    // Setup create folder button
-    createFolderBtn.addEventListener('click', openCreateFolderModal);
-    uploadFilesBtn.addEventListener('click', openUploadModal);
-    browseFilesBtn.addEventListener('click', () => fileUploadInput.click());
-    fileUploadInput.addEventListener('change', handleFileSelection);
-    startUploadBtn.addEventListener('click', startFileUpload);
-
-    // Setup drag and drop for upload area
-    const uploadArea = document.getElementById('uploadArea');
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = 'var(--primary-color)';
-        uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-    });
-
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.borderColor = '#ccc';
-        uploadArea.style.backgroundColor = 'transparent';
-    });
-
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#ccc';
-        uploadArea.style.backgroundColor = 'transparent';
-        
-        if (e.dataTransfer.files.length) {
-            handleFileSelection({ target: { files: e.dataTransfer.files } });
-        }
-    });
-}
-
-async function loadFolderContents(folderId) {
-    try {
-        // Show loading state
-        const fileManagerGrid = document.getElementById('fileManagerGrid');
-        fileManagerGrid.innerHTML = '<div class="loading">Loading documents...</div>';
-        
-        // Fetch folder contents from backend
-        const response = await fetch(`${API_BASE_URL}/files?folder=${folderId || ''}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch folder contents');
-        }
-        
-        const data = await response.json();
-        
-        // Clear the grid
-        fileManagerGrid.innerHTML = '';
-        
-        // Add folders
-        data.folders.forEach(folder => {
-            const folderItem = createFolderElement(folder.id, folder.name);
-            fileManagerGrid.appendChild(folderItem);
-        });
-        
-        // Add files
-        data.files.forEach(file => {
-            const fileItem = createFileElement(file.id, file.name, file.type);
-            fileManagerGrid.appendChild(fileItem);
-        });
-        
-    } catch (error) {
-        console.error("Error loading folder contents:", error);
-        alert("Failed to load folder contents. Please try again later.");
-    }
-}
-
-function createFolderElement(folderId, folderName) {
-    const folderItem = document.createElement('div');
-    folderItem.className = 'folder-item';
-    folderItem.setAttribute('data-folder-id', folderId);
-    folderItem.setAttribute('data-folder-name', folderName);
-    folderItem.innerHTML = `
-        <div class="folder-icon">
-            <i class="fas fa-folder"></i>
-        </div>
-        <div class="folder-name">${folderName}</div>
-        <div class="file-actions-menu" onclick="toggleFolderActions(event, ${folderId})">
-            <i class="fas fa-ellipsis-v"></i>
-        </div>
-        <div class="file-actions-dropdown" id="folder-actions-${folderId}">
-            <div class="file-action-item" onclick="renameFolder(${folderId}, '${folderName}')">
-                <i class="fas fa-pencil-alt"></i> Rename
-            </div>
-            <div class="file-action-item" onclick="deleteFolder(${folderId})">
-                <i class="fas fa-trash"></i> Delete
-            </div>
-        </div>
-    `;
-    
-    folderItem.addEventListener('click', function(e) {
-        if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
-            navigateToFolder(folderId, folderName);
-        }
-    });
-    
-    return folderItem;
-}
-
-function createFileElement(fileId, fileName, fileType) {
-    const fileItem = document.createElement('div');
-    fileItem.className = 'file-item';
-    fileItem.setAttribute('data-file-id', fileId);
-    fileItem.setAttribute('data-file-name', fileName);
-    fileItem.innerHTML = `
-        <div class="file-icon">
-            <i class="fas ${getFileIcon(fileType)}"></i>
-        </div>
-        <div class="file-name">${fileName}</div>
-        <div class="file-actions-menu" onclick="toggleFileActions(event, ${fileId})">
-            <i class="fas fa-ellipsis-v"></i>
-        </div>
-        <div class="file-actions-dropdown" id="file-actions-${fileId}">
-            <div class="file-action-item" onclick="previewFile(${fileId}, '${fileName}', '${fileType}')">
-                <i class="fas fa-eye"></i> Preview
-            </div>
-            <div class="file-action-item" onclick="downloadFile(${fileId}, '${fileName}')">
-                <i class="fas fa-download"></i> Download
-            </div>
-            <div class="file-action-item" onclick="renameFile(${fileId}, '${fileName}')">
-                <i class="fas fa-pencil-alt"></i> Rename
-            </div>
-            <div class="file-action-item" onclick="deleteFile(${fileId}, '${fileName}')">
-                <i class="fas fa-trash"></i> Delete
-            </div>
-        </div>
-    `;
-    
-    return fileItem;
-}
-
-async function createNewFolder() {
-    const folderName = document.getElementById('newFolderName').value.trim();
-    if (!folderName) {
-        alert('Please enter a folder name');
-        return;
-    }
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/folders`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: folderName,
-                parent_folder: currentPath.length > 0 ? currentPath[currentPath.length - 1].id : null
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to create folder');
-        }
-        
-        const data = await response.json();
-        const folderItem = createFolderElement(data.id, folderName);
-        document.getElementById('fileManagerGrid').prepend(folderItem);
-        closeCreateFolderModal();
-        
-    } catch (error) {
-        console.error("Error creating folder:", error);
-        alert("Failed to create folder. Please try again.");
-    }
-}
-
-async function renameFolder(folderId, currentName) {
-    const newName = prompt('Enter new folder name:', currentName);
-    if (!newName || newName === currentName) return;
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/folders/${folderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: newName })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to rename folder');
-        }
-        
-        const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
-        if (folderItem) {
-            folderItem.setAttribute('data-folder-name', newName);
-            folderItem.querySelector('.folder-name').textContent = newName;
-            
-            // Update in currentPath if needed
-            currentPath = currentPath.map(folder => {
-                if (folder.id === folderId) {
-                    return { ...folder, name: newName };
+                try {
+                    // Load initial folder contents from backend
+                    await loadFolderContents('');
+                } catch (error) {
+                    console.error("Error initializing file manager:", error);
+                    alert("Failed to load documents. Please try again later.");
                 }
-                return folder;
-            });
-            
-            setupBreadcrumb();
-        }
-        
-    } catch (error) {
-        console.error("Error renaming folder:", error);
-        alert("Failed to rename folder. Please try again.");
-    }
-}
 
-async function deleteFolder(folderId) {
-    const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
-    const folderName = folderItem ? folderItem.getAttribute('data-folder-name') : '';
-    
-    if (!confirm(`Are you sure you want to delete the folder "${folderName}" and all its contents?`)) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/folders/${folderId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to delete folder');
-        }
-        
-        if (folderItem) {
-            folderItem.remove();
-        }
-        
-    } catch (error) {
-        console.error("Error deleting folder:", error);
-        alert("Failed to delete folder. Please try again.");
-    }
-}
+                // Setup folder click handlers
+                document.querySelectorAll('.folder-item').forEach(folder => {
+                    folder.addEventListener('click', function(e) {
+                        if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                            const folderId = this.getAttribute('data-folder-id');
+                            const folderName = this.getAttribute('data-folder-name');
+                            navigateToFolder(folderId, folderName);
+                        }
+                    });
+                });
 
-async function startFileUpload() {
-    if (filesToUpload.length === 0) return;
-    
-    const uploadProgress = document.getElementById('uploadProgress');
-    const progressBarFill = document.getElementById('progressBarFill');
-    const startUploadBtn = document.getElementById('startUploadBtn');
-    
-    uploadProgress.style.display = 'block';
-    startUploadBtn.disabled = true;
-    
-    try {
-        const formData = new FormData();
-        filesToUpload.forEach(file => {
-            formData.append('files', file);
-        });
-        
-        // Add current folder path if in a subfolder
-        if (currentPath.length > 0) {
-            formData.append('folder', currentPath[currentPath.length - 1].id);
-        }
-        
-        const response = await fetch(`${API_BASE_URL}/upload`, {
-            method: 'POST',
-            body: formData,
-            // Note: Don't set Content-Type header when using FormData, the browser will set it automatically
-        });
-        
-        if (!response.ok) {
-            throw new Error('File upload failed');
-        }
-        
-        const result = await response.json();
-        
-        // Update UI with new files
-        result.files.forEach(file => {
-            addFileToUI(file.id, file.name, file.type);
-        });
-        
-        closeUploadModal();
-        
-    } catch (error) {
-        console.error("Error uploading files:", error);
-        alert("Failed to upload files. Please try again.");
-    } finally {
-        uploadProgress.style.display = 'none';
-        startUploadBtn.disabled = false;
-        progressBarFill.style.width = '0%';
-    }
-}
+                // Setup create folder button
+                createFolderBtn.addEventListener('click', openCreateFolderModal);
+                uploadFilesBtn.addEventListener('click', openUploadModal);
+                browseFilesBtn.addEventListener('click', () => fileUploadInput.click());
+                fileUploadInput.addEventListener('change', handleFileSelection);
+                startUploadBtn.addEventListener('click', startFileUpload);
 
-async function downloadFile(fileId, fileName) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/files/${fileId}/download`);
-        
-        if (!response.ok) {
-            throw new Error('Failed to download file');
-        }
-        
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        
-    } catch (error) {
-        console.error("Error downloading file:", error);
-        alert("Failed to download file. Please try again.");
-    }
-}
+                // Setup drag and drop for upload area
+                const uploadArea = document.getElementById('uploadArea');
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = 'var(--primary-color)';
+                    uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                });
 
-async function deleteFile(fileId, fileName) {
-    if (!confirm(`Are you sure you want to delete "${fileName}"?`)) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/files/${fileId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to delete file');
-        }
-        
-        const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
-        if (fileItem) {
-            fileItem.remove();
-        }
-        
-    } catch (error) {
-        console.error("Error deleting file:", error);
-        alert("Failed to delete file. Please try again.");
-    }
-}
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.style.borderColor = '#ccc';
+                    uploadArea.style.backgroundColor = 'transparent';
+                });
 
-async function renameFile(fileId, currentName) {
-    const newName = prompt('Enter new file name:', currentName);
-    if (!newName || newName === currentName) return;
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/files/${fileId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: newName })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to rename file');
-        }
-        
-        const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
-        if (fileItem) {
-            fileItem.setAttribute('data-file-name', newName);
-            fileItem.querySelector('.file-name').textContent = newName;
-        }
-        
-    } catch (error) {
-        console.error("Error renaming file:", error);
-        alert("Failed to rename file. Please try again.");
-    }
-}
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#ccc';
+                    uploadArea.style.backgroundColor = 'transparent';
+                    
+                    if (e.dataTransfer.files.length) {
+                        handleFileSelection({ target: { files: e.dataTransfer.files } });
+                    }
+                });
+            }
+
+            function setupBreadcrumb() {
+                const breadcrumb = document.getElementById('breadcrumb');
+                breadcrumb.innerHTML = '';
+                
+                // Add root item
+                const rootItem = document.createElement('span');
+                rootItem.className = 'breadcrumb-item';
+                rootItem.setAttribute('data-path', '');
+                rootItem.textContent = 'Fundraising Documents';
+                rootItem.addEventListener('click', () => navigateToFolder('', ''));
+                breadcrumb.appendChild(rootItem);
+                
+                // Add current path items
+                currentPath.forEach((folder, index) => {
+                    const separator = document.createElement('span');
+                    separator.className = 'breadcrumb-separator';
+                    separator.textContent = '›';
+                    breadcrumb.appendChild(separator);
+                    
+                    const item = document.createElement('span');
+                    item.className = 'breadcrumb-item';
+                    item.setAttribute('data-path', folder.id);
+                    item.textContent = folder.name;
+                    item.addEventListener('click', () => {
+                        // Navigate to this folder level
+                        const newPath = currentPath.slice(0, index + 1);
+                        navigateToPath(newPath);
+                    });
+                    breadcrumb.appendChild(item);
+                });
+            }
+
+            function navigateToFolder(folderId, folderName) {
+                if (folderId) {
+                    currentPath.push({ id: folderId, name: folderName });
+                } else {
+                    currentPath = [];
+                }
+                
+                setupBreadcrumb();
+                loadFolderContents(folderId);
+            }
+
+            function navigateToPath(path) {
+                currentPath = path;
+                const folderId = path.length > 0 ? path[path.length - 1].id : '';
+                setupBreadcrumb();
+                loadFolderContents(folderId);
+            }
+
+            async function loadFolderContents(folderId) {
+                try {
+                    // Show loading state
+                    const fileManagerGrid = document.getElementById('fileManagerGrid');
+                    fileManagerGrid.innerHTML = '<div class="loading">Loading documents...</div>';
+                    
+                    // Fetch folder contents from backend
+                    const response = await fetch(`${API_BASE_URL}/files?folder=${folderId || ''}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch folder contents');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Clear the grid
+                    fileManagerGrid.innerHTML = '';
+                    
+                    // Add folders
+                    data.folders.forEach(folder => {
+                        const folderItem = createFolderElement(folder.id, folder.name);
+                        fileManagerGrid.appendChild(folderItem);
+                    });
+                    
+                    // Add files
+                    data.files.forEach(file => {
+                        const fileItem = createFileElement(file.id, file.name, file.type);
+                        fileManagerGrid.appendChild(fileItem);
+                    });
+                    
+                } catch (error) {
+                    console.error("Error loading folder contents:", error);
+                    alert("Failed to load folder contents. Please try again later.");
+                }
+            }
+
+            function createFolderElement(folderId, folderName) {
+                const folderItem = document.createElement('div');
+                folderItem.className = 'folder-item';
+                folderItem.setAttribute('data-folder-id', folderId);
+                folderItem.setAttribute('data-folder-name', folderName);
+                folderItem.innerHTML = `
+                    <div class="folder-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="folder-name">${folderName}</div>
+                    <div class="file-actions-menu" onclick="toggleFolderActions(event, '${folderId}')">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="file-actions-dropdown" id="folder-actions-${folderId}">
+                        <div class="file-action-item" onclick="renameFolder('${folderId}', '${folderName}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFolder('${folderId}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                `;
+                
+                folderItem.addEventListener('click', function(e) {
+                    if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                        navigateToFolder(folderId, folderName);
+                    }
+                });
+                
+                return folderItem;
+            }
+
+            function createFileElement(fileId, fileName, fileType) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.setAttribute('data-file-id', fileId);
+                fileItem.setAttribute('data-file-name', fileName);
+                fileItem.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas ${getFileIcon(fileType)}"></i>
+                    </div>
+                    <div class="file-name">${fileName}</div>
+                    <div class="file-actions-menu" onclick="toggleFileActions(event, '${fileId}')">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="file-actions-dropdown" id="file-actions-${fileId}">
+                        <div class="file-action-item" onclick="previewFile('${fileId}', '${fileName}', '${fileType}')">
+                            <i class="fas fa-eye"></i> Preview
+                        </div>
+                        <div class="file-action-item" onclick="downloadFile('${fileId}', '${fileName}')">
+                            <i class="fas fa-download"></i> Download
+                        </div>
+                        <div class="file-action-item" onclick="renameFile('${fileId}', '${fileName}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFile('${fileId}', '${fileName}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                `;
+                
+                return fileItem;
+            }
+
+            function toggleFileActions(event, fileId) {
+                event.stopPropagation();
+                const dropdown = document.getElementById(`file-actions-${fileId}`);
+                document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                dropdown.classList.toggle('show');
+            }
+
+            function toggleFolderActions(event, folderId) {
+                event.stopPropagation();
+                const dropdown = document.getElementById(`folder-actions-${folderId}`);
+                document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                dropdown.classList.toggle('show');
+            }
+
+            function previewFile(fileId, fileName, fileType) {
+                currentFileId = fileId;
+                currentFileName = fileName;
+                currentFileType = fileType;
+                
+                document.getElementById('previewFileName').textContent = fileName;
+                const previewContent = document.getElementById('previewFileContent');
+                previewContent.innerHTML = '';
+                
+                // Create appropriate preview based on file type
+                if (fileType === 'pdf') {
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'file-preview-iframe';
+                    iframe.src = `${API_BASE_URL}/uploads/${UPLOAD_DIR}/${fileId}`;
+                    previewContent.appendChild(iframe);
+                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+                    const img = document.createElement('img');
+                    img.className = 'file-preview-image';
+                    img.src = `${API_BASE_URL}/uploads/${UPLOAD_DIR}/${fileId}`;
+                    img.alt = fileName;
+                    previewContent.appendChild(img);
+                } else {
+                    // For unsupported preview types, show a message
+                    const message = document.createElement('div');
+                    message.textContent = 'Preview not available for this file type. Please download to view.';
+                    previewContent.appendChild(message);
+                }
+                
+                document.getElementById('filePreviewModal').classList.add('show');
+            }
+
+            function closePreview() {
+                document.getElementById('filePreviewModal').classList.remove('show');
+            }
+
+            function downloadCurrentFile() {
+                downloadFile(currentFileId, currentFileName);
+                closePreview();
+            }
+
+            async function downloadFile(fileId, fileName) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/files/${fileId}/download`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to download file');
+                    }
+                    
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                } catch (error) {
+                    console.error("Error downloading file:", error);
+                    alert("Failed to download file. Please try again.");
+                }
+            }
+
+            async function renameFile(fileId, currentName) {
+                const newName = prompt('Enter new file name:', currentName);
+                if (!newName || newName === currentName) return;
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/files/${fileId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name: newName })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to rename file');
+                    }
+                    
+                    const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                    if (fileItem) {
+                        fileItem.setAttribute('data-file-name', newName);
+                        fileItem.querySelector('.file-name').textContent = newName;
+                    }
+                    
+                } catch (error) {
+                    console.error("Error renaming file:", error);
+                    alert("Failed to rename file. Please try again.");
+                }
+            }
+
+            async function deleteFile(fileId, fileName) {
+                if (!confirm(`Are you sure you want to delete "${fileName}"?`)) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/files/${fileId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to delete file');
+                    }
+                    
+                    const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                    if (fileItem) {
+                        fileItem.remove();
+                    }
+                    
+                } catch (error) {
+                    console.error("Error deleting file:", error);
+                    alert("Failed to delete file. Please try again.");
+                }
+            }
+
+            function openCreateFolderModal() {
+                document.getElementById('newFolderName').value = '';
+                document.getElementById('folderCreateModal').classList.add('show');
+            }
+
+            function closeCreateFolderModal() {
+                document.getElementById('folderCreateModal').classList.remove('show');
+            }
+
+            async function createNewFolder() {
+                const folderName = document.getElementById('newFolderName').value.trim();
+                if (!folderName) {
+                    alert('Please enter a folder name');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/folders`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: folderName,
+                            parent_folder: currentPath.length > 0 ? currentPath[currentPath.length - 1].id : null
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to create folder');
+                    }
+                    
+                    const data = await response.json();
+                    const folderItem = createFolderElement(data.id, folderName);
+                    document.getElementById('fileManagerGrid').prepend(folderItem);
+                    closeCreateFolderModal();
+                    
+                } catch (error) {
+                    console.error("Error creating folder:", error);
+                    alert("Failed to create folder. Please try again.");
+                }
+            }
+
+            async function renameFolder(folderId, currentName) {
+                const newName = prompt('Enter new folder name:', currentName);
+                if (!newName || newName === currentName) return;
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/folders/${folderId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name: newName })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to rename folder');
+                    }
+                    
+                    const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+                    if (folderItem) {
+                        folderItem.setAttribute('data-folder-name', newName);
+                        folderItem.querySelector('.folder-name').textContent = newName;
+                        
+                        // Update in currentPath if needed
+                        currentPath = currentPath.map(folder => {
+                            if (folder.id === folderId) {
+                                return { ...folder, name: newName };
+                            }
+                            return folder;
+                        });
+                        
+                        setupBreadcrumb();
+                    }
+                    
+                } catch (error) {
+                    console.error("Error renaming folder:", error);
+                    alert("Failed to rename folder. Please try again.");
+                }
+            }
+
+            async function deleteFolder(folderId) {
+                const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+                const folderName = folderItem ? folderItem.getAttribute('data-folder-name') : '';
+                
+                if (!confirm(`Are you sure you want to delete the folder "${folderName}" and all its contents?`)) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/folders/${folderId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to delete folder');
+                    }
+                    
+                    if (folderItem) {
+                        folderItem.remove();
+                    }
+                    
+                } catch (error) {
+                    console.error("Error deleting folder:", error);
+                    alert("Failed to delete folder. Please try again.");
+                }
+            }
+
+            function openUploadModal() {
+                filesToUpload = [];
+                fileUploadInput.value = '';
+                startUploadBtn.disabled = true;
+                uploadProgress.style.display = 'none';
+                document.getElementById('uploadModal').classList.add('show');
+            }
+
+            function closeUploadModal() {
+                document.getElementById('uploadModal').classList.remove('show');
+            }
+
+            function handleFileSelection(event) {
+                filesToUpload = Array.from(event.target.files);
+                if (filesToUpload.length > 0) {
+                    startUploadBtn.disabled = false;
+                }
+            }
+
+            async function startFileUpload() {
+                if (filesToUpload.length === 0) return;
+                
+                const uploadProgress = document.getElementById('uploadProgress');
+                const progressBarFill = document.getElementById('progressBarFill');
+                const startUploadBtn = document.getElementById('startUploadBtn');
+                
+                uploadProgress.style.display = 'block';
+                startUploadBtn.disabled = true;
+                
+                try {
+                    const formData = new FormData();
+                    filesToUpload.forEach(file => {
+                        formData.append('files', file);
+                    });
+                    
+                    // Add current folder path if in a subfolder
+                    if (currentPath.length > 0) {
+                        formData.append('folder', currentPath[currentPath.length - 1].id);
+                    }
+                    
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', `${API_BASE_URL}/upload`, true);
+                    
+                    // Track upload progress
+                    xhr.upload.onprogress = function(e) {
+                        if (e.lengthComputable) {
+                            const percentComplete = (e.loaded / e.total) * 100;
+                            progressBarFill.style.width = `${percentComplete}%`;
+                        }
+                    };
+                    
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            const result = JSON.parse(xhr.response);
+                            
+                            // Update UI with new files
+                            result.files.forEach(file => {
+                                const fileItem = createFileElement(file.id, file.name, file.type);
+                                document.getElementById('fileManagerGrid').appendChild(fileItem);
+                            });
+                            
+                            closeUploadModal();
+                        } else {
+                            throw new Error('File upload failed');
+                        }
+                    };
+                    
+                    xhr.send(formData);
+                    
+                } catch (error) {
+                    console.error("Error uploading files:", error);
+                    alert("Failed to upload files. Please try again.");
+                    uploadProgress.style.display = 'none';
+                    startUploadBtn.disabled = false;
+                    progressBarFill.style.width = '0%';
+                }
+            }
 
             function getFileType(filename) {
                 const extension = filename.split('.').pop().toLowerCase();
-                switch(extension) {
-                    case 'pdf': return 'pdf';
-                    case 'doc':
-                    case 'docx': return 'word';
-                    case 'xls':
-                    case 'xlsx': return 'excel';
-                    case 'ppt':
-                    case 'pptx': return 'powerpoint';
-                    case 'jpg':
-                    case 'jpeg':
-                    case 'png':
-                    case 'gif': return 'image';
-                    default: return 'file';
-                }
+                return extension;
             }
 
             function getFileIcon(fileType) {
                 switch(fileType) {
                     case 'pdf': return 'fa-file-pdf';
-                    case 'word': return 'fa-file-word';
-                    case 'excel': return 'fa-file-excel';
-                    case 'powerpoint': return 'fa-file-powerpoint';
-                    case 'image': return 'fa-file-image';
+                    case 'doc':
+                    case 'docx': return 'fa-file-word';
+                    case 'xls':
+                    case 'xlsx': return 'fa-file-excel';
+                    case 'ppt':
+                    case 'pptx': return 'fa-file-powerpoint';
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                    case 'gif': return 'fa-file-image';
                     default: return 'fa-file';
                 }
-            }
-
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
 
             // Close dropdowns when clicking elsewhere
@@ -1707,6 +1845,282 @@ async function renameFile(fileId, currentName) {
                 }
             });
         });
+
+        // Make these functions available globally for inline event handlers
+        window.toggleFileActions = function(event, fileId) {
+            event.stopPropagation();
+            const dropdown = document.getElementById(`file-actions-${fileId}`);
+            document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                if (d !== dropdown) d.classList.remove('show');
+            });
+            dropdown.classList.toggle('show');
+        };
+
+        window.toggleFolderActions = function(event, folderId) {
+            event.stopPropagation();
+            const dropdown = document.getElementById(`folder-actions-${folderId}`);
+            document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                if (d !== dropdown) d.classList.remove('show');
+            });
+            dropdown.classList.toggle('show');
+        };
+
+        window.previewFile = function(fileId, fileName, fileType) {
+            const previewModal = document.getElementById('filePreviewModal');
+            const previewFileName = document.getElementById('previewFileName');
+            const previewContent = document.getElementById('previewFileContent');
+            
+            currentFileId = fileId;
+            currentFileName = fileName;
+            currentFileType = fileType;
+            
+            previewFileName.textContent = fileName;
+            previewContent.innerHTML = '';
+            
+            if (['pdf'].includes(fileType)) {
+                const iframe = document.createElement('iframe');
+                iframe.className = 'file-preview-iframe';
+                iframe.src = `https://man-m681.onrender.com/uploads/fundraising/${fileId}`;
+                previewContent.appendChild(iframe);
+            } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+                const img = document.createElement('img');
+                img.className = 'file-preview-image';
+                img.src = `https://man-m681.onrender.com/uploads/fundraising/${fileId}`;
+                img.alt = fileName;
+                previewContent.appendChild(img);
+            } else {
+                const message = document.createElement('div');
+                message.textContent = 'Preview not available for this file type. Please download to view.';
+                previewContent.appendChild(message);
+            }
+            
+            previewModal.classList.add('show');
+        };
+
+        window.closePreview = function() {
+            document.getElementById('filePreviewModal').classList.remove('show');
+        };
+
+        window.downloadCurrentFile = function() {
+            downloadFile(currentFileId, currentFileName);
+            closePreview();
+        };
+
+        async function downloadFile(fileId, fileName) {
+            try {
+                const response = await fetch(`https://man-m681.onrender.com/files/${fileId}/download`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to download file');
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                console.error("Error downloading file:", error);
+                alert("Failed to download file. Please try again.");
+            }
+        }
+
+        window.renameFile = async function(fileId, currentName) {
+            const newName = prompt('Enter new file name:', currentName);
+            if (!newName || newName === currentName) return;
+            
+            try {
+                const response = await fetch(`https://man-m681.onrender.com/files/${fileId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: newName })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to rename file');
+                }
+                
+                const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                if (fileItem) {
+                    fileItem.setAttribute('data-file-name', newName);
+                    fileItem.querySelector('.file-name').textContent = newName;
+                }
+                
+            } catch (error) {
+                console.error("Error renaming file:", error);
+                alert("Failed to rename file. Please try again.");
+            }
+        };
+
+        window.deleteFile = async function(fileId, fileName) {
+            if (!confirm(`Are you sure you want to delete "${fileName}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`https://man-m681.onrender.com/files/${fileId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete file');
+                }
+                
+                const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                if (fileItem) {
+                    fileItem.remove();
+                }
+                
+            } catch (error) {
+                console.error("Error deleting file:", error);
+                alert("Failed to delete file. Please try again.");
+            }
+        };
+
+        window.renameFolder = async function(folderId, currentName) {
+            const newName = prompt('Enter new folder name:', currentName);
+            if (!newName || newName === currentName) return;
+            
+            try {
+                const response = await fetch(`https://man-m681.onrender.com/folders/${folderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: newName })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to rename folder');
+                }
+                
+                const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+                if (folderItem) {
+                    folderItem.setAttribute('data-folder-name', newName);
+                    folderItem.querySelector('.folder-name').textContent = newName;
+                    
+                    // Update in currentPath if needed
+                    const currentPath = [];
+                    const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
+                    breadcrumbItems.forEach(item => {
+                        if (item.getAttribute('data-path') === folderId) {
+                            item.textContent = newName;
+                        }
+                    });
+                }
+                
+            } catch (error) {
+                console.error("Error renaming folder:", error);
+                alert("Failed to rename folder. Please try again.");
+            }
+        };
+
+        window.deleteFolder = async function(folderId) {
+            const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+            const folderName = folderItem ? folderItem.getAttribute('data-folder-name') : '';
+            
+            if (!confirm(`Are you sure you want to delete the folder "${folderName}" and all its contents?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`https://man-m681.onrender.com/folders/${folderId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete folder');
+                }
+                
+                if (folderItem) {
+                    folderItem.remove();
+                }
+                
+            } catch (error) {
+                console.error("Error deleting folder:", error);
+                alert("Failed to delete folder. Please try again.");
+            }
+        };
+
+        window.createNewFolder = async function() {
+            const folderName = document.getElementById('newFolderName').value.trim();
+            if (!folderName) {
+                alert('Please enter a folder name');
+                return;
+            }
+            
+            try {
+                const currentPath = [];
+                const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
+                const parentFolder = breadcrumbItems.length > 1 ? breadcrumbItems[breadcrumbItems.length - 1].getAttribute('data-path') : null;
+                
+                const response = await fetch(`https://man-m681.onrender.com/folders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: folderName,
+                        parent_folder: parentFolder
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to create folder');
+                }
+                
+                const data = await response.json();
+                const folderItem = document.createElement('div');
+                folderItem.className = 'folder-item';
+                folderItem.setAttribute('data-folder-id', data.id);
+                folderItem.setAttribute('data-folder-name', folderName);
+                folderItem.innerHTML = `
+                    <div class="folder-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="folder-name">${folderName}</div>
+                    <div class="file-actions-menu" onclick="toggleFolderActions(event, '${data.id}')">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="file-actions-dropdown" id="folder-actions-${data.id}">
+                        <div class="file-action-item" onclick="renameFolder('${data.id}', '${folderName}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFolder('${data.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                `;
+                
+                folderItem.addEventListener('click', function(e) {
+                    if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                        navigateToFolder(data.id, folderName);
+                    }
+                });
+                
+                document.getElementById('fileManagerGrid').prepend(folderItem);
+                document.getElementById('folderCreateModal').classList.remove('show');
+                
+            } catch (error) {
+                console.error("Error creating folder:", error);
+                alert("Failed to create folder. Please try again.");
+            }
+        };
+
+        window.closeCreateFolderModal = function() {
+            document.getElementById('folderCreateModal').classList.remove('show');
+        };
+
+        window.closeUploadModal = function() {
+            document.getElementById('uploadModal').classList.remove('show');
+        };
     </script>
 </body>
 </html>
