@@ -775,13 +775,6 @@
             margin-top: 20px;
         }
 
-        .loading {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 20px;
-            color: #777;
-        }
-
         /* Responsive adjustments */
         @media (max-width: 992px) {
             .dashboard-grid {
@@ -1096,8 +1089,91 @@
                 </div>
 
                 <div class="file-manager-grid" id="fileManagerGrid">
-                    <!-- Content will be loaded dynamically -->
-                    <div class="loading">Loading documents...</div>
+                    <!-- Folders will be added here -->
+                    <div class="folder-item" data-folder-id="1" data-folder-name="Proposals">
+                        <div class="folder-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="folder-name">Proposals</div>
+                        <div class="file-actions-menu" onclick="toggleFolderActions(event, 1)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="folder-actions-1">
+                            <div class="file-action-item" onclick="renameFolder(1, 'Proposals')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFolder(1)">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="folder-item" data-folder-id="2" data-folder-name="Reports">
+                        <div class="folder-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="folder-name">Reports</div>
+                        <div class="file-actions-menu" onclick="toggleFolderActions(event, 2)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="folder-actions-2">
+                            <div class="file-action-item" onclick="renameFolder(2, 'Reports')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFolder(2)">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Files will be added here -->
+                    <div class="file-item" data-file-id="1" data-file-name="Annual_Report_2023.pdf">
+                        <div class="file-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="file-name">Annual_Report_2023.pdf</div>
+                        <div class="file-actions-menu" onclick="toggleFileActions(event, 1)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="file-actions-1">
+                            <div class="file-action-item" onclick="previewFile(1, 'Annual_Report_2023.pdf', 'pdf')">
+                                <i class="fas fa-eye"></i> Preview
+                            </div>
+                            <div class="file-action-item" onclick="downloadFile(1, 'Annual_Report_2023.pdf')">
+                                <i class="fas fa-download"></i> Download
+                            </div>
+                            <div class="file-action-item" onclick="renameFile(1, 'Annual_Report_2023.pdf')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFile(1, 'Annual_Report_2023.pdf')">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-item" data-file-id="2" data-file-name="Budget_2024.xlsx">
+                        <div class="file-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="file-name">Budget_2024.xlsx</div>
+                        <div class="file-actions-menu" onclick="toggleFileActions(event, 2)">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="file-actions-dropdown" id="file-actions-2">
+                            <div class="file-action-item" onclick="previewFile(2, 'Budget_2024.xlsx', 'xlsx')">
+                                <i class="fas fa-eye"></i> Preview
+                            </div>
+                            <div class="file-action-item" onclick="downloadFile(2, 'Budget_2024.xlsx')">
+                                <i class="fas fa-download"></i> Download
+                            </div>
+                            <div class="file-action-item" onclick="renameFile(2, 'Budget_2024.xlsx')">
+                                <i class="fas fa-pencil-alt"></i> Rename
+                            </div>
+                            <div class="file-action-item" onclick="deleteFile(2, 'Budget_2024.xlsx')">
+                                <i class="fas fa-trash"></i> Delete
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1176,10 +1252,6 @@
     </div>
 
     <script>
-        // API Configuration
-        const API_BASE_URL = "https://man-m681.onrender.com";
-        const UPLOAD_DIR = "fundraising";
-        
         document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
@@ -1251,7 +1323,7 @@
             // Initialize file manager
             initFileManager();
 
-            // File manager state
+            // File manager functions
             let currentPath = [];
             let currentFileId = null;
             let currentFileName = null;
@@ -1262,36 +1334,27 @@
                 // Setup breadcrumb navigation
                 setupBreadcrumb();
 
-                try {
-                    // Load initial folder contents from backend
-                    loadFolderContents('');
-                } catch (error) {
-                    console.error("Error initializing file manager:", error);
-                    alert("Failed to load documents. Please try again later.");
-                }
-
-                // Setup create folder button - FIXED: Added proper event listener
-                document.getElementById('createFolderBtn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openCreateFolderModal();
+                // Setup folder click handlers
+                document.querySelectorAll('.folder-item').forEach(folder => {
+                    folder.addEventListener('click', function(e) {
+                        if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                            const folderId = this.getAttribute('data-folder-id');
+                            const folderName = this.getAttribute('data-folder-name');
+                            navigateToFolder(folderId, folderName);
+                        }
+                    });
                 });
 
-                // Setup upload files button - FIXED: Added proper event listener
-                document.getElementById('uploadFilesBtn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openUploadModal();
-                });
+                // Setup create folder button
+                createFolderBtn.addEventListener('click', openCreateFolderModal);
 
-                // Setup browse files button
-                document.getElementById('browseFilesBtn').addEventListener('click', function() {
-                    document.getElementById('fileUploadInput').click();
-                });
+                // Setup upload files button
+                uploadFilesBtn.addEventListener('click', openUploadModal);
 
-                // Setup file input change handler
-                document.getElementById('fileUploadInput').addEventListener('change', handleFileSelection);
-
-                // Setup start upload button
-                document.getElementById('startUploadBtn').addEventListener('click', startFileUpload);
+                // Setup file upload handlers
+                browseFilesBtn.addEventListener('click', () => fileUploadInput.click());
+                fileUploadInput.addEventListener('change', handleFileSelection);
+                startUploadBtn.addEventListener('click', startFileUpload);
 
                 // Setup drag and drop for upload area
                 const uploadArea = document.getElementById('uploadArea');
@@ -1317,20 +1380,258 @@
                 });
             }
 
-            // FIXED: Added proper modal opening functions
+            function setupBreadcrumb() {
+                const breadcrumb = document.getElementById('breadcrumb');
+                breadcrumb.innerHTML = '';
+                
+                // Add root item
+                const rootItem = document.createElement('span');
+                rootItem.className = 'breadcrumb-item';
+                rootItem.setAttribute('data-path', '');
+                rootItem.textContent = 'Fundraising Documents';
+                rootItem.addEventListener('click', () => navigateToFolder('', ''));
+                breadcrumb.appendChild(rootItem);
+                
+                // Add current path items
+                currentPath.forEach((folder, index) => {
+                    const separator = document.createElement('span');
+                    separator.className = 'breadcrumb-separator';
+                    separator.textContent = '›';
+                    breadcrumb.appendChild(separator);
+                    
+                    const item = document.createElement('span');
+                    item.className = 'breadcrumb-item';
+                    item.setAttribute('data-path', folder.id);
+                    item.textContent = folder.name;
+                    item.addEventListener('click', () => {
+                        // Navigate to this folder level
+                        const newPath = currentPath.slice(0, index + 1);
+                        navigateToPath(newPath);
+                    });
+                    breadcrumb.appendChild(item);
+                });
+            }
+
+            function navigateToFolder(folderId, folderName) {
+                if (folderId) {
+                    currentPath.push({ id: folderId, name: folderName });
+                } else {
+                    currentPath = [];
+                }
+                
+                // In a real app, we would fetch the folder contents from the server here
+                setupBreadcrumb();
+                loadFolderContents(folderId);
+            }
+
+            function navigateToPath(path) {
+                currentPath = path;
+                const folderId = path.length > 0 ? path[path.length - 1].id : '';
+                setupBreadcrumb();
+                loadFolderContents(folderId);
+            }
+
+            function loadFolderContents(folderId) {
+                // In a real implementation, this would fetch files and subfolders from the server
+                console.log(`Loading contents for folder ${folderId}`);
+                // For demo, we'll just show a message
+                alert(`Loading contents for folder: ${folderId || 'Root'}`);
+            }
+
+            function toggleFileActions(event, fileId) {
+                event.stopPropagation();
+                const dropdown = document.getElementById(`file-actions-${fileId}`);
+                document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                dropdown.classList.toggle('show');
+            }
+
+            function toggleFolderActions(event, folderId) {
+                event.stopPropagation();
+                const dropdown = document.getElementById(`folder-actions-${folderId}`);
+                document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                dropdown.classList.toggle('show');
+            }
+
+            function previewFile(fileId, fileName, fileType) {
+                currentFileId = fileId;
+                currentFileName = fileName;
+                currentFileType = fileType;
+                
+                document.getElementById('previewFileName').textContent = fileName;
+                const previewContent = document.getElementById('previewFileContent');
+                previewContent.innerHTML = '';
+                
+                // Create appropriate preview based on file type
+                if (fileType === 'pdf') {
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'file-preview-iframe';
+                    iframe.src = `path/to/files/${fileName}`; // In real app, use actual file path
+                    previewContent.appendChild(iframe);
+                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+                    const img = document.createElement('img');
+                    img.className = 'file-preview-image';
+                    img.src = `path/to/files/${fileName}`; // In real app, use actual file path
+                    img.alt = fileName;
+                    previewContent.appendChild(img);
+                } else {
+                    // For unsupported preview types, show a message
+                    const message = document.createElement('div');
+                    message.textContent = 'Preview not available for this file type. Please download to view.';
+                    previewContent.appendChild(message);
+                }
+                
+                document.getElementById('filePreviewModal').classList.add('show');
+            }
+
+            function closePreview() {
+                document.getElementById('filePreviewModal').classList.remove('show');
+            }
+
+            function downloadCurrentFile() {
+                downloadFile(currentFileId, currentFileName);
+                closePreview();
+            }
+
+            function downloadFile(fileId, fileName) {
+                alert(`Downloading file: ${fileName}`);
+                // In a real implementation, this would trigger a download
+                // window.location.href = `/api/files/download/${fileId}`;
+            }
+
+            function renameFile(fileId, currentName) {
+                const newName = prompt('Enter new file name:', currentName);
+                if (newName && newName !== currentName) {
+                    alert(`File renamed from ${currentName} to ${newName}`);
+                    // In real app, make API call to rename file
+                    // Then update the UI
+                    const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                    if (fileItem) {
+                        fileItem.setAttribute('data-file-name', newName);
+                        fileItem.querySelector('.file-name').textContent = newName;
+                    }
+                }
+            }
+
+            function deleteFile(fileId, fileName) {
+                if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
+                    alert(`File "${fileName}" deleted`);
+                    // In real app, make API call to delete file
+                    // Then remove from UI
+                    const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                    if (fileItem) {
+                        fileItem.remove();
+                    }
+                }
+            }
+
             function openCreateFolderModal() {
                 document.getElementById('newFolderName').value = '';
                 document.getElementById('folderCreateModal').classList.add('show');
             }
 
-            function openUploadModal() {
-                filesToUpload = [];
-                document.getElementById('fileUploadInput').value = '';
-                document.getElementById('startUploadBtn').disabled = true;
-                document.getElementById('uploadProgress').style.display = 'none';
-                document.getElementById('uploadModal').classList.add('show');
+            function closeCreateFolderModal() {
+                document.getElementById('folderCreateModal').classList.remove('show');
             }
 
+            function createNewFolder() {
+                const folderName = document.getElementById('newFolderName').value.trim();
+                if (!folderName) {
+                    alert('Please enter a folder name');
+                    return;
+                }
+                
+                // In a real app, this would make an API call to create the folder
+                // For demo, we'll just create a new folder in the UI
+                const folderId = Date.now(); // Temporary ID
+                const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
+                
+                alert(`Folder "${folderName}" created in ${currentFolderId || 'root'}`);
+                
+                // Create the new folder element
+                const folderItem = document.createElement('div');
+                folderItem.className = 'folder-item';
+                folderItem.setAttribute('data-folder-id', folderId);
+                folderItem.setAttribute('data-folder-name', folderName);
+                folderItem.innerHTML = `
+                    <div class="folder-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="folder-name">${folderName}</div>
+                    <div class="file-actions-menu" onclick="toggleFolderActions(event, ${folderId})">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="file-actions-dropdown" id="folder-actions-${folderId}">
+                        <div class="file-action-item" onclick="renameFolder(${folderId}, '${folderName}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFolder(${folderId})">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                `;
+                
+                // Add click handler for navigation
+                folderItem.addEventListener('click', function(e) {
+                    if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                        navigateToFolder(folderId, folderName);
+                    }
+                });
+                
+                // Add to the grid
+                document.getElementById('fileManagerGrid').prepend(folderItem);
+                closeCreateFolderModal();
+            }
+
+            function renameFolder(folderId, currentName) {
+                const newName = prompt('Enter new folder name:', currentName);
+                if (newName && newName !== currentName) {
+                    alert(`Folder renamed from ${currentName} to ${newName}`);
+                    // In real app, make API call to rename folder
+                    // Then update the UI
+                    const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+                    if (folderItem) {
+                        folderItem.setAttribute('data-folder-name', newName);
+                        folderItem.querySelector('.folder-name').textContent = newName;
+                        
+                        // Update in currentPath if needed
+                        currentPath = currentPath.map(folder => {
+                            if (folder.id === folderId) {
+                                return { ...folder, name: newName };
+                            }
+                            return folder;
+                        });
+                        
+                        // Update breadcrumb if needed
+                        setupBreadcrumb();
+                    }
+                }
+            }
+
+            function deleteFolder(folderId) {
+                const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
+                const folderName = folderItem ? folderItem.getAttribute('data-folder-name') : '';
+                
+                if (confirm(`Are you sure you want to delete the folder "${folderName}" and all its contents?`)) {
+                    alert(`Folder "${folderName}" deleted`);
+                    // In real app, make API call to delete folder
+                    // Then remove from UI
+                    if (folderItem) {
+                        folderItem.remove();
+                    }
+                }
+            }
+
+            function openUploadModal() {
+                filesToUpload = [];
+                fileUploadInput.value = '';
+                startUploadBtn.disabled = true;
+                uploadProgress.style.display = 'none';
+                document.getElementById('uploadModal').classList.add('show');
+            }
 
             function closeUploadModal() {
                 document.getElementById('uploadModal').classList.remove('show');
@@ -1340,88 +1641,108 @@
                 filesToUpload = Array.from(event.target.files);
                 if (filesToUpload.length > 0) {
                     startUploadBtn.disabled = false;
+                    alert(`Selected ${filesToUpload.length} file(s) for upload`);
                 }
             }
 
-            async function startFileUpload() {
+            function startFileUpload() {
                 if (filesToUpload.length === 0) return;
-                
-                const uploadProgress = document.getElementById('uploadProgress');
-                const progressBarFill = document.getElementById('progressBarFill');
-                const startUploadBtn = document.getElementById('startUploadBtn');
                 
                 uploadProgress.style.display = 'block';
                 startUploadBtn.disabled = true;
                 
-                try {
-                    const formData = new FormData();
-                    filesToUpload.forEach(file => {
-                        formData.append('files', file);
-                    });
+                // Simulate upload progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressBarFill.style.width = `${Math.min(progress, 100)}%`;
                     
-                    // Add current folder path if in a subfolder
-                    if (currentPath.length > 0) {
-                        formData.append('folder', currentPath[currentPath.length - 1].id);
-                    }
-                    
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', `${API_BASE_URL}/upload`, true);
-                    
-                    // Track upload progress
-                    xhr.upload.onprogress = function(e) {
-                        if (e.lengthComputable) {
-                            const percentComplete = (e.loaded / e.total) * 100;
-                            progressBarFill.style.width = `${percentComplete}%`;
-                        }
-                    };
-                    
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            const result = JSON.parse(xhr.response);
-                            
-                            // Update UI with new files
-                            result.files.forEach(file => {
-                                const fileItem = createFileElement(file.id, file.name, file.type);
-                                document.getElementById('fileManagerGrid').appendChild(fileItem);
-                            });
-                            
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            alert('Files uploaded successfully!');
                             closeUploadModal();
-                        } else {
-                            throw new Error('File upload failed');
-                        }
-                    };
-                    
-                    xhr.send(formData);
-                    
-                } catch (error) {
-                    console.error("Error uploading files:", error);
-                    alert("Failed to upload files. Please try again.");
-                    uploadProgress.style.display = 'none';
-                    startUploadBtn.disabled = false;
-                    progressBarFill.style.width = '0%';
-                }
+                            
+                            // In a real app, we would add the uploaded files to the UI
+                            filesToUpload.forEach(file => {
+                                addFileToUI(file.name, file.size);
+                            });
+                        }, 500);
+                    }
+                }, 200);
+            }
+
+            function addFileToUI(fileName, fileSize) {
+                const fileType = getFileType(fileName);
+                const fileSizeFormatted = formatFileSize(fileSize);
+                const fileId = Date.now(); // Temporary ID
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.setAttribute('data-file-id', fileId);
+                fileItem.setAttribute('data-file-name', fileName);
+                fileItem.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas ${getFileIcon(fileType)}"></i>
+                    </div>
+                    <div class="file-name">${fileName}</div>
+                    <div class="file-actions-menu" onclick="toggleFileActions(event, ${fileId})">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="file-actions-dropdown" id="file-actions-${fileId}">
+                        <div class="file-action-item" onclick="previewFile(${fileId}, '${fileName}', '${fileType}')">
+                            <i class="fas fa-eye"></i> Preview
+                        </div>
+                        <div class="file-action-item" onclick="downloadFile(${fileId}, '${fileName}')">
+                            <i class="fas fa-download"></i> Download
+                        </div>
+                        <div class="file-action-item" onclick="renameFile(${fileId}, '${fileName}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFile(${fileId}, '${fileName}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('fileManagerGrid').appendChild(fileItem);
             }
 
             function getFileType(filename) {
                 const extension = filename.split('.').pop().toLowerCase();
-                return extension;
+                switch(extension) {
+                    case 'pdf': return 'pdf';
+                    case 'doc':
+                    case 'docx': return 'word';
+                    case 'xls':
+                    case 'xlsx': return 'excel';
+                    case 'ppt':
+                    case 'pptx': return 'powerpoint';
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                    case 'gif': return 'image';
+                    default: return 'file';
+                }
             }
 
             function getFileIcon(fileType) {
                 switch(fileType) {
                     case 'pdf': return 'fa-file-pdf';
-                    case 'doc':
-                    case 'docx': return 'fa-file-word';
-                    case 'xls':
-                    case 'xlsx': return 'fa-file-excel';
-                    case 'ppt':
-                    case 'pptx': return 'fa-file-powerpoint';
-                    case 'jpg':
-                    case 'jpeg':
-                    case 'png':
-                    case 'gif': return 'fa-file-image';
+                    case 'word': return 'fa-file-word';
+                    case 'excel': return 'fa-file-excel';
+                    case 'powerpoint': return 'fa-file-powerpoint';
+                    case 'image': return 'fa-file-image';
                     default: return 'fa-file';
                 }
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
 
             // Close dropdowns when clicking elsewhere
@@ -1463,291 +1784,6 @@
                 }
             });
         });
-
-        // Make these functions available globally for inline event handlers
-        window.toggleFileActions = function(event, fileId) {
-            event.stopPropagation();
-            const dropdown = document.getElementById(`file-actions-${fileId}`);
-            document.querySelectorAll('.file-actions-dropdown').forEach(d => {
-                if (d !== dropdown) d.classList.remove('show');
-            });
-            dropdown.classList.toggle('show');
-        };
-
-        window.toggleFolderActions = function(event, folderId) {
-            event.stopPropagation();
-            const dropdown = document.getElementById(`folder-actions-${folderId}`);
-            document.querySelectorAll('.file-actions-dropdown').forEach(d => {
-                if (d !== dropdown) d.classList.remove('show');
-            });
-            dropdown.classList.toggle('show');
-        };
-
-        window.previewFile = function(fileId, fileName, fileType) {
-            const previewModal = document.getElementById('filePreviewModal');
-            const previewFileName = document.getElementById('previewFileName');
-            const previewContent = document.getElementById('previewFileContent');
-            
-            currentFileId = fileId;
-            currentFileName = fileName;
-            currentFileType = fileType;
-            
-            previewFileName.textContent = fileName;
-            previewContent.innerHTML = '';
-            
-            if (['pdf'].includes(fileType)) {
-                const iframe = document.createElement('iframe');
-                iframe.className = 'file-preview-iframe';
-                iframe.src = `https://man-m681.onrender.com/uploads/fundraising/${fileId}`;
-                previewContent.appendChild(iframe);
-            } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
-                const img = document.createElement('img');
-                img.className = 'file-preview-image';
-                img.src = `https://man-m681.onrender.com/uploads/fundraising/${fileId}`;
-                img.alt = fileName;
-                previewContent.appendChild(img);
-            } else {
-                const message = document.createElement('div');
-                message.textContent = 'Preview not available for this file type. Please download to view.';
-                previewContent.appendChild(message);
-            }
-            
-            previewModal.classList.add('show');
-        };
-
-        window.closePreview = function() {
-            document.getElementById('filePreviewModal').classList.remove('show');
-        };
-
-        window.downloadCurrentFile = function() {
-            downloadFile(currentFileId, currentFileName);
-            closePreview();
-        };
-
-        async function downloadFile(fileId, fileName) {
-            try {
-                const response = await fetch(`https://man-m681.onrender.com/files/${fileId}/download`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to download file');
-                }
-                
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-                
-            } catch (error) {
-                console.error("Error downloading file:", error);
-                alert("Failed to download file. Please try again.");
-            }
-        }
-
-        window.renameFile = async function(fileId, currentName) {
-            const newName = prompt('Enter new file name:', currentName);
-            if (!newName || newName === currentName) return;
-            
-            try {
-                const response = await fetch(`https://man-m681.onrender.com/files/${fileId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: newName })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to rename file');
-                }
-                
-                const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
-                if (fileItem) {
-                    fileItem.setAttribute('data-file-name', newName);
-                    fileItem.querySelector('.file-name').textContent = newName;
-                }
-                
-            } catch (error) {
-                console.error("Error renaming file:", error);
-                alert("Failed to rename file. Please try again.");
-            }
-        };
-
-        window.deleteFile = async function(fileId, fileName) {
-            if (!confirm(`Are you sure you want to delete "${fileName}"?`)) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`https://man-m681.onrender.com/files/${fileId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to delete file');
-                }
-                
-                const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
-                if (fileItem) {
-                    fileItem.remove();
-                }
-                
-            } catch (error) {
-                console.error("Error deleting file:", error);
-                alert("Failed to delete file. Please try again.");
-            }
-        };
-
-        window.renameFolder = async function(folderId, currentName) {
-            const newName = prompt('Enter new folder name:', currentName);
-            if (!newName || newName === currentName) return;
-            
-            try {
-                const response = await fetch(`https://man-m681.onrender.com/folders/${folderId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: newName })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to rename folder');
-                }
-                
-                const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
-                if (folderItem) {
-                    folderItem.setAttribute('data-folder-name', newName);
-                    folderItem.querySelector('.folder-name').textContent = newName;
-                    
-                    // Update in currentPath if needed
-                    const currentPath = [];
-                    const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
-                    breadcrumbItems.forEach(item => {
-                        if (item.getAttribute('data-path') === folderId) {
-                            item.textContent = newName;
-                        }
-                    });
-                }
-                
-            } catch (error) {
-                console.error("Error renaming folder:", error);
-                alert("Failed to rename folder. Please try again.");
-            }
-        };
-
-        window.deleteFolder = async function(folderId) {
-            const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
-            const folderName = folderItem ? folderItem.getAttribute('data-folder-name') : '';
-            
-            if (!confirm(`Are you sure you want to delete the folder "${folderName}" and all its contents?`)) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`https://man-m681.onrender.com/folders/${folderId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to delete folder');
-                }
-                
-                if (folderItem) {
-                    folderItem.remove();
-                }
-                
-            } catch (error) {
-                console.error("Error deleting folder:", error);
-                alert("Failed to delete folder. Please try again.");
-            }
-        };
-
-        window.createNewFolder = async function() {
-            const folderName = document.getElementById('newFolderName').value.trim();
-            if (!folderName) {
-                alert('Please enter a folder name');
-                return;
-            }
-            
-            try {
-                const currentPath = [];
-                const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
-                const parentFolder = breadcrumbItems.length > 1 ? breadcrumbItems[breadcrumbItems.length - 1].getAttribute('data-path') : null;
-                
-                const response = await fetch(`https://man-m681.onrender.com/folders`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: folderName,
-                        parent_folder: parentFolder
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to create folder');
-                }
-                
-                const data = await response.json();
-                const folderItem = document.createElement('div');
-                folderItem.className = 'folder-item';
-                folderItem.setAttribute('data-folder-id', data.id);
-                folderItem.setAttribute('data-folder-name', folderName);
-                folderItem.innerHTML = `
-                    <div class="folder-icon">
-                        <i class="fas fa-folder"></i>
-                    </div>
-                    <div class="folder-name">${folderName}</div>
-                    <div class="file-actions-menu" onclick="toggleFolderActions(event, '${data.id}')">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </div>
-                    <div class="file-actions-dropdown" id="folder-actions-${data.id}">
-                        <div class="file-action-item" onclick="renameFolder('${data.id}', '${folderName}')">
-                            <i class="fas fa-pencil-alt"></i> Rename
-                        </div>
-                        <div class="file-action-item" onclick="deleteFolder('${data.id}')">
-                            <i class="fas fa-trash"></i> Delete
-                        </div>
-                    </div>
-                `;
-                
-                folderItem.addEventListener('click', function(e) {
-                    if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
-                        navigateToFolder(data.id, folderName);
-                    }
-                });
-                
-                document.getElementById('fileManagerGrid').prepend(folderItem);
-                document.getElementById('folderCreateModal').classList.remove('show');
-                
-            } catch (error) {
-                console.error("Error creating folder:", error);
-                alert("Failed to create folder. Please try again.");
-            }
-        };
-
-        window.openCreateFolderModal = function() {
-            document.getElementById('folderCreateModal').classList.add('show');
-        };
-
-        window.openUploadModal = function() {
-            document.getElementById('uploadModal').classList.add('show');
-        };
-
-        window.closeCreateFolderModal = function() {
-            document.getElementById('folderCreateModal').classList.remove('show');
-        };
-
-        window.closeUploadModal = function() {
-            document.getElementById('uploadModal').classList.remove('show');
-        };
-
     </script>
 </body>
 </html>
