@@ -1352,14 +1352,12 @@
     function initFileManager() {
         // Setup breadcrumb navigation
         setupBreadcrumb();
-        loadFolderContents('root');
 
         // Setup create folder button
         createFolderBtn.addEventListener('click', openCreateFolderModal);
 
         // Setup upload files button
         uploadFilesBtn.addEventListener('click', openUploadModal);
-        
 
         // Setup file upload handlers
         browseFilesBtn.addEventListener('click', () => fileUploadInput.click());
@@ -1391,52 +1389,48 @@
     }
 
     function setupBreadcrumb() {
-    const breadcrumb = document.getElementById('breadcrumb');
-    breadcrumb.innerHTML = '';
-    
-    // Add root item
-    const rootItem = document.createElement('span');
-    rootItem.className = 'breadcrumb-item';
-    rootItem.setAttribute('data-path', '');
-    rootItem.textContent = 'Fundraising Documents';
-    rootItem.addEventListener('click', () => navigateToFolder('', ''));
-    breadcrumb.appendChild(rootItem);
-    
-    // Add current path items
-    currentPath.forEach((folder, index) => {
-        const separator = document.createElement('span');
-        separator.className = 'breadcrumb-separator';
-        separator.textContent = '›';
-        breadcrumb.appendChild(separator);
+        const breadcrumb = document.getElementById('breadcrumb');
+        breadcrumb.innerHTML = '';
         
-        const item = document.createElement('span');
-        item.className = 'breadcrumb-item';
-        item.setAttribute('data-path', folder.id);
-        item.textContent = folder.name;
-        item.addEventListener('click', () => {
-            // Navigate to this folder level
-            const newPath = currentPath.slice(0, index + 1);
-            navigateToPath(newPath);
+        // Add root item
+        const rootItem = document.createElement('span');
+        rootItem.className = 'breadcrumb-item';
+        rootItem.setAttribute('data-path', '');
+        rootItem.textContent = 'Fundraising Documents';
+        rootItem.addEventListener('click', () => navigateToFolder('', ''));
+        breadcrumb.appendChild(rootItem);
+        
+        // Add current path items
+        currentPath.forEach((folder, index) => {
+            const separator = document.createElement('span');
+            separator.className = 'breadcrumb-separator';
+            separator.textContent = '›';
+            breadcrumb.appendChild(separator);
+            
+            const item = document.createElement('span');
+            item.className = 'breadcrumb-item';
+            item.setAttribute('data-path', folder.id);
+            item.textContent = folder.name;
+            item.addEventListener('click', () => {
+                // Navigate to this folder level
+                const newPath = currentPath.slice(0, index + 1);
+                navigateToPath(newPath);
+            });
+            breadcrumb.appendChild(item);
         });
-        breadcrumb.appendChild(item);
-    });
-}
+    }
 
     async function navigateToFolder(folderId, folderName) {
-    if (folderId) {
-        currentPath.push({ id: folderId, name: folderName });
-    } else {
-        // Reset to root
-        currentPath = [];
+        if (folderId) {
+            currentPath.push({ id: folderId, name: folderName });
+        } else {
+            currentPath = [];
+        }
+        
+        saveCurrentPath();
+        setupBreadcrumb();
+        await loadFolderContents(folderId);
     }
-    
-    saveCurrentPath();
-    setupBreadcrumb();
-    
-    // Use 'root' as the ID when navigating to the root folder
-    const folderToLoad = folderId || 'root';
-    await loadFolderContents(folderToLoad);
-}
 
     function navigateToPath(path) {
         currentPath = path;
@@ -1446,41 +1440,41 @@
     }
 
     async function loadFolderContents(folderId) {
-    try {
-        // Show loading state
-        const fileManagerGrid = document.getElementById('fileManagerGrid');
-        fileManagerGrid.innerHTML = '<div class="loading">Loading contents...</div>';
-        
-        // Fetch folder contents from backend
-        const response = await fetch(`/folders/${folderId || 'root'}/contents`);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch folder contents');
-        }
-        
-        const data = await response.json();
-        
-        // Clear the grid
-        fileManagerGrid.innerHTML = '';
-        
-        // Add folders
-        data.folders.forEach(folder => {
-            const folderItem = createFolderElement(folder.id, folder.name);
-            fileManagerGrid.appendChild(folderItem);
-        });
-        
-        // Add files
-        data.files.forEach(file => {
-            const fileItem = createFileElement(file.id, file.name, file.type);
-            fileManagerGrid.appendChild(fileItem);
-        });
-        
-    } catch (error) {
-        console.error('Error loading folder contents:', error);
-        alert('Failed to load folder contents. Please try again.');
-    }
-}
+        try {
+            // Show loading state
+            const fileManagerGrid = document.getElementById('fileManagerGrid');
+            fileManagerGrid.innerHTML = '<div class="loading">Loading contents...</div>';
             
+            // Fetch folder contents from backend
+            const response = await fetch(`https://man-m681.onrender.com/folders/${folderId || 'root'}/contents`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch folder contents');
+            }
+            
+            const data = await response.json();
+            
+            // Clear the grid
+            fileManagerGrid.innerHTML = '';
+            
+            // Add folders
+            data.folders.forEach(folder => {
+                const folderItem = createFolderElement(folder.id, folder.name);
+                fileManagerGrid.appendChild(folderItem);
+            });
+            
+            // Add files
+            data.files.forEach(file => {
+                const fileItem = createFileElement(file.id, file.name, file.type);
+                fileManagerGrid.appendChild(fileItem);
+            });
+            
+        } catch (error) {
+            console.error('Error loading folder contents:', error);
+            alert('Failed to load folder contents. Please try again.');
+        }
+    }
+
     function createFolderElement(folderId, folderName) {
         const folderItem = document.createElement('div');
         folderItem.className = 'folder-item';
