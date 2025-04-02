@@ -1667,42 +1667,42 @@
             }
 
             async function createNewFolder() {
-                const folderName = document.getElementById('newFolderName').value.trim();
-                if (!folderName) {
-                    alert('Please enter a folder name');
-                    return;
-                }
-                
-                try {
-                    const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
-                    
-                    const response = await fetch('https://man-m681.onrender.com/folders', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            name: folderName,
-                            parent_id: currentFolderId || null
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to create folder');
-                    }
-                    
-                    const data = await response.json();
-                    
-                    // Add the new folder to the UI
-                    const folderItem = createFolderElement(data.id, folderName);
-                    document.getElementById('fileManagerGrid').prepend(folderItem);
-                    
-                    closeCreateFolderModal();
-                } catch (error) {
-                    console.error('Error creating folder:', error);
-                    alert('Failed to create folder. Please try again.');
-                }
-            }
+    const folderName = document.getElementById('newFolderName').value.trim();
+    if (!folderName) {
+        alert('Please enter a folder name');
+        return;
+    }
+    
+    try {
+        const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
+        
+        const formData = new FormData();
+        formData.append('name', folderName);
+        if (currentFolderId) {
+            formData.append('parent_id', currentFolderId);
+        }
+        
+        const response = await fetch('https://man-m681.onrender.com/folders/', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to create folder');
+        }
+        
+        const data = await response.json();
+        
+        // Add the new folder to the UI
+        const folderItem = createFolderElement(data.id, folderName);
+        document.getElementById('fileManagerGrid').prepend(folderItem);
+        
+        closeCreateFolderModal();
+    } catch (error) {
+        console.error('Error creating folder:', error);
+        alert('Failed to create folder. Please try again.');
+    }
+}
 
             async function renameFolder(folderId, currentName) {
                 const newName = prompt('Enter new folder name:', currentName);
