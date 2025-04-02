@@ -1298,27 +1298,39 @@
     });
 
     // Navigation between dashboard and file manager
-    dashboardLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        dashboardContent.style.display = 'block';
-        fileManagerContent.classList.remove('show');
-        setActiveNavItem(dashboardLink);
-    });
+    // Navigation between dashboard and file manager
+dashboardLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    dashboardContent.style.display = 'block';
+    fileManagerContent.classList.remove('show');
+    setActiveNavItem(dashboardLink);
+});
 
-    fundraisingLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        dashboardContent.style.display = 'none';
-        fileManagerContent.classList.add('show');
-        setActiveNavItem(fundraisingLink);
-    });
-
-    function setActiveNavItem(activeItem) {
-        const menuItems = document.querySelectorAll('.sidebar-menu li a');
-        menuItems.forEach(item => {
-            item.classList.remove('active');
-        });
-        activeItem.classList.add('active');
+fundraisingLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    dashboardContent.style.display = 'none';
+    fileManagerContent.classList.add('show');
+    setActiveNavItem(fundraisingLink);
+    
+    // Initialize file manager if not already done
+    if (!window.fileManagerInitialized) {
+        initFileManager();
+        window.fileManagerInitialized = true;
     }
+    
+    // Load content if empty
+    if (document.getElementById('fileManagerGrid').children.length === 0) {
+        loadFolderContents('');
+    }
+});
+
+function setActiveNavItem(activeItem) {
+    const menuItems = document.querySelectorAll('.sidebar-menu li a');
+    menuItems.forEach(item => {
+        item.classList.remove('active');
+    });
+    activeItem.classList.add('active');
+}
 
     // Initialize file manager
     initFileManager();
