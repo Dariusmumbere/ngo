@@ -1251,7 +1251,8 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM elements
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const reportsMenu = document.getElementById('reportsMenu');
@@ -1269,49 +1270,62 @@
     const uploadProgress = document.getElementById('uploadProgress');
     const progressBarFill = document.getElementById('progressBarFill');
 
-    // Initialize with saved path or empty
+    // State management
     let currentPath = loadCurrentPath();
     let currentFileId = null;
     let currentFileName = null;
     let currentFileType = null;
     let filesToUpload = [];
 
-    // Initialize by showing dashboard and hiding file manager
+    // Initialize UI
     dashboardContent.style.display = 'block';
     fileManagerContent.style.display = 'none';
 
-    // Toggle sidebar collapse/expand
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        
-        // Change icon based on state
-        const icon = menuToggle.querySelector('i');
-        if (sidebar.classList.contains('collapsed')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-indent');
-        } else {
-            icon.classList.remove('fa-indent');
-            icon.classList.add('fa-bars');
-        }
-    });
+    // Event listeners
+    menuToggle.addEventListener('click', toggleSidebar);
+    reportsMenu.addEventListener('click', toggleReportsSubmenu);
+    dashboardLink.addEventListener('click', showDashboard);
+    fundraisingLink.addEventListener('click', showFileManager);
+    createFolderBtn.addEventListener('click', openCreateFolderModal);
+    uploadFilesBtn.addEventListener('click', openUploadModal);
+    browseFilesBtn.addEventListener('click', () => fileUploadInput.click());
+    fileUploadInput.addEventListener('change', handleFileSelection);
+    startUploadBtn.addEventListener('click', startFileUpload);
 
-    // Toggle reports submenu
-    reportsMenu.addEventListener('click', function(e) {
+    // Initialize drag and drop
+    const uploadArea = document.getElementById('uploadArea');
+    uploadArea.addEventListener('dragover', handleDragOver);
+    uploadArea.addEventListener('dragleave', handleDragLeave);
+    uploadArea.addEventListener('drop', handleDrop);
+
+    // Check URL hash for initial view
+    if (window.location.hash === '#filemanager') {
+        showFileManager({ preventDefault: () => {} });
+    }
+
+    // Functions
+    function toggleSidebar() {
+        sidebar.classList.toggle('collapsed');
+        const icon = menuToggle.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-indent');
+    }
+
+    function toggleReportsSubmenu(e) {
         e.preventDefault();
         reportsSubmenu.classList.toggle('show');
         reportsArrow.classList.toggle('fa-chevron-down');
         reportsArrow.classList.toggle('fa-chevron-up');
-    });
+    }
 
-    // Navigation between dashboard and file manager
-    dashboardLink.addEventListener('click', function(e) {
+    function showDashboard(e) {
         e.preventDefault();
         dashboardContent.style.display = 'block';
         fileManagerContent.style.display = 'none';
         setActiveNavItem(dashboardLink);
-    });
+    }
 
-    fundraisingLink.addEventListener('click', function(e) {
+    function showFileManager(e) {
         e.preventDefault();
         dashboardContent.style.display = 'none';
         fileManagerContent.style.display = 'block';
@@ -1320,79 +1334,30 @@
         // Load content for current path
         const folderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
         loadFolderContents(folderId);
-    });
-
-    // Initialize file manager
-    initFileManager();
-
-    // Check if we should show file manager based on URL hash
-    if (window.location.hash === '#filemanager') {
-        fundraisingLink.click();
     }
 
     function setActiveNavItem(activeItem) {
-        const menuItems = document.querySelectorAll('.sidebar-menu li a');
-        menuItems.forEach(item => {
+        document.querySelectorAll('.sidebar-menu li a').forEach(item => {
             item.classList.remove('active');
         });
         activeItem.classList.add('active');
     }
 
-    // Save current path to localStorage
-    function saveCurrentPath() {
-        localStorage.setItem('currentPath', JSON.stringify(currentPath));
-    }
-
-    // Load current path from localStorage
+    // File manager functions
     function loadCurrentPath() {
         const savedPath = localStorage.getItem('currentPath');
         return savedPath ? JSON.parse(savedPath) : [];
     }
 
-    function initFileManager() {
-        // Setup breadcrumb navigation
-        setupBreadcrumb();
-
-        // Setup create folder button
-        createFolderBtn.addEventListener('click', openCreateFolderModal);
-
-        // Setup upload files button
-        uploadFilesBtn.addEventListener('click', openUploadModal);
-
-        // Setup file upload handlers
-        browseFilesBtn.addEventListener('click', () => fileUploadInput.click());
-        fileUploadInput.addEventListener('change', handleFileSelection);
-        startUploadBtn.addEventListener('click', startFileUpload);
-
-        // Setup drag and drop for upload area
-        const uploadArea = document.getElementById('uploadArea');
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = 'var(--primary-color)';
-            uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = '#ccc';
-            uploadArea.style.backgroundColor = 'transparent';
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#ccc';
-            uploadArea.style.backgroundColor = 'transparent';
-            
-            if (e.dataTransfer.files.length) {
-                handleFileSelection({ target: { files: e.dataTransfer.files } });
-            }
-        });
+    function saveCurrentPath() {
+        localStorage.setItem('currentPath', JSON.stringify(currentPath));
     }
 
     function setupBreadcrumb() {
         const breadcrumb = document.getElementById('breadcrumb');
         breadcrumb.innerHTML = '';
         
-        // Add root item
+        // Root item
         const rootItem = document.createElement('span');
         rootItem.className = 'breadcrumb-item';
         rootItem.setAttribute('data-path', '');
@@ -1400,7 +1365,7 @@
         rootItem.addEventListener('click', () => navigateToFolder('', ''));
         breadcrumb.appendChild(rootItem);
         
-        // Add current path items
+        // Current path items
         currentPath.forEach((folder, index) => {
             const separator = document.createElement('span');
             separator.className = 'breadcrumb-separator';
@@ -1411,11 +1376,7 @@
             item.className = 'breadcrumb-item';
             item.setAttribute('data-path', folder.id);
             item.textContent = folder.name;
-            item.addEventListener('click', () => {
-                // Navigate to this folder level
-                const newPath = currentPath.slice(0, index + 1);
-                navigateToPath(newPath);
-            });
+            item.addEventListener('click', () => navigateToPath(currentPath.slice(0, index + 1)));
             breadcrumb.appendChild(item);
         });
     }
@@ -1441,32 +1402,22 @@
 
     async function loadFolderContents(folderId) {
         try {
-            // Show loading state
             const fileManagerGrid = document.getElementById('fileManagerGrid');
             fileManagerGrid.innerHTML = '<div class="loading">Loading contents...</div>';
             
-            // Fetch folder contents from backend
             const response = await fetch(`https://man-m681.onrender.com/folders/${folderId || 'root'}/contents`);
             
-            if (!response.ok) {
-                throw new Error('Failed to fetch folder contents');
-            }
+            if (!response.ok) throw new Error('Failed to fetch folder contents');
             
             const data = await response.json();
-            
-            // Clear the grid
             fileManagerGrid.innerHTML = '';
             
-            // Add folders
             data.folders.forEach(folder => {
-                const folderItem = createFolderElement(folder.id, folder.name);
-                fileManagerGrid.appendChild(folderItem);
+                fileManagerGrid.appendChild(createFolderElement(folder.id, folder.name));
             });
             
-            // Add files
             data.files.forEach(file => {
-                const fileItem = createFileElement(file.id, file.name, file.type);
-                fileManagerGrid.appendChild(fileItem);
+                fileManagerGrid.appendChild(createFileElement(file.id, file.name, file.type));
             });
             
         } catch (error) {
@@ -1481,9 +1432,7 @@
         folderItem.setAttribute('data-folder-id', folderId);
         folderItem.setAttribute('data-folder-name', folderName);
         folderItem.innerHTML = `
-            <div class="folder-icon">
-                <i class="fas fa-folder"></i>
-            </div>
+            <div class="folder-icon"><i class="fas fa-folder"></i></div>
             <div class="folder-name">${folderName}</div>
             <div class="file-actions-menu" onclick="event.stopPropagation(); toggleFolderActions(event, '${folderId}')">
                 <i class="fas fa-ellipsis-v"></i>
@@ -1513,9 +1462,7 @@
         fileItem.setAttribute('data-file-id', fileId);
         fileItem.setAttribute('data-file-name', fileName);
         fileItem.innerHTML = `
-            <div class="file-icon">
-                <i class="fas ${getFileIcon(fileType)}"></i>
-            </div>
+            <div class="file-icon"><i class="fas ${getFileIcon(fileType)}"></i></div>
             <div class="file-name">${fileName}</div>
             <div class="file-actions-menu" onclick="event.stopPropagation(); toggleFileActions(event, '${fileId}')">
                 <i class="fas fa-ellipsis-v"></i>
@@ -1538,25 +1485,8 @@
         return fileItem;
     }
 
-    function toggleFileActions(event, fileId) {
-        event.stopPropagation();
-        const dropdown = document.getElementById(`file-actions-${fileId}`);
-        document.querySelectorAll('.file-actions-dropdown').forEach(d => {
-            if (d !== dropdown) d.classList.remove('show');
-        });
-        dropdown.classList.toggle('show');
-    }
-
-    function toggleFolderActions(event, folderId) {
-        event.stopPropagation();
-        const dropdown = document.getElementById(`folder-actions-${folderId}`);
-        document.querySelectorAll('.file-actions-dropdown').forEach(d => {
-            if (d !== dropdown) d.classList.remove('show');
-        });
-        dropdown.classList.toggle('show');
-    }
-
-    function previewFile(fileId, fileName, fileType) {
+    // File operations
+    async function previewFile(fileId, fileName, fileType) {
         currentFileId = fileId;
         currentFileName = fileName;
         currentFileType = fileType;
@@ -1565,20 +1495,12 @@
         const previewContent = document.getElementById('previewFileContent');
         previewContent.innerHTML = '';
         
-        // Create appropriate preview based on file type
-        if (fileType === 'pdf') {
+        if (['pdf', 'jpg', 'jpeg', 'png', 'gif'].some(ext => fileType.includes(ext))) {
             const iframe = document.createElement('iframe');
             iframe.className = 'file-preview-iframe';
             iframe.src = `https://man-m681.onrender.com/files/${fileId}/preview`;
             previewContent.appendChild(iframe);
-        } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
-            const img = document.createElement('img');
-            img.className = 'file-preview-image';
-            img.src = `https://man-m681.onrender.com/files/${fileId}/preview`;
-            img.alt = fileName;
-            previewContent.appendChild(img);
         } else {
-            // For unsupported preview types, show a message
             const message = document.createElement('div');
             message.textContent = 'Preview not available for this file type. Please download to view.';
             previewContent.appendChild(message);
@@ -1598,18 +1520,10 @@
 
     async function downloadFile(fileId, fileName) {
         try {
-            // Show loading state
-            const originalText = startUploadBtn.innerHTML;
-            startUploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
-            startUploadBtn.disabled = true;
-            
             window.location.href = `https://man-m681.onrender.com/files/${fileId}/download`;
         } catch (error) {
             console.error('Error downloading file:', error);
             alert('Failed to download file. Please try again.');
-        } finally {
-            startUploadBtn.innerHTML = 'Upload';
-            startUploadBtn.disabled = false;
         }
     }
 
@@ -1619,19 +1533,12 @@
             try {
                 const response = await fetch(`https://man-m681.onrender.com/files/${fileId}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: newName
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName })
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to rename file');
-                }
+                if (!response.ok) throw new Error('Failed to rename file');
                 
-                // Update the UI
                 const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
                 if (fileItem) {
                     fileItem.setAttribute('data-file-name', newName);
@@ -1651,15 +1558,10 @@
                     method: 'DELETE'
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to delete file');
-                }
+                if (!response.ok) throw new Error('Failed to delete file');
                 
-                // Remove from UI
                 const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
-                if (fileItem) {
-                    fileItem.remove();
-                }
+                if (fileItem) fileItem.remove();
             } catch (error) {
                 console.error('Error deleting file:', error);
                 alert('Failed to delete file. Please try again.');
@@ -1667,6 +1569,7 @@
         }
     }
 
+    // Folder operations
     function openCreateFolderModal() {
         document.getElementById('newFolderName').value = '';
         document.getElementById('folderCreateModal').classList.add('show');
@@ -1685,28 +1588,19 @@
         
         try {
             const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
-            
             const formData = new FormData();
             formData.append('name', folderName);
-            if (currentFolderId) {
-                formData.append('parent_id', currentFolderId);
-            }
+            if (currentFolderId) formData.append('parent_id', currentFolderId);
             
             const response = await fetch('https://man-m681.onrender.com/folders/', {
                 method: 'POST',
                 body: formData
             });
             
-            if (!response.ok) {
-                throw new Error('Failed to create folder');
-            }
+            if (!response.ok) throw new Error('Failed to create folder');
             
             const data = await response.json();
-            
-            // Add the new folder to the UI
-            const folderItem = createFolderElement(data.id, folderName);
-            document.getElementById('fileManagerGrid').prepend(folderItem);
-            
+            document.getElementById('fileManagerGrid').prepend(createFolderElement(data.id, folderName));
             closeCreateFolderModal();
         } catch (error) {
             console.error('Error creating folder:', error);
@@ -1720,33 +1614,21 @@
             try {
                 const response = await fetch(`https://man-m681.onrender.com/folders/${folderId}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: newName
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName })
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to rename folder');
-                }
+                if (!response.ok) throw new Error('Failed to rename folder');
                 
-                // Update the UI
                 const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
                 if (folderItem) {
                     folderItem.setAttribute('data-folder-name', newName);
                     folderItem.querySelector('.folder-name').textContent = newName;
                     
-                    // Update in currentPath if needed
                     currentPath = currentPath.map(folder => {
-                        if (folder.id === folderId) {
-                            return { ...folder, name: newName };
-                        }
-                        return folder;
+                        return folder.id === folderId ? { ...folder, name: newName } : folder;
                     });
                     
-                    // Update breadcrumb if needed
                     setupBreadcrumb();
                 }
             } catch (error) {
@@ -1758,22 +1640,17 @@
 
     async function deleteFolder(folderId) {
         const folderItem = document.querySelector(`.folder-item[data-folder-id="${folderId}"]`);
-        const folderName = folderItem ? folderItem.getAttribute('data-folder-name') : '';
+        const folderName = folderItem?.getAttribute('data-folder-name') || '';
         
-        if (confirm(`Are you sure you want to delete the folder "${folderName}" and all its contents?`)) {
+        if (confirm(`Are you sure you want to delete "${folderName}" and all its contents?`)) {
             try {
                 const response = await fetch(`https://man-m681.onrender.com/folders/${folderId}`, {
                     method: 'DELETE'
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to delete folder');
-                }
+                if (!response.ok) throw new Error('Failed to delete folder');
                 
-                // Remove from UI
-                if (folderItem) {
-                    folderItem.remove();
-                }
+                if (folderItem) folderItem.remove();
             } catch (error) {
                 console.error('Error deleting folder:', error);
                 alert('Failed to delete folder. Please try again.');
@@ -1781,6 +1658,7 @@
         }
     }
 
+    // Upload functions
     function openUploadModal() {
         filesToUpload = [];
         fileUploadInput.value = '';
@@ -1797,7 +1675,6 @@
         filesToUpload = Array.from(event.target.files);
         if (filesToUpload.length > 0) {
             startUploadBtn.disabled = false;
-            // Show selected files count
             document.querySelector('#uploadArea p').textContent = `${filesToUpload.length} file(s) selected for upload`;
         }
     }
@@ -1814,31 +1691,19 @@
             const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
             const formData = new FormData();
             
-            // Add all files to FormData
-            for (let i = 0; i < filesToUpload.length; i++) {
-                formData.append('files', filesToUpload[i]);
-            }
-            
-            // Add folder ID if we're in a subfolder
-            if (currentFolderId) {
-                formData.append('folder_id', currentFolderId);
-            }
+            filesToUpload.forEach(file => formData.append('files', file));
+            if (currentFolderId) formData.append('folder_id', currentFolderId);
             
             const response = await fetch('https://man-m681.onrender.com/upload', {
                 method: 'POST',
                 body: formData
             });
             
-            if (!response.ok) {
-                throw new Error('File upload failed');
-            }
+            if (!response.ok) throw new Error('File upload failed');
             
             const data = await response.json();
-            
-            // Add uploaded files to UI
             data.uploadedFiles.forEach(file => {
-                const fileItem = createFileElement(file.id, file.name, file.type);
-                document.getElementById('fileManagerGrid').appendChild(fileItem);
+                document.getElementById('fileManagerGrid').appendChild(createFileElement(file.id, file.name, file.type));
             });
             
             alert('Files uploaded successfully!');
@@ -1853,33 +1718,63 @@
         }
     }
 
-    function getFileIcon(fileType) {
-        switch(fileType) {
-            case 'pdf': return 'fa-file-pdf';
-            case 'doc':
-            case 'docx': return 'fa-file-word';
-            case 'xls':
-            case 'xlsx': return 'fa-file-excel';
-            case 'ppt':
-            case 'pptx': return 'fa-file-powerpoint';
-            case 'jpg':
-            case 'jpeg':
-            case 'png':
-            case 'gif': return 'fa-file-image';
-            default: return 'fa-file';
+    // Drag and drop handlers
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--primary-color)';
+        uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+    }
+
+    function handleDragLeave() {
+        uploadArea.style.borderColor = '#ccc';
+        uploadArea.style.backgroundColor = 'transparent';
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ccc';
+        uploadArea.style.backgroundColor = 'transparent';
+        if (e.dataTransfer.files.length) {
+            handleFileSelection({ target: { files: e.dataTransfer.files } });
         }
+    }
+
+    // Helper functions
+    function getFileIcon(fileType) {
+        if (fileType.includes('pdf')) return 'fa-file-pdf';
+        if (fileType.includes('word')) return 'fa-file-word';
+        if (fileType.includes('excel')) return 'fa-file-excel';
+        if (fileType.includes('powerpoint')) return 'fa-file-powerpoint';
+        if (fileType.includes('image')) return 'fa-file-image';
+        return 'fa-file';
+    }
+
+    function toggleFileActions(event, fileId) {
+        event.stopPropagation();
+        const dropdown = document.getElementById(`file-actions-${fileId}`);
+        document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+            if (d !== dropdown) d.classList.remove('show');
+        });
+        dropdown.classList.toggle('show');
+    }
+
+    function toggleFolderActions(event, folderId) {
+        event.stopPropagation();
+        const dropdown = document.getElementById(`folder-actions-${folderId}`);
+        document.querySelectorAll('.file-actions-dropdown').forEach(d => {
+            if (d !== dropdown) d.classList.remove('show');
+        });
+        dropdown.classList.toggle('show');
     }
 
     // Close dropdowns when clicking elsewhere
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
-            document.querySelectorAll('.file-actions-dropdown').forEach(d => {
-                d.classList.remove('show');
-            });
+            document.querySelectorAll('.file-actions-dropdown').forEach(d => d.classList.remove('show'));
         }
     });
 
-    // Expose functions to global scope for inline event handlers
+    // Expose functions to global scope
     window.toggleFileActions = toggleFileActions;
     window.toggleFolderActions = toggleFolderActions;
     window.previewFile = previewFile;
