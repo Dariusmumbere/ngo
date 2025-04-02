@@ -1389,55 +1389,55 @@
     }
 
     function setupBreadcrumb() {
-    const breadcrumb = document.getElementById('breadcrumb');
-    breadcrumb.innerHTML = '';
-    
-    // Add root item
-    const rootItem = document.createElement('span');
-    rootItem.className = 'breadcrumb-item';
-    rootItem.setAttribute('data-path', '');
-    rootItem.textContent = 'Fundraising Documents';
-    rootItem.addEventListener('click', () => navigateToFolder('', ''));
-    breadcrumb.appendChild(rootItem);
-    
-    // Add current path items
-    currentPath.forEach((folder, index) => {
-        const separator = document.createElement('span');
-        separator.className = 'breadcrumb-separator';
-        separator.textContent = '›';
-        breadcrumb.appendChild(separator);
+        const breadcrumb = document.getElementById('breadcrumb');
+        breadcrumb.innerHTML = '';
         
-        const item = document.createElement('span');
-        item.className = 'breadcrumb-item';
-        item.setAttribute('data-path', folder.id);
-        item.textContent = folder.name;
-        item.addEventListener('click', () => {
-            // Navigate to this folder level
-            const newPath = currentPath.slice(0, index + 1);
-            navigateToPath(newPath);
+        // Add root item
+        const rootItem = document.createElement('span');
+        rootItem.className = 'breadcrumb-item';
+        rootItem.setAttribute('data-path', '');
+        rootItem.textContent = 'Fundraising Documents';
+        rootItem.addEventListener('click', () => navigateToFolder('', ''));
+        breadcrumb.appendChild(rootItem);
+        
+        // Add current path items
+        currentPath.forEach((folder, index) => {
+            const separator = document.createElement('span');
+            separator.className = 'breadcrumb-separator';
+            separator.textContent = '›';
+            breadcrumb.appendChild(separator);
+            
+            const item = document.createElement('span');
+            item.className = 'breadcrumb-item';
+            item.setAttribute('data-path', folder.id);
+            item.textContent = folder.name;
+            item.addEventListener('click', () => {
+                // Navigate to this folder level
+                const newPath = currentPath.slice(0, index + 1);
+                navigateToPath(newPath);
+            });
+            breadcrumb.appendChild(item);
         });
-        breadcrumb.appendChild(item);
-    });
-}
+    }
 
     async function navigateToFolder(folderId, folderName) {
-    if (folderId) {
-        currentPath.push({ id: folderId, name: folderName });
-    } else {
-        currentPath = []; // Reset to root
+        if (folderId) {
+            currentPath.push({ id: folderId, name: folderName });
+        } else {
+            currentPath = [];
+        }
+        
+        saveCurrentPath();
+        setupBreadcrumb();
+        await loadFolderContents(folderId);
     }
-    
-    saveCurrentPath();
-    setupBreadcrumb();
-    await loadFolderContents(folderId);
-}
 
-function navigateToPath(path) {
-    currentPath = path;
-    saveCurrentPath();
-    const folderId = path.length > 0 ? path[path.length - 1].id : '';
-    loadFolderContents(folderId);
-}
+    function navigateToPath(path) {
+        currentPath = path;
+        saveCurrentPath();
+        const folderId = path.length > 0 ? path[path.length - 1].id : '';
+        loadFolderContents(folderId);
+    }
 
     async function loadFolderContents(folderId) {
         try {
@@ -1476,36 +1476,37 @@ function navigateToPath(path) {
     }
 
     function createFolderElement(folderId, folderName) {
-    const folderItem = document.createElement('div');
-    folderItem.className = 'folder-item';
-    folderItem.setAttribute('data-folder-id', folderId);
-    folderItem.setAttribute('data-folder-name', folderName);
-    folderItem.innerHTML = `
-        <div class="folder-icon">
-            <i class="fas fa-folder"></i>
-        </div>
-        <div class="folder-name">${folderName}</div>
-        <div class="file-actions-menu" onclick="event.stopPropagation(); toggleFolderActions(event, '${folderId}')">
-            <i class="fas fa-ellipsis-v"></i>
-        </div>
-        <div class="file-actions-dropdown" id="folder-actions-${folderId}">
-            <div class="file-action-item" onclick="renameFolder('${folderId}', '${folderName}')">
-                <i class="fas fa-pencil-alt"></i> Rename
+        const folderItem = document.createElement('div');
+        folderItem.className = 'folder-item';
+        folderItem.setAttribute('data-folder-id', folderId);
+        folderItem.setAttribute('data-folder-name', folderName);
+        folderItem.innerHTML = `
+            <div class="folder-icon">
+                <i class="fas fa-folder"></i>
             </div>
-            <div class="file-action-item" onclick="deleteFolder('${folderId}')">
-                <i class="fas fa-trash"></i> Delete
+            <div class="folder-name">${folderName}</div>
+            <div class="file-actions-menu" onclick="event.stopPropagation(); toggleFolderActions(event, '${folderId}')">
+                <i class="fas fa-ellipsis-v"></i>
             </div>
-        </div>
-    `;
-    
-    folderItem.addEventListener('click', function(e) {
-        if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
-            navigateToFolder(folderId, folderName);
-        }
-    });
-    
-    return folderItem;
-}
+            <div class="file-actions-dropdown" id="folder-actions-${folderId}">
+                <div class="file-action-item" onclick="renameFolder('${folderId}', '${folderName}')">
+                    <i class="fas fa-pencil-alt"></i> Rename
+                </div>
+                <div class="file-action-item" onclick="deleteFolder('${folderId}')">
+                    <i class="fas fa-trash"></i> Delete
+                </div>
+            </div>
+        `;
+        
+        folderItem.addEventListener('click', function(e) {
+            if (!e.target.closest('.file-actions-menu') && !e.target.closest('.file-actions-dropdown')) {
+                navigateToFolder(folderId, folderName);
+            }
+        });
+        
+        return folderItem;
+    }
+
     function createFileElement(fileId, fileName, fileType) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
@@ -1676,43 +1677,43 @@ function navigateToPath(path) {
     }
 
     async function createNewFolder() {
-    const folderName = document.getElementById('newFolderName').value.trim();
-    if (!folderName) {
-        alert('Please enter a folder name');
-        return;
-    }
-    
-    try {
-        const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
-        
-        const response = await fetch('https://man-m681.onrender.com/folders/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: folderName,
-                parent_id: currentFolderId || null
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to create folder');
+        const folderName = document.getElementById('newFolderName').value.trim();
+        if (!folderName) {
+            alert('Please enter a folder name');
+            return;
         }
         
-        const data = await response.json();
-        
-        // Add the new folder to the UI
-        const folderItem = createFolderElement(data.id, folderName);
-        document.getElementById('fileManagerGrid').prepend(folderItem);
-        
-        closeCreateFolderModal();
-    } catch (error) {
-        console.error('Error creating folder:', error);
-        alert('Failed to create folder. Please try again.');
-    }
-}
+        try {
+            const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
             
+            const formData = new FormData();
+            formData.append('name', folderName);
+            if (currentFolderId) {
+                formData.append('parent_id', currentFolderId);
+            }
+            
+            const response = await fetch('https://man-m681.onrender.com/folders/', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to create folder');
+            }
+            
+            const data = await response.json();
+            
+            // Add the new folder to the UI
+            const folderItem = createFolderElement(data.id, folderName);
+            document.getElementById('fileManagerGrid').prepend(folderItem);
+            
+            closeCreateFolderModal();
+        } catch (error) {
+            console.error('Error creating folder:', error);
+            alert('Failed to create folder. Please try again.');
+        }
+    }
+
     async function renameFolder(folderId, currentName) {
         const newName = prompt('Enter new folder name:', currentName);
         if (newName && newName !== currentName) {
