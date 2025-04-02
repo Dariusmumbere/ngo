@@ -1298,39 +1298,67 @@
     });
 
     // Navigation between dashboard and file manager
-    // Navigation between dashboard and file manager
-dashboardLink.addEventListener('click', function(e) {
-    e.preventDefault();
+    document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const reportsMenu = document.getElementById('reportsMenu');
+    const reportsSubmenu = document.getElementById('reportsSubmenu');
+    const reportsArrow = document.getElementById('reportsArrow');
+    const dashboardLink = document.getElementById('dashboardLink');
+    const fundraisingLink = document.getElementById('fundraisingLink');
+    const dashboardContent = document.getElementById('dashboardContent');
+    const fileManagerContent = document.getElementById('fileManagerContent');
+    
+    // Initialize by showing dashboard and hiding file manager
     dashboardContent.style.display = 'block';
-    fileManagerContent.classList.remove('show');
-    setActiveNavItem(dashboardLink);
-});
+    fileManagerContent.style.display = 'none';
 
-fundraisingLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    dashboardContent.style.display = 'none';
-    fileManagerContent.classList.add('show');
-    setActiveNavItem(fundraisingLink);
-    
-    // Initialize file manager if not already done
-    if (!window.fileManagerInitialized) {
-        initFileManager();
-        window.fileManagerInitialized = true;
-    }
-    
-    // Load content if empty
-    if (document.getElementById('fileManagerGrid').children.length === 0) {
-        loadFolderContents('');
-    }
-});
-
-function setActiveNavItem(activeItem) {
-    const menuItems = document.querySelectorAll('.sidebar-menu li a');
-    menuItems.forEach(item => {
-        item.classList.remove('active');
+    // Toggle sidebar collapse/expand
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        
+        // Change icon based on state
+        const icon = menuToggle.querySelector('i');
+        if (sidebar.classList.contains('collapsed')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-indent');
+        } else {
+            icon.classList.remove('fa-indent');
+            icon.classList.add('fa-bars');
+        }
     });
-    activeItem.classList.add('active');
-}
+
+    // Toggle reports submenu
+    reportsMenu.addEventListener('click', function(e) {
+        e.preventDefault();
+        reportsSubmenu.classList.toggle('show');
+        reportsArrow.classList.toggle('fa-chevron-down');
+        reportsArrow.classList.toggle('fa-chevron-up');
+    });
+
+    // Navigation between dashboard and file manager
+    dashboardLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        dashboardContent.style.display = 'block';
+        fileManagerContent.style.display = 'none';
+        setActiveNavItem(dashboardLink);
+    });
+
+    fundraisingLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        dashboardContent.style.display = 'none';
+        fileManagerContent.style.display = 'block';
+        setActiveNavItem(fundraisingLink);
+    });
+
+    function setActiveNavItem(activeItem) {
+        const menuItems = document.querySelectorAll('.sidebar-menu li a');
+        menuItems.forEach(item => {
+            item.classList.remove('active');
+        });
+        activeItem.classList.add('active');
+    }
+
 
     // Initialize file manager
     initFileManager();
