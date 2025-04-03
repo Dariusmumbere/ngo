@@ -1197,11 +1197,11 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <i class="fas fa-hand-holding-usd"></i>
-                        <span>Collect Donations</span>
-                    </a>
-                </li>
+    <a href="#" id="donationsLink">
+        <i class="fas fa-hand-holding-usd"></i>
+        <span>Collect Donations</span>
+    </a>
+</li>
                 <li>
                     <a href="#" class="has-submenu" id="reportsMenu">
                         <i class="fas fa-chart-pie"></i>
@@ -1862,6 +1862,8 @@
     const startUploadBtn = document.getElementById('startUploadBtn');
     const uploadProgress = document.getElementById('uploadProgress');
     const progressBarFill = document.getElementById('progressBarFill');
+    const donationsContent = document.getElementById('donationsContent');
+    
 
     // Initialize with saved path or empty
     let currentPath = loadCurrentPath();
@@ -2488,7 +2490,7 @@
     window.createNewFolder = createNewFolder;
 });
                 // Donations Page Functionality
-        const donationsLink = document.querySelector('.sidebar-menu li a[href="#"]:nth-child(5)');
+        const donationsLink = document.getElementById('donationsLink');
         const donationsContent = document.getElementById('donationsContent');
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -2497,12 +2499,12 @@
 
         // Navigation to donations page
         donationsLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            dashboardContent.style.display = 'none';
-            fileManagerContent.style.display = 'none';
-            donationsContent.style.display = 'block';
-            setActiveNavItem(donationsLink);
-        });
+    e.preventDefault();
+    dashboardContent.style.display = 'none';
+    fileManagerContent.style.display = 'none';
+    donationsContent.style.display = 'block';
+    setActiveNavItem(donationsLink);
+});
 
         // Tab switching
         tabBtns.forEach(btn => {
