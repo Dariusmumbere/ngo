@@ -2560,6 +2560,184 @@
         // Expose functions to global scope
         window.closeDonationModal = closeDonationModal;
         window.submitDonation = submitDonation;
+
+        async function submitDonation() {
+    const donorName = document.getElementById('donorName').value;
+    const donationAmount = parseFloat(document.getElementById('donationAmount').value);
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    const donationDate = document.getElementById('donationDate').value;
+    const donationProject = document.getElementById('donationProject').value;
+    const donationNotes = document.getElementById('donationNotes').value;
+
+    if (!donorName || !donationAmount || !paymentMethod || !donationDate) {
+        alert('Please fill in all required fields');
+        return;
+    }
+
+    try {
+        const response = await fetch('https://man-m681.onrender.com/donations/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                donor_name: donorName,
+                amount: donationAmount,
+                payment_method: paymentMethod,
+                date: donationDate,
+                project: donationProject,
+                notes: donationNotes
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to submit donation');
+        }
+
+        const data = await response.json();
+        alert('Donation submitted successfully!');
+        
+        // Close the modal and refresh the donations table
+        closeDonationModal();
+        loadDonations();
+        
+        // Reset form
+        document.getElementById('donationForm').reset();
+    } catch (error) {
+        console.error('Error submitting donation:', error);
+        alert('Failed to submit donation. Please try again.');
+    }
+}
+
+// Add this function to load donations
+async function loadDonations() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/donations/');
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch donations');
+        }
+        
+        const data = await response.json();
+        const donationsTable = document.querySelector('.donations-table tbody');
+        donationsTable.innerHTML = '';
+        
+        data.donations.forEach(donation => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${donation.date}</td>
+                <td>${donation.donor_name}</td>
+                <td>UGX ${donation.amount.toLocaleString()}</td>
+                <td>${donation.payment_method || 'Not specified'}</td>
+                <td>${donation.project}</td>
+                <td><span class="status-badge ${donation.status === 'completed' ? 'completed' : 'pending'}">${donation.status}</span></td>
+                <td>
+                    <button class="action-btn view-btn" onclick="viewDonation(${donation.id})"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit-btn" onclick="editDonation(${donation.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn" onclick="deleteDonation(${donation.id})"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+            donationsTable.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading donations:', error);
+        alert('Failed to load donations. Please try again.');
+    }
+}
+
+// Add these functions for CRUD operations
+async function viewDonation(donationId) {
+    // Implement view functionality
+    alert(`View donation ${donationId}`);
+}
+
+async function editDonation(donationId) {
+    // Implement edit functionality
+    alert(`Edit donation ${donationId}`);
+}
+
+async function deleteDonation(donationId) {
+    if (confirm('Are you sure you want to delete this donation record?')) {
+        try {
+            const response = await fetch(`https://man-m681.onrender.com/donations/${donationId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to delete donation');
+            }
+            
+            alert('Donation deleted successfully');
+            loadDonations();
+        } catch (error) {
+            console.error('Error deleting donation:', error);
+            alert('Failed to delete donation. Please try again.');
+        }
+    }
+}
+        // Tab switching functionality
+function setupTabSwitching() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            this.classList.add('active');
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+
+            // Load content for the active tab
+            switch(tabId) {
+                case 'donationHistory':
+                    loadDonations();
+                    break;
+                case 'receipts':
+                    // You can add a loadReceipts() function later
+                    break;
+                case 'donorProfiles':
+                    // You can add a loadDonorProfiles() function later
+                    break;
+            }
+        });
+    });
+}
+
+// Call this function when the donations content is shown
+function showDonationsContent() {
+    dashboardContent.style.display = 'none';
+    fileManagerContent.style.display = 'none';
+    donationsContent.style.display = 'block';
+    setActiveNavItem(donationsLink);
+    
+    // Set the first tab as active and load its content
+    const firstTabBtn = document.querySelector('.donations-tabs .tab-btn');
+    firstTabBtn.click(); // This will trigger the click event and load the content
+}
+
+// Update your donationsLink event listener
+donationsLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    showDonationsContent();
+});
+
+// Initialize tab switching when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setupTabSwitching();
+    
+    // If donations content is shown by default (e.g., from URL hash)
+    if (window.location.hash === '#donations') {
+        showDonationsContent();
+    }
+});
+        window.submitDonation = submitDonation;
+window.viewDonation = viewDonation;
+window.editDonation = editDonation;
+window.deleteDonation = deleteDonation;
     </script>
 </body>
 </html>
