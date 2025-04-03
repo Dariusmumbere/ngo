@@ -820,6 +820,335 @@
                 align-items: flex-end;
             }
         }
+                /* Donations Page Styles */
+        .donations-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .donations-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #777;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--dark-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .donations-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .donations-table th, 
+        .donations-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .donations-table th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+
+        .donations-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            background-color: #e6f7ee;
+            color: var(--success-color);
+        }
+
+        .status-badge.pending {
+            background-color: #fff5e6;
+            color: var(--warning-color);
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 3px;
+            color: #777;
+            transition: color 0.2s;
+        }
+
+        .action-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .action-btn.delete-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .receipts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .receipt-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .receipt-header {
+            background-color: #f9f9f9;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .receipt-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .receipt-date {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .receipt-body {
+            padding: 15px;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .receipt-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .receipt-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .receipt-value {
+            text-align: right;
+        }
+
+        .receipt-actions {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .donor-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .donor-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .donor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .donor-info {
+            flex: 1;
+        }
+
+        .donor-name {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+
+        .donor-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .donor-contact i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .donor-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
+            font-size: 0.9rem;
+        }
+
+        .stat-label {
+            display: block;
+            color: #777;
+            font-size: 0.8rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+
+        .donor-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        /* Donation Modal Styles */
+        .donation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .donation-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1171,6 +1500,271 @@
                             <div class="file-action-item" onclick="deleteFile(2, 'Budget_2024.xlsx')">
                                 <i class="fas fa-trash"></i> Delete
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <!-- Donations Collection Content -->
+            <div id="donationsContent" class="donations-container" style="display: none;">
+                <h1 class="page-title">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    Collect Donations
+                </h1>
+
+                <div class="donations-tabs">
+                    <button class="tab-btn active" data-tab="donationHistory">Donation History</button>
+                    <button class="tab-btn" data-tab="receipts">Receipts/Invoices</button>
+                    <button class="tab-btn" data-tab="donorProfiles">Donor Profiles</button>
+                </div>
+
+                <div class="tab-content active" id="donationHistory">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Donations</h2>
+                        <button class="file-manager-btn" id="addDonationBtn">
+                            <i class="fas fa-plus"></i> Add Donation
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="donations-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Donor</th>
+                                    <th>Amount</th>
+                                    <th>Payment Method</th>
+                                    <th>Campaign/Project</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2023-10-15</td>
+                                    <td>John Smith</td>
+                                    <td>UGX 500,000</td>
+                                    <td>Mobile Money</td>
+                                    <td>Agriculture Extension</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                    <td>
+                                        <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2023-10-10</td>
+                                    <td>Acme Corp</td>
+                                    <td>UGX 2,000,000</td>
+                                    <td>Bank Transfer</td>
+                                    <td>Vocational Education</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                    <td>
+                                        <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2023-10-05</td>
+                                    <td>Sarah Johnson</td>
+                                    <td>UGX 250,000</td>
+                                    <td>PayPal</td>
+                                    <td>Women Empowerment</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                    <td>
+                                        <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="receipts">
+                    <div class="section-header">
+                        <h2 class="section-title">Generate Receipts/Invoices</h2>
+                    </div>
+                    
+                    <div class="receipts-grid">
+                        <div class="receipt-card">
+                            <div class="receipt-header">
+                                <h3>Donation Receipt</h3>
+                                <span class="receipt-date">2023-10-15</span>
+                            </div>
+                            <div class="receipt-body">
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Donor:</span>
+                                    <span class="receipt-value">John Smith</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Amount:</span>
+                                    <span class="receipt-value">UGX 500,000</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Payment Method:</span>
+                                    <span class="receipt-value">Mobile Money</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Purpose:</span>
+                                    <span class="receipt-value">Agriculture Extension</span>
+                                </div>
+                            </div>
+                            <div class="receipt-actions">
+                                <button class="file-manager-btn"><i class="fas fa-download"></i> Download PDF</button>
+                                <button class="file-manager-btn secondary"><i class="fas fa-envelope"></i> Email Receipt</button>
+                            </div>
+                        </div>
+                        
+                        <div class="receipt-card">
+                            <div class="receipt-header">
+                                <h3>Donation Receipt</h3>
+                                <span class="receipt-date">2023-10-10</span>
+                            </div>
+                            <div class="receipt-body">
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Donor:</span>
+                                    <span class="receipt-value">Acme Corp</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Amount:</span>
+                                    <span class="receipt-value">UGX 2,000,000</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Payment Method:</span>
+                                    <span class="receipt-value">Bank Transfer</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Purpose:</span>
+                                    <span class="receipt-value">Vocational Education</span>
+                                </div>
+                            </div>
+                            <div class="receipt-actions">
+                                <button class="file-manager-btn"><i class="fas fa-download"></i> Download PDF</button>
+                                <button class="file-manager-btn secondary"><i class="fas fa-envelope"></i> Email Receipt</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="donorProfiles">
+                    <div class="section-header">
+                        <h2 class="section-title">Donor Profiles</h2>
+                        <button class="file-manager-btn" id="addDonorBtn">
+                            <i class="fas fa-plus"></i> Add Donor
+                        </button>
+                    </div>
+                    
+                    <div class="donor-cards">
+                        <div class="donor-card">
+                            <div class="donor-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="donor-info">
+                                <h3 class="donor-name">John Smith</h3>
+                                <div class="donor-contact">
+                                    <span><i class="fas fa-envelope"></i> john@example.com</span>
+                                    <span><i class="fas fa-phone"></i> +256 712 345 678</span>
+                                </div>
+                                <div class="donor-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Donations:</span>
+                                        <span class="stat-value">UGX 2,500,000</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Last Donation:</span>
+                                        <span class="stat-value">2023-10-15</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="donor-actions">
+                                <button class="file-manager-btn secondary"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="file-manager-btn"><i class="fas fa-history"></i> View History</button>
+                            </div>
+                        </div>
+                        
+                        <div class="donor-card">
+                            <div class="donor-avatar">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="donor-info">
+                                <h3 class="donor-name">Acme Corp</h3>
+                                <div class="donor-contact">
+                                    <span><i class="fas fa-envelope"></i> contact@acme.com</span>
+                                    <span><i class="fas fa-phone"></i> +256 312 345 678</span>
+                                </div>
+                                <div class="donor-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Donations:</span>
+                                        <span class="stat-value">UGX 5,000,000</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Last Donation:</span>
+                                        <span class="stat-value">2023-10-10</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="donor-actions">
+                                <button class="file-manager-btn secondary"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="file-manager-btn"><i class="fas fa-history"></i> View History</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Donation Modal -->
+                <div class="donation-modal" id="addDonationModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Add New Donation</h3>
+                            <button class="close-btn" onclick="closeDonationModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="donationForm">
+                                <div class="form-group">
+                                    <label for="donorName">Donor Name</label>
+                                    <input type="text" id="donorName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="donationAmount">Amount (UGX)</label>
+                                    <input type="number" id="donationAmount" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="paymentMethod">Payment Method</label>
+                                    <select id="paymentMethod" required>
+                                        <option value="">Select method</option>
+                                        <option value="mobile_money">Mobile Money</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="paypal">PayPal</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="donationDate">Date</label>
+                                    <input type="date" id="donationDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="donationProject">Project/Campaign</label>
+                                    <select id="donationProject">
+                                        <option value="">General Donation</option>
+                                        <option value="agriculture">Agriculture Extension</option>
+                                        <option value="vocational">Vocational Education</option>
+                                        <option value="women">Women Empowerment</option>
+                                        <option value="economic">Economic Empowerment</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="donationNotes">Notes</label>
+                                    <textarea id="donationNotes" rows="3"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="file-manager-btn secondary" onclick="closeDonationModal()">Cancel</button>
+                            <button class="file-manager-btn" onclick="submitDonation()">Save Donation</button>
                         </div>
                     </div>
                 </div>
@@ -1893,6 +2487,64 @@
     window.closeCreateFolderModal = closeCreateFolderModal;
     window.createNewFolder = createNewFolder;
 });
+                // Donations Page Functionality
+        const donationsLink = document.querySelector('.sidebar-menu li a[href="#"]:nth-child(5)');
+        const donationsContent = document.getElementById('donationsContent');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const addDonationBtn = document.getElementById('addDonationBtn');
+        const addDonationModal = document.getElementById('addDonationModal');
+
+        // Navigation to donations page
+        donationsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            dashboardContent.style.display = 'none';
+            fileManagerContent.style.display = 'none';
+            donationsContent.style.display = 'block';
+            setActiveNavItem(donationsLink);
+        });
+
+        // Tab switching
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Add donation modal
+        addDonationBtn.addEventListener('click', function() {
+            addDonationModal.classList.add('show');
+        });
+
+        function closeDonationModal() {
+            addDonationModal.classList.remove('show');
+        }
+
+        function submitDonation() {
+            // Here you would normally send the data to your backend
+            alert('Donation submitted successfully!');
+            closeDonationModal();
+            // Reset form
+            document.getElementById('donationForm').reset();
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === addDonationModal) {
+                closeDonationModal();
+            }
+        });
+
+        // Expose functions to global scope
+        window.closeDonationModal = closeDonationModal;
+        window.submitDonation = submitDonation;
     </script>
 </body>
 </html>
