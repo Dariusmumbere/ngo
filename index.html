@@ -2583,7 +2583,7 @@
             body: JSON.stringify({
                 donor_name: donorName,
                 amount: donationAmount,
-                payment_method: paymentMethod,
+                payment_method: paymentMethod, 
                 date: donationDate,
                 project: donationProject,
                 notes: donationNotes
@@ -2612,6 +2612,9 @@
 // Add this function to load donations
 async function loadDonations() {
     try {
+        const donationsTable = document.querySelector('.donations-table tbody');
+        donationsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">Loading donations...</td></tr>';
+        
         const response = await fetch('https://man-m681.onrender.com/donations/');
         
         if (!response.ok) {
@@ -2619,32 +2622,41 @@ async function loadDonations() {
         }
         
         const data = await response.json();
-        const donationsTable = document.querySelector('.donations-table tbody');
         donationsTable.innerHTML = '';
         
         data.donations.forEach(donation => {
+            // Extract payment method from the purpose field or use default
+            let paymentMethod = 'Not specified';
+            if (donation.purpose) {
+                // This assumes payment method is stored in the purpose field
+                // You might need to adjust this based on your actual data structure
+                if (donation.purpose.includes('Mobile Money')) paymentMethod = 'Mobile Money';
+                else if (donation.purpose.includes('Bank Transfer')) paymentMethod = 'Bank Transfer';
+                else if (donation.purpose.includes('PayPal')) paymentMethod = 'PayPal';
+                else if (donation.purpose.includes('Cash')) paymentMethod = 'Cash';
+            }
+            
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${donation.date}</td>
                 <td>${donation.donor_name}</td>
                 <td>UGX ${donation.amount.toLocaleString()}</td>
-                <td>${donation.payment_method || 'Not specified'}</td>
-                <td>${donation.project}</td>
-                <td><span class="status-badge ${donation.status === 'completed' ? 'completed' : 'pending'}">${donation.status}</span></td>
+                <td>${paymentMethod}</td>
+                <td>${donation.project || 'General Fund'}</td>
+                <td><span class="status-badge completed">Completed</span></td>
                 <td>
-                    <button class="action-btn view-btn" onclick="viewDonation(${donation.id})"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit-btn" onclick="editDonation(${donation.id})"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete-btn" onclick="deleteDonation(${donation.id})"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
                 </td>
             `;
             donationsTable.appendChild(row);
         });
     } catch (error) {
         console.error('Error loading donations:', error);
-        alert('Failed to load donations. Please try again.');
+        donationsTable.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Failed to load donations</td></tr>';
     }
 }
-
 // Add these functions for CRUD operations
 async function viewDonation(donationId) {
     // Implement view functionality
@@ -2708,21 +2720,30 @@ function setupTabSwitching() {
 }
 
 // Call this function when the donations content is shown
+// Update your showDonationsContent function
 function showDonationsContent() {
     dashboardContent.style.display = 'none';
     fileManagerContent.style.display = 'none';
     donationsContent.style.display = 'block';
     setActiveNavItem(donationsLink);
     
-    // Set the first tab as active and load its content
+    // Always load donations when showing this content
+    loadDonations();
+    
+    // Set the first tab as active
     const firstTabBtn = document.querySelector('.donations-tabs .tab-btn');
-    firstTabBtn.click(); // This will trigger the click event and load the content
+    firstTabBtn.classList.add('active');
+    document.getElementById('donationHistory').classList.add('active');
 }
 
-// Update your donationsLink event listener
-donationsLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    showDonationsContent();
+// Update your DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    setupTabSwitching();
+    
+    // Check if we're on the donations page (either by default or via URL hash)
+    if (window.location.hash === '#donations' || donationsContent.style.display === 'block') {
+        showDonationsContent();
+    }
 });
 
 // Initialize tab switching when the page loads
