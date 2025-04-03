@@ -2559,6 +2559,97 @@
         // Expose functions to global scope
         window.closeDonationModal = closeDonationModal;
         window.submitDonation = submitDonation;
+        function startFileUpload() {
+    if (filesToUpload.length === 0) return;
+    
+    uploadProgress.style.display = 'block';
+    startUploadBtn.disabled = true;
+    const originalText = startUploadBtn.innerHTML;
+    startUploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    
+    try {
+        const currentFolderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
+        const formData = new FormData();
+        
+        // Add all files to FormData
+        for (let i = 0; i < filesToUpload.length; i++) {
+            formData.append('files', filesToUpload[i]);
+        }
+        
+        // Add folder ID if we're in a subfolder
+        if (currentFolderId) {
+            formData.append('folder_id', currentFolderId);
+        }
+        
+        // Create XMLHttpRequest for progress tracking
+        const xhr = new XMLHttpRequest();
+        
+        // Track upload progress
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                progressBarFill.style.width = percentComplete + '%';
+                document.getElementById('progressPercent').textContent = percentComplete + '%';
+                
+                // Change color based on progress
+                if (percentComplete < 30) {
+                    progressBarFill.style.backgroundColor = '#e74c3c'; // Red
+                } else if (percentComplete < 70) {
+                    progressBarFill.style.backgroundColor = '#f39c12'; // Orange
+                } else {
+                    progressBarFill.style.backgroundColor = '#2ecc71'; // Green
+                }
+            }
+        });
+        
+        // Handle completion
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                
+                // Add uploaded files to UI
+                data.uploadedFiles.forEach(file => {
+                    const fileItem = createFileElement(file.id, file.name, file.type);
+                    document.getElementById('fileManagerGrid').appendChild(fileItem);
+                });
+                
+                alert('Files uploaded successfully!');
+                closeUploadModal();
+            } else {
+                throw new Error('File upload failed');
+            }
+            
+            progressBarFill.style.width = '0%';
+            startUploadBtn.innerHTML = originalText;
+            startUploadBtn.disabled = false;
+        };
+        
+        // Handle errors
+        xhr.onerror = function() {
+            progressBarFill.style.width = '0%';
+            startUploadBtn.innerHTML = originalText;
+            startUploadBtn.disabled = false;
+            alert('File upload failed. Please try again.');
+        };
+        
+        // Open and send the request
+        xhr.open('POST', 'https://man-m681.onrender.com/upload', true);
+        xhr.send(formData);
+        
+    } catch (error) {
+        console.error('Error uploading files:', error);
+        progressBarFill.style.width = '0%';
+        startUploadBtn.innerHTML = originalText;
+        startUploadBtn.disabled = false;
+        alert('Failed to upload files. Please try again.');
+    }
+}
+        <div class="upload-progress" id="uploadProgress">
+    <p>Uploading files... <span class="progress-percent" id="progressPercent">0%</span></p>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+</div>
     </script>
 </body>
 </html>
