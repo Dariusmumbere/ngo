@@ -3009,7 +3009,7 @@ async function saveDonor() {
     
     // Prepare donor data
     const donorData = {
-        name: donorName,
+        name: document.getElementById('donorName').value.trim(),
         email: document.getElementById('donorEmail').value.trim(),
         phone: document.getElementById('donorPhone').value.trim(),
         address: document.getElementById('donorAddress').value.trim(),
