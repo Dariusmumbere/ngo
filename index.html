@@ -3013,18 +3013,14 @@ async function loadDonorDonations(donorId) {
 
 // Function to save donor
 async function saveDonor() {
-    // Get form data
-    const nameInput = document.getElementById('donorName');
-    const donorName = nameInput.value.trim();
-    
-    if (!donorName) {
-        alert('Please enter donor name');
-        nameInput.focus();
+    // Validate form before proceeding
+    if (!validateDonorForm()) {
         return;
     }
     
+    // Get form data
     const donorData = {
-        name: donorName,
+        name: document.getElementById('donorName').value.trim(),
         email: document.getElementById('donorEmail').value.trim(),
         phone: document.getElementById('donorPhone').value.trim(),
         address: document.getElementById('donorAddress').value.trim(),
@@ -3040,6 +3036,12 @@ async function saveDonor() {
             : 'https://man-m681.onrender.com/donors/';
         const method = isEdit ? 'PUT' : 'POST';
         
+        // Show loading state
+        const saveBtn = document.getElementById('saveDonorBtn');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveBtn.disabled = true;
+        
         const response = await fetch(url, {
             method: method,
             headers: {
@@ -3053,12 +3055,18 @@ async function saveDonor() {
             throw new Error(error.detail || 'Failed to save donor');
         }
         
-        alert(`Donor ${isEdit ? 'updated' : 'added'} successfully!`);
-        loadDonorProfiles();
+        // Success - reload donor list and close modal
+        await loadDonorProfiles();
         closeDonorModal();
+        
     } catch (error) {
         console.error('Save donor error:', error);
         alert(`Error: ${error.message}`);
+    } finally {
+        // Restore button state
+        const saveBtn = document.getElementById('saveDonorBtn');
+        saveBtn.innerHTML = currentDonorId ? 'Update Donor' : 'Add Donor';
+        saveBtn.disabled = false;
     }
 }
         function validateDonorForm() {
