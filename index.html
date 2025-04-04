@@ -2997,6 +2997,8 @@ async function loadDonorDonations(donorId) {
 async function saveDonor() {
     // Get and trim the donor name
     const donorName = document.getElementById('donorName').value.trim();
+    console.log('Donor name value:', document.getElementById('donorName').value);
+    console.log('Trimmed name:', document.getElementById('donorName').value.trim());
     
     // Validate donor name
     if (!donorName) {
