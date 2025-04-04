@@ -2995,21 +2995,19 @@ async function loadDonorDonations(donorId) {
 
 // Function to save donor
 async function saveDonor() {
-    // Get and trim the donor name
-    const donorName = document.getElementById('donorName').value.trim();
-    console.log('Donor name value:', document.getElementById('donorName').value);
-    console.log('Trimmed name:', document.getElementById('donorName').value.trim());
+    // Get and validate form data
+    const nameInput = document.getElementById('donorName');
+    const donorName = nameInput.value.trim();
     
-    // Validate donor name
     if (!donorName) {
         alert('Please enter donor name');
-        document.getElementById('donorName').focus();
+        nameInput.focus();
         return;
     }
     
     // Prepare donor data
     const donorData = {
-        name: document.getElementById('donorName').value.trim(),
+        name: donorName,
         email: document.getElementById('donorEmail').value.trim(),
         phone: document.getElementById('donorPhone').value.trim(),
         address: document.getElementById('donorAddress').value.trim(),
@@ -3033,21 +3031,30 @@ async function saveDonor() {
         });
         
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || 'Failed to save donor');
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.message || 'Failed to save donor');
         }
         
-        const savedDonor = await response.json();
         alert(`Donor ${isEdit ? 'updated' : 'added'} successfully!`);
-        
-        // Refresh donor list and close modal
         loadDonorProfiles();
         closeDonorModal();
     } catch (error) {
-        console.error('Error saving donor:', error);
-        alert(`Failed to save donor: ${error.message}`);
+        console.error('Save donor error:', error);
+        alert(`Error: ${error.message}`);
     }
 }
+
+// Add event listener in your DOMContentLoaded
+document.getElementById('donorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    saveDonor();
+});
+
+// Update your save button to trigger form submission
+document.getElementById('saveDonorBtn').addEventListener('click', function() {
+    document.getElementById('donorForm').dispatchEvent(new Event('submit'));
+});
+        
 // Function to load donor profiles
 async function loadDonorProfiles(search = '') {
     try {
