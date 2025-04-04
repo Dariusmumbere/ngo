@@ -1942,7 +1942,7 @@ input:invalid {
         </div>
         <div class="modal-footer">
             <button class="file-manager-btn secondary" onclick="closeDonorModal()">Cancel</button>
-            <button class="file-manager-btn" id="saveDonorBtn">Save Donor</button>
+            <button type="submit" class="file-manager-btn" id="saveDonorBtn">Save Donor</button>
         </div>
     </div>
 </div>
@@ -3049,66 +3049,59 @@ async function loadDonorDonations(donorId) {
 
 // Function to save donor
 async function saveDonor() {
-    // Validate form before proceeding
-    if (!validateDonorForm()) {
-        return;
-    }
-    
-    // Get form data
-    const donorData = {
-        name: document.getElementById('donorName').value.trim(),
-        email: document.getElementById('donorEmail').value.trim(),
-        phone: document.getElementById('donorPhone').value.trim(),
-        address: document.getElementById('donorAddress').value.trim(),
-        donor_type: document.getElementById('donorType').value,
-        category: document.getElementById('donorCategory').value,
-        notes: document.getElementById('donorNotes').value.trim()
-    };
+    const saveBtn = document.getElementById('saveDonorBtn');
     
     try {
-        const isEdit = !!currentDonorId;
-        const url = isEdit 
+        // Disable button during submission
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        // Prepare data
+        const donorData = {
+            name: document.getElementById('donorName').value.trim(),
+            email: document.getElementById('donorEmail').value.trim(),
+            phone: document.getElementById('donorPhone').value.trim(),
+            donor_type: document.getElementById('donorType').value,
+            category: document.getElementById('donorCategory').value,
+            notes: document.getElementById('donorNotes').value.trim()
+        };
+
+        // Determine if it's an ADD or UPDATE request
+        const url = currentDonorId 
             ? `https://man-m681.onrender.com/donors/${currentDonorId}`
             : 'https://man-m681.onrender.com/donors/';
-        const method = isEdit ? 'PUT' : 'POST';
         
-        // Show loading state
-        const saveBtn = document.getElementById('saveDonorBtn');
-        const originalText = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        saveBtn.disabled = true;
-        
+        const method = currentDonorId ? 'PUT' : 'POST';
+
+        // Send request
         const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(donorData)
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.detail || 'Failed to save donor');
+            throw new Error(error.message || 'Failed to save donor');
         }
+
+        // Success! Close modal & refresh data
+        closeDonorModal();
+        loadDonorProfiles(); // Refresh donor list
         
         // Show success message
-        showToast('Donor saved successfully!', 'success');
-        
-        // Reload donor list and close modal
-        await loadDonorProfiles();
-        closeDonorModal();
+        alert('Donor saved successfully!');
         
     } catch (error) {
-        console.error('Save donor error:', error);
-        showToast(`Error: ${error.message}`, 'error');
+        console.error('Error saving donor:', error);
+        alert(`Error: ${error.message}`);
     } finally {
-        // Restore button state
-        const saveBtn = document.getElementById('saveDonorBtn');
-        saveBtn.innerHTML = currentDonorId ? 'Update Donor' : 'Add Donor';
+        // Re-enable button
         saveBtn.disabled = false;
+        saveBtn.innerHTML = currentDonorId ? 'Update Donor' : 'Add Donor';
     }
 }
-
+        
 // Helper function to show toast messages (add this to your code)
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
@@ -3132,27 +3125,17 @@ function showToast(message, type = 'success') {
 
         function validateDonorForm() {
     const nameInput = document.getElementById('donorName');
-    const donorName = nameInput.value.trim();
+    const nameValue = nameInput.value.trim();
     
-    if (!donorName) {
-        // Highlight the field and show a more user-friendly message
-        nameInput.style.borderColor = 'var(--accent-color)';
+    if (!nameValue) {
+        nameInput.style.borderColor = 'red';
+        alert('Please enter donor name');
         nameInput.focus();
-        
-        // Create or show a validation message
-        let errorMsg = nameInput.nextElementSibling;
-        if (!errorMsg || !errorMsg.classList.contains('error-message')) {
-            errorMsg = document.createElement('div');
-            errorMsg.className = 'error-message';
-            errorMsg.style.color = 'var(--accent-color)';
-            errorMsg.style.fontSize = '0.8rem';
-            errorMsg.style.marginTop = '5px';
-            nameInput.parentNode.insertBefore(errorMsg, nameInput.nextSibling);
-        }
-        errorMsg.textContent = 'Please enter donor name';
-        
         return false;
     }
+    
+    return true; // Validation passed
+}
     
     // Clear any existing error
     nameInput.style.borderColor = '';
@@ -3326,15 +3309,15 @@ function setupTabSwitching() {
 // Add event listeners
 document.addEventListener('DOMContentLoaded', function() {
     // Add donor button
-    document.getElementById('addDonorBtn').addEventListener('click', function() {
-        openDonorModal();
-    });
+    document.getElementById('donorForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Prevent page reload
     
-    // Save donor form submission
-    document.getElementById('donorForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        saveDonor();
-    });
+    if (!validateDonorForm()) {
+        return; // Stop if validation fails
+    }
+    
+    await saveDonor(); // Proceed to save
+});
     
     // Initialize tab switching
     setupTabSwitching();
