@@ -3061,6 +3061,20 @@ async function saveDonor() {
         alert(`Error: ${error.message}`);
     }
 }
+        function validateDonorForm() {
+    const nameInput = document.getElementById('donorName');
+    const donorName = nameInput.value.trim();
+    
+    if (!donorName) {
+        alert('Please enter donor name');
+        nameInput.focus();
+        return false;
+    }
+    
+    // Additional validations can be added here if needed
+    return true;
+}
+
 
 // Add event listener in your DOMContentLoaded
 document.getElementById('donorForm').addEventListener('submit', function(e) {
