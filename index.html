@@ -1205,6 +1205,33 @@
 input:invalid {
     border-color: var(--accent-color);
 }
+        .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    border-radius: 4px;
+    color: white;
+    background-color: var(--dark-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.success {
+    background-color: var(--success-color);
+}
+
+.toast.error {
+    background-color: var(--accent-color);
+}
     </style>
 </head>
 <body>
@@ -3064,13 +3091,16 @@ async function saveDonor() {
             throw new Error(error.detail || 'Failed to save donor');
         }
         
-        // Success - reload donor list and close modal
+        // Show success message
+        showToast('Donor saved successfully!', 'success');
+        
+        // Reload donor list and close modal
         await loadDonorProfiles();
         closeDonorModal();
         
     } catch (error) {
         console.error('Save donor error:', error);
-        alert(`Error: ${error.message}`);
+        showToast(`Error: ${error.message}`, 'error');
     } finally {
         // Restore button state
         const saveBtn = document.getElementById('saveDonorBtn');
@@ -3078,6 +3108,28 @@ async function saveDonor() {
         saveBtn.disabled = false;
     }
 }
+
+// Helper function to show toast messages (add this to your code)
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
+
         function validateDonorForm() {
     const nameInput = document.getElementById('donorName');
     const donorName = nameInput.value.trim();
