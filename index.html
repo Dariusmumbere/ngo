@@ -1942,7 +1942,10 @@ input:invalid {
         </div>
         <div class="modal-footer">
             <button class="file-manager-btn secondary" onclick="closeDonorModal()">Cancel</button>
-            <button class="file-manager-btn" id="saveDonorBtn" type="button" onclick="document.getElementById('donorForm').dispatchEvent(new Event('submit'))">Save Donor</button>
+            <button class="file-manager-btn" id="saveDonorBtn" type="button" onclick="document.getElementById('donorForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveDonor();
+    });">Save Donor</button>
         </div>
     </div>
 </div>
