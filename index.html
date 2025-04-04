@@ -1196,6 +1196,18 @@
 .stat-value {
     font-weight: 600;
 }
+        .validation-error {
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: none;
+}
+
+.form-group input:invalid, 
+.form-group select:invalid, 
+.form-group textarea:invalid {
+    border-color: var(--accent-color);
+}
     </style>
 </head>
 <body>
@@ -1831,6 +1843,7 @@
                 <div class="form-group">
                     <label for="donorName">Name*</label>
                     <input type="text" id="donorName" required>
+                    <div class="validation-error" id="nameError" style="color: red; display: none;">Please enter donor name</div>
                 </div>
                 <div class="form-group">
                     <label for="donorEmail">Email</label>
@@ -3070,19 +3083,25 @@ async function saveDonor() {
     }
 }
         function validateDonorForm() {
+    let isValid = true;
     const nameInput = document.getElementById('donorName');
+    const nameError = document.getElementById('nameError');
     const donorName = nameInput.value.trim();
     
+    // Reset error states
+    nameError.style.display = 'none';
+    nameInput.style.borderColor = '';
+    
     if (!donorName) {
-        alert('Please enter donor name');
+        nameError.style.display = 'block';
+        nameInput.style.borderColor = 'red';
         nameInput.focus();
-        return false;
+        isValid = false;
     }
     
-    // Additional validations can be added here if needed
-    return true;
+    return isValid;
 }
-
+        
 
 // Add event listener in your DOMContentLoaded
 document.getElementById('donorForm').addEventListener('submit', function(e) {
@@ -3091,9 +3110,11 @@ document.getElementById('donorForm').addEventListener('submit', function(e) {
 });
 
 // Update your save button to trigger form submission
-document.getElementById('saveDonorBtn').addEventListener('click', function() {
+document.getElementById('saveDonorBtn').addEventListener('click', function(e) {
+    e.preventDefault();
     document.getElementById('donorForm').dispatchEvent(new Event('submit'));
 });
+
         
 // Function to load donor profiles
 async function loadDonorProfiles(search = '') {
