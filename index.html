@@ -3158,8 +3158,9 @@ document.getElementById('saveDonorBtn').addEventListener('click', function(e) {
 async function loadDonorProfiles(search = '') {
     try {
         const container = document.querySelector('.donor-cards');
+        
         // Clear the container completely first
-        container.innerHTML = '';
+        container.innerHTML = '<div class="loading">Loading donors...</div>';
         
         const response = await fetch(`https://man-m681.onrender.com/donors/?search=${encodeURIComponent(search)}`);
         
@@ -3170,12 +3171,26 @@ async function loadDonorProfiles(search = '') {
         
         const donors = await response.json();
         
+        // Clear loading message
+        container.innerHTML = '';
+        
         if (donors.length === 0) {
             container.innerHTML = '<p>No donors found. Add a new donor to get started.</p>';
             return;
         }
         
+        // Create a map to track unique donors by ID
+        const uniqueDonors = new Map();
+        
         donors.forEach(donor => {
+            // Only add if not already in the map
+            if (!uniqueDonors.has(donor.id)) {
+                uniqueDonors.set(donor.id, donor);
+            }
+        });
+        
+        // Now render only the unique donors
+        uniqueDonors.forEach(donor => {
             const donorCard = document.createElement('div');
             donorCard.className = 'donor-card';
             donorCard.innerHTML = `
