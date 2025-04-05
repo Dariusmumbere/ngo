@@ -3085,20 +3085,48 @@ async function saveDonor() {
         function validateDonorForm() {
     let isValid = true;
     const nameInput = document.getElementById('donorName');
-    const nameError = document.getElementById('nameError');
-    const donorName = nameInput.value.trim();
+    const emailInput = document.getElementById('donorEmail');
+    const phoneInput = document.getElementById('donorPhone');
     
-    // Reset error states
-    nameError.style.display = 'none';
-    nameInput.style.borderColor = '';
-    
-    if (!donorName) {
-        nameError.style.display = 'block';
+    // Reset all errors
+    document.querySelectorAll('.validation-error').forEach(el => {
+        el.style.display = 'none';
+    });
+    document.querySelectorAll('.form-group input, .form-group select, .form-group textarea').forEach(el => {
+        el.style.borderColor = '';
+    });
+
+    // Validate name (required)
+    if (!nameInput.value.trim()) {
+        document.getElementById('nameError').style.display = 'block';
         nameInput.style.borderColor = 'red';
-        nameInput.focus();
         isValid = false;
     }
-    
+
+    // Validate email format if provided
+    if (emailInput.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+        document.getElementById('emailError').textContent = 'Please enter a valid email address';
+        document.getElementById('emailError').style.display = 'block';
+        emailInput.style.borderColor = 'red';
+        isValid = false;
+    }
+
+    // Validate phone format if provided
+    if (phoneInput.value.trim() && !/^[\d\s+-]+$/.test(phoneInput.value)) {
+        document.getElementById('phoneError').textContent = 'Please enter a valid phone number';
+        document.getElementById('phoneError').style.display = 'block';
+        phoneInput.style.borderColor = 'red';
+        isValid = false;
+    }
+
+    if (!isValid) {
+        // Focus on first invalid field
+        const firstInvalid = document.querySelector('.validation-error[style*="display: block"]');
+        if (firstInvalid) {
+            firstInvalid.previousElementSibling.focus();
+        }
+    }
+
     return isValid;
 }
         
