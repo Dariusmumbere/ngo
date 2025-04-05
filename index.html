@@ -1208,7 +1208,6 @@
 .form-group textarea:invalid {
     border-color: var(--accent-color);
 }
-   
     </style>
 </head>
 <body>
@@ -1233,7 +1232,7 @@
         <aside class="sidebar" id="sidebar">
             <ul class="sidebar-menu">
                 <li>
-                    <a href="#dashboard" class="active" id="dashboardLink">
+                    <a href="#" class="active" id="dashboardLink">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
@@ -1251,13 +1250,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#fundraising" id="fundraisingLink">
+                    <a href="#" id="fundraisingLink">
                         <i class="fas fa-file-invoice-dollar"></i>
                         <span>Fundraising Documents</span>
                     </a>
                 </li>
                 <li>
-    <a href="#donations" id="donationsLink">
+    <a href="#" id="donationsLink">
         <i class="fas fa-hand-holding-usd"></i>
         <span>Collect Donations</span>
     </a>
@@ -2066,23 +2065,23 @@
     });
 
     // Navigation between dashboard and file manager
-   dashboardLink.addEventListener('click', function(e) {
-    // Remove e.preventDefault() to allow default link behavior
-    dashboardContent.style.display = 'block';
-    fileManagerContent.style.display = 'none';
-    setActiveNavItem(dashboardLink);
-});ay = 'none';
+    dashboardLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        dashboardContent.style.display = 'block';
+        fileManagerContent.style.display = 'none';
+        setActiveNavItem(dashboardLink);
+    });
 
     fundraisingLink.addEventListener('click', function(e) {
-    // Remove e.preventDefault() to allow default link behavior
-    dashboardContent.style.display = 'none';
-    fileManagerContent.style.display = 'block';
-    setActiveNavItem(fundraisingLink);
-    
-    // Load content for current path
-    const folderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
-    loadFolderContents(folderId);
-});
+        e.preventDefault();
+        dashboardContent.style.display = 'none';
+        fileManagerContent.style.display = 'block';
+        setActiveNavItem(fundraisingLink);
+        
+        // Load content for current path
+        const folderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
+        loadFolderContents(folderId);
+    });
 
     // Initialize file manager
     initFileManager();
@@ -2664,8 +2663,8 @@
         const addDonationModal = document.getElementById('addDonationModal');
 
         // Navigation to donations page
-         donationsLink.addEventListener('click', function(e) {
-    // Remove e.preventDefault() to allow default link behavior
+        donationsLink.addEventListener('click', function(e) {
+    e.preventDefault();
     dashboardContent.style.display = 'none';
     fileManagerContent.style.display = 'none';
     donationsContent.style.display = 'block';
@@ -3072,7 +3071,6 @@ async function saveDonor() {
         // Success - reload donor list and close modal
         await loadDonorProfiles();
         closeDonorModal();
-        alert('Donor saved successfully!');
         
     } catch (error) {
         console.error('Save donor error:', error);
@@ -3092,20 +3090,12 @@ async function saveDonor() {
     
     // Reset error states
     nameError.style.display = 'none';
-    nameInput.classList.remove('invalid');
+    nameInput.style.borderColor = '';
     
-    // Validate required fields
     if (!donorName) {
         nameError.style.display = 'block';
-        nameInput.classList.add('invalid');
+        nameInput.style.borderColor = 'red';
         nameInput.focus();
-        isValid = false;
-    }
-    
-    // Validate email format if provided
-    const email = document.getElementById('donorEmail').value.trim();
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('Please enter a valid email address');
         isValid = false;
     }
     
@@ -3267,13 +3257,12 @@ function setupTabSwitching() {
     });
 }
 
-// Add event listener for the Add Donor button
-// Update the addDonorBtn event listener
-document.getElementById('addDonorBtn').addEventListener('click', function(e) {
-    e.preventDefault(); // Keep this for the modal
-    e.stopPropagation(); // Add this to prevent event bubbling
-    openDonorModal();
-});
+// Add event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Add donor button
+    document.getElementById('addDonorBtn').addEventListener('click', function() {
+        openDonorModal();
+    });
     
     // Save donor form submission
     document.getElementById('donorForm').addEventListener('submit', function(e) {
@@ -3288,52 +3277,6 @@ document.getElementById('addDonorBtn').addEventListener('click', function(e) {
     if (document.getElementById('donorProfiles').classList.contains('active')) {
         loadDonorProfiles();
     }
-});
-        // Add this function to handle hash changes
-function handleHashChange() {
-    const hash = window.location.hash;
-    
-    // Hide all content sections first
-    document.querySelectorAll('.main-content > div').forEach(section => {
-        section.style.display = 'none';
-    });
-    
-    // Show the appropriate section based on hash
-    switch(hash) {
-        case '#dashboard':
-            document.getElementById('dashboardContent').style.display = 'block';
-            setActiveNavItem(document.getElementById('dashboardLink'));
-            break;
-        case '#fundraising':
-            document.getElementById('fileManagerContent').style.display = 'block';
-            setActiveNavItem(document.getElementById('fundraisingLink'));
-            break;
-        case '#donations':
-            document.getElementById('donationsContent').style.display = 'block';
-            setActiveNavItem(document.getElementById('donationsLink'));
-            break;
-        default:
-            document.getElementById('dashboardContent').style.display = 'block';
-            setActiveNavItem(document.getElementById('dashboardLink'));
-    }
-}
-
-// Add event listener for hash changes
-window.addEventListener('hashchange', handleHashChange);
-
-// Call it on initial load
-document.addEventListener('DOMContentLoaded', function() {
-    handleHashChange();
-});
-
-// Add this event listener
-window.addEventListener('hashchange', handleHashChange);
-
-// Call it on initial load
-document.addEventListener('DOMContentLoaded', function() {
-    handleHashChange();
-    
-    // Your other initialization code...
 });
 
 // Expose functions to global scope
