@@ -1208,6 +1208,16 @@
 .form-group textarea:invalid {
     border-color: var(--accent-color);
 }
+        .invalid {
+    border-color: var(--accent-color) !important;
+}
+
+.validation-error {
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: none;
+}
     </style>
 </head>
 <body>
@@ -3071,6 +3081,7 @@ async function saveDonor() {
         // Success - reload donor list and close modal
         await loadDonorProfiles();
         closeDonorModal();
+        alert('Donor saved successfully!');
         
     } catch (error) {
         console.error('Save donor error:', error);
@@ -3090,12 +3101,20 @@ async function saveDonor() {
     
     // Reset error states
     nameError.style.display = 'none';
-    nameInput.style.borderColor = '';
+    nameInput.classList.remove('invalid');
     
+    // Validate required fields
     if (!donorName) {
         nameError.style.display = 'block';
-        nameInput.style.borderColor = 'red';
+        nameInput.classList.add('invalid');
         nameInput.focus();
+        isValid = false;
+    }
+    
+    // Validate email format if provided
+    const email = document.getElementById('donorEmail').value.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('Please enter a valid email address');
         isValid = false;
     }
     
@@ -3257,12 +3276,11 @@ function setupTabSwitching() {
     });
 }
 
-// Add event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    // Add donor button
-    document.getElementById('addDonorBtn').addEventListener('click', function() {
-        openDonorModal();
-    });
+// Add event listener for the Add Donor button
+document.getElementById('addDonorBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    openDonorModal();
+});
     
     // Save donor form submission
     document.getElementById('donorForm').addEventListener('submit', function(e) {
