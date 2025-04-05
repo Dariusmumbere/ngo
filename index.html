@@ -3157,6 +3157,9 @@ document.getElementById('saveDonorBtn').addEventListener('click', function(e) {
 // Update the loadDonorProfiles function to prevent duplicates
 async function loadDonorProfiles(search = '') {
     try {
+        const container = document.querySelector('.donor-cards');
+        container.innerHTML = '<div class="loading">Loading donors...</div>';
+        
         const response = await fetch(`https://man-m681.onrender.com/donors/?search=${encodeURIComponent(search)}`);
         
         if (!response.ok) {
@@ -3165,8 +3168,7 @@ async function loadDonorProfiles(search = '') {
         }
         
         const donors = await response.json();
-        const container = document.querySelector('.donor-cards');
-        container.innerHTML = '';  // Clear existing content
+        container.innerHTML = '';  // Clear the container completely
         
         if (donors.length === 0) {
             container.innerHTML = '<p>No donors found. Add a new donor to get started.</p>';
@@ -3213,10 +3215,11 @@ async function loadDonorProfiles(search = '') {
         });
     } catch (error) {
         console.error('Error loading donors:', error);
-        alert(`Failed to load donors: ${error.message}`);
+        document.querySelector('.donor-cards').innerHTML = 
+            `<p class="error">Failed to load donors: ${error.message}</p>`;
     }
 }
-
+        
 // Add the deleteDonor function
 async function deleteDonor(donorId) {
     if (!confirm('Are you sure you want to delete this donor? This action cannot be undone.')) {
