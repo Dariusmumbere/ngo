@@ -1830,7 +1830,7 @@
                 </div>
             </div>
             <!-- Add this modal to your HTML (place it with the other modals) -->
-            <!-- Add this modal to your HTML (place it with the other modals) -->
+            
 <div class="donor-modal" id="donorModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -1842,7 +1842,7 @@
                 <input type="hidden" id="donorId">
                 <div class="form-group">
                     <label for="donorName">Name*</label>
-                    <input type="text" id="donorName" required>
+                    <input type="text" id="donorProfileName" required>
                     <div class="validation-error" id="nameError" style="color: red; display: none;">Please enter donor name</div>
                 </div>
                 <div class="form-group">
@@ -2964,7 +2964,7 @@ async function loadDonorData(donorId) {
         
         // Populate form
         document.getElementById('donorId').value = donor.id;
-        document.getElementById('donorName').value = donor.name;
+        document.getElementById('donorProfileName').value = donor.name;
         document.getElementById('donorEmail').value = donor.email || '';
         document.getElementById('donorPhone').value = donor.phone || '';
         document.getElementById('donorAddress').value = donor.address || '';
@@ -3033,7 +3033,7 @@ async function saveDonor() {
     
     // Get form data
     const donorData = {
-        name: document.getElementById('donorName').value.trim(),
+        name: document.getElementById('donorProfileName').value.trim(),
         email: document.getElementById('donorEmail').value.trim(),
         phone: document.getElementById('donorPhone').value.trim(),
         address: document.getElementById('donorAddress').value.trim(),
@@ -3084,7 +3084,7 @@ async function saveDonor() {
 }
         function validateDonorForm() {
     let isValid = true;
-    const nameInput = document.getElementById('donorName');
+    const nameInput = document.getElementById('donorProfileName');
     const emailInput = document.getElementById('donorEmail');
     const phoneInput = document.getElementById('donorPhone');
     
