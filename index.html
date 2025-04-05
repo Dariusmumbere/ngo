@@ -2066,23 +2066,23 @@
     });
 
     // Navigation between dashboard and file manager
-    dashboardLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        dashboardContent.style.display = 'block';
-        fileManagerContent.style.display = 'none';
-        setActiveNavItem(dashboardLink);
-    });
+   dashboardLink.addEventListener('click', function(e) {
+    // Remove e.preventDefault() to allow default link behavior
+    dashboardContent.style.display = 'block';
+    fileManagerContent.style.display = 'none';
+    setActiveNavItem(dashboardLink);
+});ay = 'none';
 
     fundraisingLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        dashboardContent.style.display = 'none';
-        fileManagerContent.style.display = 'block';
-        setActiveNavItem(fundraisingLink);
-        
-        // Load content for current path
-        const folderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
-        loadFolderContents(folderId);
-    });
+    // Remove e.preventDefault() to allow default link behavior
+    dashboardContent.style.display = 'none';
+    fileManagerContent.style.display = 'block';
+    setActiveNavItem(fundraisingLink);
+    
+    // Load content for current path
+    const folderId = currentPath.length > 0 ? currentPath[currentPath.length - 1].id : '';
+    loadFolderContents(folderId);
+});
 
     // Initialize file manager
     initFileManager();
@@ -2664,8 +2664,8 @@
         const addDonationModal = document.getElementById('addDonationModal');
 
         // Navigation to donations page
-        donationsLink.addEventListener('click', function(e) {
-    e.preventDefault();
+         donationsLink.addEventListener('click', function(e) {
+    // Remove e.preventDefault() to allow default link behavior
     dashboardContent.style.display = 'none';
     fileManagerContent.style.display = 'none';
     donationsContent.style.display = 'block';
@@ -3268,8 +3268,10 @@ function setupTabSwitching() {
 }
 
 // Add event listener for the Add Donor button
+// Update the addDonorBtn event listener
 document.getElementById('addDonorBtn').addEventListener('click', function(e) {
-    e.preventDefault();
+    e.preventDefault(); // Keep this for the modal
+    e.stopPropagation(); // Add this to prevent event bubbling
     openDonorModal();
 });
     
@@ -3286,6 +3288,34 @@ document.getElementById('addDonorBtn').addEventListener('click', function(e) {
     if (document.getElementById('donorProfiles').classList.contains('active')) {
         loadDonorProfiles();
     }
+});
+        // Add this function to handle hash changes
+function handleHashChange() {
+    const hash = window.location.hash;
+    
+    switch(hash) {
+        case '#dashboard':
+            dashboardLink.click();
+            break;
+        case '#fundraising':
+            fundraisingLink.click();
+            break;
+        case '#donations':
+            donationsLink.click();
+            break;
+        default:
+            dashboardLink.click();
+    }
+}
+
+// Add this event listener
+window.addEventListener('hashchange', handleHashChange);
+
+// Call it on initial load
+document.addEventListener('DOMContentLoaded', function() {
+    handleHashChange();
+    
+    // Your other initialization code...
 });
 
 // Expose functions to global scope
