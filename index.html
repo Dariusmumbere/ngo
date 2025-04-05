@@ -1233,7 +1233,7 @@
         <aside class="sidebar" id="sidebar">
             <ul class="sidebar-menu">
                 <li>
-                    <a href="#" class="active" id="dashboardLink">
+                    <a href="#dashboard" class="active" id="dashboardLink">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
@@ -1251,13 +1251,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="fundraisingLink">
+                    <a href="#fundraising" id="fundraisingLink">
                         <i class="fas fa-file-invoice-dollar"></i>
                         <span>Fundraising Documents</span>
                     </a>
                 </li>
                 <li>
-    <a href="#" id="donationsLink">
+    <a href="#donations" id="donationsLink">
         <i class="fas fa-hand-holding-usd"></i>
         <span>Collect Donations</span>
     </a>
@@ -3293,20 +3293,38 @@ document.getElementById('addDonorBtn').addEventListener('click', function(e) {
 function handleHashChange() {
     const hash = window.location.hash;
     
+    // Hide all content sections first
+    document.querySelectorAll('.main-content > div').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show the appropriate section based on hash
     switch(hash) {
         case '#dashboard':
-            dashboardLink.click();
+            document.getElementById('dashboardContent').style.display = 'block';
+            setActiveNavItem(document.getElementById('dashboardLink'));
             break;
         case '#fundraising':
-            fundraisingLink.click();
+            document.getElementById('fileManagerContent').style.display = 'block';
+            setActiveNavItem(document.getElementById('fundraisingLink'));
             break;
         case '#donations':
-            donationsLink.click();
+            document.getElementById('donationsContent').style.display = 'block';
+            setActiveNavItem(document.getElementById('donationsLink'));
             break;
         default:
-            dashboardLink.click();
+            document.getElementById('dashboardContent').style.display = 'block';
+            setActiveNavItem(document.getElementById('dashboardLink'));
     }
 }
+
+// Add event listener for hash changes
+window.addEventListener('hashchange', handleHashChange);
+
+// Call it on initial load
+document.addEventListener('DOMContentLoaded', function() {
+    handleHashChange();
+});
 
 // Add this event listener
 window.addEventListener('hashchange', handleHashChange);
