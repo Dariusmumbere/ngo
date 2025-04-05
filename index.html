@@ -3158,6 +3158,8 @@ document.getElementById('saveDonorBtn').addEventListener('click', function(e) {
 async function loadDonorProfiles(search = '') {
     try {
         const container = document.querySelector('.donor-cards');
+        
+        // Clear the container completely first
         container.innerHTML = '<div class="loading">Loading donors...</div>';
         
         const response = await fetch(`https://man-m681.onrender.com/donors/?search=${encodeURIComponent(search)}`);
@@ -3168,6 +3170,8 @@ async function loadDonorProfiles(search = '') {
         }
         
         const donors = await response.json();
+        
+        // Clear loading message
         container.innerHTML = '';
         
         if (donors.length === 0) {
@@ -3175,44 +3179,18 @@ async function loadDonorProfiles(search = '') {
             return;
         }
         
-        // Create a map to store donor stats
-        const donorStats = new Map();
+        // Create a map to track unique donors by ID
+        const uniqueDonors = new Map();
         
-        // First, fetch all donations to calculate stats
-        const donationsResponse = await fetch('https://man-m681.onrender.com/donations/');
-        if (donationsResponse.ok) {
-            const donationsData = await donationsResponse.json();
-            
-            // Calculate stats for each donor
-            donationsData.donations.forEach(donation => {
-                if (!donorStats.has(donation.donor_name)) {
-                    donorStats.set(donation.donor_name, {
-                        total: 0,
-                        count: 0,
-                        dates: []
-                    });
-                }
-                
-                const stats = donorStats.get(donation.donor_name);
-                stats.total += donation.amount;
-                stats.count++;
-                stats.dates.push(new Date(donation.date));
-            });
-        }
-        
-        // Now render each donor card
         donors.forEach(donor => {
-            const stats = donorStats.get(donor.name) || {
-                total: 0,
-                count: 0,
-                dates: []
-            };
-            
-            // Sort dates to get first and last donation
-            stats.dates.sort((a, b) => a - b);
-            const firstDonation = stats.dates.length > 0 ? stats.dates[0] : null;
-            const lastDonation = stats.dates.length > 0 ? stats.dates[stats.dates.length - 1] : null;
-            
+            // Only add if not already in the map
+            if (!uniqueDonors.has(donor.id)) {
+                uniqueDonors.set(donor.id, donor);
+            }
+        });
+        
+        // Now render only the unique donors
+        uniqueDonors.forEach(donor => {
             const donorCard = document.createElement('div');
             donorCard.className = 'donor-card';
             donorCard.innerHTML = `
@@ -3228,19 +3206,11 @@ async function loadDonorProfiles(search = '') {
                     <div class="donor-stats">
                         <div class="stat-item">
                             <span class="stat-label">Total Donations:</span>
-                            <span class="stat-value">UGX ${stats.total.toLocaleString()}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Donation Count:</span>
-                            <span class="stat-value">${stats.count}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">First Donation:</span>
-                            <span class="stat-value">${firstDonation ? firstDonation.toLocaleDateString() : '-'}</span>
+                            <span class="stat-value">UGX 0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Last Donation:</span>
-                            <span class="stat-value">${lastDonation ? lastDonation.toLocaleDateString() : '-'}</span>
+                            <span class="stat-value">-</span>
                         </div>
                     </div>
                 </div>
