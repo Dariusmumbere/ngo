@@ -3153,21 +3153,37 @@ async function loadDonorProfiles(search = '') {
         const container = document.querySelector('.donor-cards');
         container.innerHTML = '<div class="loading">Loading donors...</div>';
         
-        // Clear existing donors first
+        // Fetch donors and their stats in parallel
+        const [donorsResponse, statsResponse] = await Promise.all([
+            fetch(`https://man-m681.onrender.com/donors/?search=${encodeURIComponent(search)}`),
+            fetch('https://man-m681.onrender.com/donors/stats/')
+        ]);
+        
+        if (!donorsResponse.ok || !statsResponse.ok) {
+            throw new Error('Failed to fetch donor data');
+        }
+        
+        const donors = await donorsResponse.json();
+        const statsData = await statsResponse.json();
+        const stats = statsData.donor_stats;
+        
         container.innerHTML = '';
-        
-        const response = await fetch(`https://man-m681.onrender.com/donors/?search=${encodeURIComponent(search)}`);
-        if (!response.ok) throw new Error('Failed to fetch donors');
-        
-        const donors = await response.json();
         
         if (donors.length === 0) {
             container.innerHTML = '<p>No donors found. Add a new donor to get started.</p>';
             return;
         }
         
-        // Create donor cards - only one per donor
+        // Create donor cards
         donors.forEach(donor => {
+            const donorStats = stats[donor.id] || {
+                name: donor.name,
+                donation_count: 0,
+                total_donated: 0,
+                first_donation: null,
+                last_donation: null
+            };
+            
             const donorCard = document.createElement('div');
             donorCard.className = 'donor-card';
             donorCard.innerHTML = `
@@ -3183,11 +3199,19 @@ async function loadDonorProfiles(search = '') {
                     <div class="donor-stats">
                         <div class="stat-item">
                             <span class="stat-label">Total Donations:</span>
-                            <span class="stat-value">UGX 0</span>
+                            <span class="stat-value">UGX ${donorStats.total_donated.toLocaleString()}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Donation Count:</span>
+                            <span class="stat-value">${donorStats.donation_count}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">First Donation:</span>
+                            <span class="stat-value">${donorStats.first_donation || '-'}</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Last Donation:</span>
-                            <span class="stat-value">-</span>
+                            <span class="stat-value">${donorStats.last_donation || '-'}</span>
                         </div>
                     </div>
                 </div>
@@ -3205,9 +3229,6 @@ async function loadDonorProfiles(search = '') {
             `;
             container.appendChild(donorCard);
         });
-        
-        // Now load stats separately to avoid duplicates
-        loadDonorStats();
     } catch (error) {
         console.error('Error loading donors:', error);
         document.querySelector('.donor-cards').innerHTML = 
