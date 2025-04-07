@@ -2788,24 +2788,19 @@ async function loadDonations() {
         donationsTable.innerHTML = '';
         
         data.donations.forEach(donation => {
-            // Extract payment method from the purpose field or use default
-            let paymentMethod = 'Not specified';
-            if (donation.purpose) {
-                // This assumes payment method is stored in the purpose field
-                // You might need to adjust this based on your actual data structure
-                if (donation.purpose.includes('Mobile Money')) paymentMethod = 'Mobile Money';
-                else if (donation.purpose.includes('Bank Transfer')) paymentMethod = 'Bank Transfer';
-                else if (donation.purpose.includes('PayPal')) paymentMethod = 'PayPal';
-                else if (donation.purpose.includes('Cash')) paymentMethod = 'Cash';
-            }
+            // Properly parse the purpose field to get payment method
+            const purposeParts = donation.purpose.split('|');
+            const donorName = purposeParts[0].replace('Donation from ', '');
+            const paymentMethod = purposeParts[1] || 'Not specified';
+            const project = purposeParts[2] || 'General Fund';
             
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${donation.date}</td>
-                <td>${donation.donor_name}</td>
+                <td>${donorName}</td>
                 <td>UGX ${donation.amount.toLocaleString()}</td>
                 <td>${paymentMethod}</td>
-                <td>${donation.project || 'General Fund'}</td>
+                <td>${project}</td>
                 <td><span class="status-badge completed">Completed</span></td>
                 <td>
                     <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
