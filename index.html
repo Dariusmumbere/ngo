@@ -2746,7 +2746,7 @@
             body: JSON.stringify({
                 donor_name: donorName,
                 amount: donationAmount,
-                payment_method: paymentMethod, 
+                payment_method: paymentMethod,
                 date: donationDate,
                 project: donationProject,
                 notes: donationNotes
@@ -2754,7 +2754,8 @@
         });
 
         if (!response.ok) {
-            throw new Error('Failed to submit donation');
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Failed to submit donation');
         }
 
         const data = await response.json();
@@ -2768,10 +2769,10 @@
         document.getElementById('donationForm').reset();
     } catch (error) {
         console.error('Error submitting donation:', error);
-        alert('Failed to submit donation. Please try again.');
+        alert(`Failed to submit donation: ${error.message}`);
     }
 }
-
+        
 // Add this function to load donations
 async function loadDonations() {
     try {
@@ -2784,28 +2785,22 @@ async function loadDonations() {
             throw new Error('Failed to fetch donations');
         }
         
-        const data = await response.json();
+        const donations = await response.json();
         donationsTable.innerHTML = '';
         
-        data.donations.forEach(donation => {
-            // Properly parse the purpose field to get payment method
-            const purposeParts = donation.purpose.split('|');
-            const donorName = purposeParts[0].replace('Donation from ', '');
-            const paymentMethod = purposeParts[1] || 'Not specified';
-            const project = purposeParts[2] || 'General Fund';
-            
+        donations.forEach(donation => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${donation.date}</td>
-                <td>${donorName}</td>
+                <td>${donation.donor_name}</td>
                 <td>UGX ${donation.amount.toLocaleString()}</td>
-                <td>${paymentMethod}</td>
-                <td>${project}</td>
+                <td>${donation.payment_method}</td>
+                <td>${donation.project || 'General Fund'}</td>
                 <td><span class="status-badge completed">Completed</span></td>
                 <td>
-                    <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view-btn" onclick="viewDonation(${donation.id})"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit-btn" onclick="editDonation(${donation.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn" onclick="deleteDonation(${donation.id})"><i class="fas fa-trash"></i></button>
                 </td>
             `;
             donationsTable.appendChild(row);
