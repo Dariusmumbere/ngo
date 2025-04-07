@@ -3158,6 +3158,7 @@ document.getElementById('saveDonorBtn').addEventListener('click', function(e) {
 async function loadDonorProfiles(search = '') {
     try {
         const container = document.querySelector('.donor-cards');
+        // Clear existing content first
         container.innerHTML = '<div class="loading">Loading donors...</div>';
         
         // Fetch donors and their stats in parallel
@@ -3174,6 +3175,7 @@ async function loadDonorProfiles(search = '') {
         const statsData = await statsResponse.json();
         const stats = statsData.donor_stats;
         
+        // Clear container again before adding new content
         container.innerHTML = '';
         
         if (donors.length === 0) {
