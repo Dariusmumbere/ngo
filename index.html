@@ -2020,14 +2020,14 @@
             </div>
         </div>
         <div class="modal-footer">
-    <button class="file-manager-btn secondary" onclick="closeDonorModal()">Close</button>
-    <button class="file-manager-btn" id="saveDonorBtn" type="button" onclick="document.getElementById('donorForm').dispatchEvent(new Event('submit'))">
-        <i class="fas fa-save"></i> Save Donor
-    </button>
-    <button class="file-manager-btn" id="downloadDonationHistoryBtn" onclick="downloadDonationHistory()">
-        <i class="fas fa-download"></i> Print History
-    </button>
-</div>
+            <button class="file-manager-btn secondary" onclick="closeDonorModal()">Close</button>
+            <button class="file-manager-btn" id="saveDonorBtn" type="button" onclick="document.getElementById('donorForm').dispatchEvent(new Event('submit'))">
+                <i class="fas fa-save"></i> Save Donor
+            </button>
+            <button class="file-manager-btn" id="downloadDonationHistoryBtn" onclick="downloadDonationHistory()">
+                <i class="fas fa-download"></i> Print History
+            </button>
+        </div>
     </div>
 </div>
 
@@ -3486,6 +3486,8 @@ window.closeDonorModal = closeDonorModal;
 window.viewDonorHistory = viewDonorHistory;
 window.saveDonor = saveDonor;
 window.deleteDonor = deleteDonor       
+window.downloadDonationHistory = downloadDonationHistory;
+        
         async function populateDonorDropdown() {
     try {
         const response = await fetch('https://man-m681.onrender.com/donors/');
@@ -3731,7 +3733,7 @@ document.getElementById('addDonationBtn').addEventListener('click', function() {
         alert('Failed to download donation history. Please try again.');
     }
 }
-        window.downloadDonationHistory = downloadDonationHistory;
+        
     </script>
 </body>
 </html>
