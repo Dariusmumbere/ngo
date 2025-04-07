@@ -2820,7 +2820,7 @@
         window.closeDonationModal = closeDonationModal;
         window.submitDonation = submitDonation;
 
-        async function submitDonation() {
+         async function submitDonation() {
     const donorName = document.getElementById('donorName').value;
     const donationAmount = parseFloat(document.getElementById('donationAmount').value);
     const paymentMethod = document.getElementById('paymentMethod').value;
@@ -2842,7 +2842,7 @@
             body: JSON.stringify({
                 donor_name: donorName,
                 amount: donationAmount,
-                payment_method: paymentMethod,
+                payment_method: paymentMethod, 
                 date: donationDate,
                 project: donationProject,
                 notes: donationNotes
@@ -2850,8 +2850,7 @@
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || 'Failed to submit donation');
+            throw new Error('Failed to submit donation');
         }
 
         const data = await response.json();
@@ -2865,9 +2864,10 @@
         document.getElementById('donationForm').reset();
     } catch (error) {
         console.error('Error submitting donation:', error);
-        alert(`Failed to submit donation: ${error.message}`);
+        alert('Failed to submit donation. Please try again.');
     }
 }
+
         
 // Add this function to load donations
 async function loadDonations() {
