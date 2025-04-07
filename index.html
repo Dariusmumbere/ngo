@@ -3522,6 +3522,44 @@ document.getElementById('addDonationBtn').addEventListener('click', function() {
     addDonationModal.classList.add('show');
     populateDonorDropdown();
 });
+         async function downloadDonationHistory() {
+    try {
+        // Get donor data
+        const donorId = currentDonorId;
+        if (!donorId) {
+            alert('No donor selected');
+            return;
+        }
+
+        // Fetch donor details
+        const donorResponse = await fetch(`https://man-m681.onrender.com/donors/${donorId}`);
+        if (!donorResponse.ok) throw new Error('Failed to fetch donor data');
+        const donorData = await donorResponse.json();
+
+        // Fetch donation history
+        const donationsResponse = await fetch(`https://man-m681.onrender.com/donors/${donorId}/donations`);
+        if (!donationsResponse.ok) throw new Error('Failed to fetch donation history');
+        const donationsData = await donationsResponse.json();
+        const donations = donationsData.donations || [];
+
+        // Generate HTML content
+        const htmlContent = generateDonationHistoryHTML(donorData, donations);
+
+        // Create a blob and download it
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Donation_History_${donorData.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading donation history:', error);
+        alert('Failed to download donation history. Please try again.');
+    }
+}
         function generateDonationHistoryHTML(donorData, donations) {
     // Calculate totals
     const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0);
@@ -3695,44 +3733,7 @@ document.getElementById('addDonationBtn').addEventListener('click', function() {
         </html>
     `;
 }
-        async function downloadDonationHistory() {
-    try {
-        // Get donor data
-        const donorId = currentDonorId;
-        if (!donorId) {
-            alert('No donor selected');
-            return;
-        }
-
-        // Fetch donor details
-        const donorResponse = await fetch(`https://man-m681.onrender.com/donors/${donorId}`);
-        if (!donorResponse.ok) throw new Error('Failed to fetch donor data');
-        const donorData = await donorResponse.json();
-
-        // Fetch donation history
-        const donationsResponse = await fetch(`https://man-m681.onrender.com/donors/${donorId}/donations`);
-        if (!donationsResponse.ok) throw new Error('Failed to fetch donation history');
-        const donationsData = await donationsResponse.json();
-        const donations = donationsData.donations || [];
-
-        // Generate HTML content
-        const htmlContent = generateDonationHistoryHTML(donorData, donations);
-
-        // Create a blob and download it
-        const blob = new Blob([htmlContent], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Donation_History_${donorData.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    } catch (error) {
-        console.error('Error downloading donation history:', error);
-        alert('Failed to download donation history. Please try again.');
-    }
-}
+       
         
     </script>
 </body>
