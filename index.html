@@ -2187,9 +2187,7 @@
             <button class="file-manager-btn" id="saveDonorBtn" type="button" onclick="document.getElementById('donorForm').dispatchEvent(new Event('submit'))">
                 <i class="fas fa-save"></i> Save Donor
             </button>
-            <button class="file-manager-btn" id="downloadDonationHistoryBtn" type="button">
-                <i class="fas fa-download"></i> Print History
-            </button>
+         
         </div>
     </div>
 </div>
@@ -3923,6 +3921,10 @@ async function downloadDonationHistory(donorId) {
             <div class="footer">
                 Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
             </div>
+            <center><h2>Thank you so much. We are deeply grateful for your generous gift.</h2></center>
+            <center><p>For enquiries call +256 704240309 or email to info@rwenzori-development.org</p></center>
+            <center><p>Website: www.rwenzori-development.org</p></center>
+
         `;
 
         // PDF generation options
