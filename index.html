@@ -1409,6 +1409,18 @@
     display: flex;
     justify-content: flex-end;
 }
+        .receipt-message {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.receipt-message p {
+    margin-bottom: 10px;
+}
     </style>
 </head>
 <body>
@@ -1842,73 +1854,18 @@
                         </table>
                     </div>
                 </div>
-
+                
                 <div class="tab-content" id="receipts">
                     <div class="section-header">
                         <h2 class="section-title">Generate Receipts/Invoices</h2>
                     </div>
-                    
-                    <div class="receipts-grid">
-                        <div class="receipt-card">
-                            <div class="receipt-header">
-                                <h3>Donation Receipt</h3>
-                                <span class="receipt-date">2023-10-15</span>
-                            </div>
-                            <div class="receipt-body">
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Donor:</span>
-                                    <span class="receipt-value">Mumbere Darius</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Amount:</span>
-                                    <span class="receipt-value">UGX 500,000</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Payment Method:</span>
-                                    <span class="receipt-value">Mobile Money</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Purpose:</span>
-                                    <span class="receipt-value">Agriculture Extension</span>
-                                </div>
-                            </div>
-                            <div class="receipt-actions">
-                                <button class="file-manager-btn"><i class="fas fa-download"></i> Download PDF</button>
-                                <button class="file-manager-btn secondary"><i class="fas fa-envelope"></i> Email Receipt</button>
-                            </div>
-                        </div>
-                        
-                        <div class="receipt-card">
-                            <div class="receipt-header">
-                                <h3>Donation Receipt</h3>
-                                <span class="receipt-date">2023-10-10</span>
-                            </div>
-                            <div class="receipt-body">
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Donor:</span>
-                                    <span class="receipt-value">Acme Corp</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Amount:</span>
-                                    <span class="receipt-value">UGX 2,000,000</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Payment Method:</span>
-                                    <span class="receipt-value">Bank Transfer</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="receipt-label">Purpose:</span>
-                                    <span class="receipt-value">Vocational Education</span>
-                                </div>
-                            </div>
-                            <div class="receipt-actions">
-                                <button class="file-manager-btn"><i class="fas fa-download"></i> Download PDF</button>
-                                <button class="file-manager-btn secondary"><i class="fas fa-envelope"></i> Email Receipt</button>
-                            </div>
-                        </div>
+    
+                    <div class="receipts-grid" id="receiptsGrid">
+                        <!-- Receipts will be dynamically added here -->
                     </div>
                 </div>
 
+                
                 <div class="tab-content" id="donorProfiles">
                     <div class="section-header">
                         <h2 class="section-title">Donor Profiles</h2>
@@ -3004,11 +2961,11 @@
             body: JSON.stringify({
                 donor_name: donorName,
                 amount: donationAmount,
-                payment_method: paymentMethod, // Ensure this is included
+                payment_method: paymentMethod,
                 date: donationDate,
                 project: donationProject,
                 notes: donationNotes,
-                status: "completed" // Add status if your backend expects it
+                status: "completed"
             })
         });
 
@@ -3022,6 +2979,9 @@
         closeDonationModal();
         loadDonations();
         
+        // Generate receipt for the new donation
+        generateReceipt(data);
+        
         document.getElementById('donationForm').reset();
     } catch (error) {
         console.error('Error submitting donation:', error);
@@ -3029,6 +2989,83 @@
     }
 }
 
+function generateReceipt(donation) {
+    // Create receipt HTML
+    const receiptHTML = `
+        <div class="receipt-card" id="receipt-${donation.id}">
+            <div class="receipt-header">
+                <h3>Donation Receipt</h3>
+                <span class="receipt-date">${donation.date}</span>
+            </div>
+            <div class="receipt-body">
+                <div class="receipt-row">
+                    <span class="receipt-label">Donor:</span>
+                    <span class="receipt-value">${donation.donor_name}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Amount:</span>
+                    <span class="receipt-value">UGX ${donation.amount.toLocaleString()}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Payment Method:</span>
+                    <span class="receipt-value">${donation.payment_method}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Purpose:</span>
+                    <span class="receipt-value">${donation.project || 'General Donation'}</span>
+                </div>
+                <div class="receipt-message">
+                    <p>Dear ${donation.donor_name}, RCDNET confirms receipt of your donation worth UGX ${donation.amount.toLocaleString()} on ${new Date(donation.date).toLocaleDateString()} at ${new Date().toLocaleTimeString()}. Thank you so much for caring about ${donation.project || 'our cause'}. We are deeply grateful for your generous gift.</p>
+                    <p>For enquiries call +256 704240309 or email to info@rwenzori-development.org</p>
+                    <p>Website: www.rwenzori-development.org</p>
+                    <p>YouTube: https://youtube.com/@rwenzoricommunitydevelopme7810?si=zYLqI2Iajh0iQuAq</p>
+                    <p>Instagram: https://www.instagram.com/rwenzoridevelopment_rcdnet</p>
+                    <p>Facebook: https://www.facebook.com/profile.php?id=100066779636297</p>
+                </div>
+            </div>
+            <div class="receipt-actions">
+                <button class="file-manager-btn" onclick="downloadReceipt(${donation.id})">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+                <button class="file-manager-btn secondary" onclick="emailReceipt(${donation.id})">
+                    <i class="fas fa-envelope"></i> Email Receipt
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Add receipt to the receipts grid
+    const receiptsGrid = document.querySelector('.receipts-grid');
+    if (receiptsGrid) {
+        receiptsGrid.insertAdjacentHTML('afterbegin', receiptHTML);
+    }
+}
+
+function downloadReceipt(donationId) {
+    const receiptElement = document.getElementById(`receipt-${donationId}`);
+    if (!receiptElement) {
+        alert('Receipt not found');
+        return;
+    }
+
+    // Options for PDF generation
+    const opt = {
+        margin: 10,
+        filename: `Donation_Receipt_${donationId}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Generate PDF
+    html2pdf().set(opt).from(receiptElement).save();
+}
+
+function emailReceipt(donationId) {
+    // This would be implemented with your email service
+    alert(`Email receipt for donation ${donationId} would be sent here`);
+    // In a real implementation, you would call your backend API to send the email
+}
         
 // Add this function to load donations
 async function loadDonations() {
@@ -3131,15 +3168,39 @@ function setupTabSwitching() {
                     loadDonations();
                     break;
                 case 'receipts':
-                    // You can add a loadReceipts() function later
+                    loadReceipts();
                     break;
                 case 'donorProfiles':
-                    // You can add a loadDonorProfiles() function later
+                    loadDonorProfiles();
                     break;
             }
         });
     });
 }
+async function loadReceipts() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/donations/');
+        if (!response.ok) throw new Error('Failed to fetch donations');
+        
+        const donations = await response.json();
+        const receiptsGrid = document.getElementById('receiptsGrid');
+        receiptsGrid.innerHTML = '';
+        
+        // Generate receipts for all donations
+        donations.forEach(donation => {
+            generateReceipt(donation);
+        });
+        
+        if (donations.length === 0) {
+            receiptsGrid.innerHTML = '<p>No receipts available. Add a donation to generate receipts.</p>';
+        }
+    } catch (error) {
+        console.error('Error loading receipts:', error);
+        document.getElementById('receiptsGrid').innerHTML = 
+            '<p class="error">Failed to load receipts. Please try again.</p>';
+    }
+}
+
 
 // Call this function when the donations content is shown
 // Update your showDonationsContent function
