@@ -2940,6 +2940,9 @@
         window.submitDonation = submitDonation;
 
          async function submitDonation() {
+    const donationId = document.getElementById('addDonationModal').dataset.donationId;
+    const isEdit = !!donationId;
+    
     const donorName = document.getElementById('donorName').value;
     const donationAmount = parseFloat(document.getElementById('donationAmount').value);
     const paymentMethod = document.getElementById('paymentMethod').value;
@@ -2953,8 +2956,20 @@
     }
 
     try {
-        const response = await fetch('https://man-m681.onrender.com/donations/', {
-            method: 'POST',
+        // Show loading state
+        const submitBtn = document.querySelector('#addDonationModal .modal-footer .file-manager-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        submitBtn.disabled = true;
+
+        const url = isEdit 
+            ? `https://man-m681.onrender.com/donations/${donationId}`
+            : 'https://man-m681.onrender.com/donations/';
+            
+        const method = isEdit ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -2974,21 +2989,36 @@
         }
 
         const data = await response.json();
-        alert('Donation submitted successfully!');
         
-        closeDonationModal();
-        loadDonations();
+        // Refresh donations table
+        await loadDonations();
         
-        // Generate receipt for the new donation
+        if (isEdit) {
+            // Update existing receipt
+            const receiptElement = document.getElementById(`receipt-${donationId}`);
+            if (receiptElement) {
+                receiptElement.remove();
+            }
+        }
+        
+        // Generate receipt for the new/updated donation
         generateReceipt(data);
         
+        // Show success message
+        alert(`Donation ${isEdit ? 'updated' : 'submitted'} successfully!`);
+        closeDonationModal();
         document.getElementById('donationForm').reset();
+        
     } catch (error) {
         console.error('Error submitting donation:', error);
-        alert('Failed to submit donation. Please try again.');
+        alert(`Failed to ${isEdit ? 'update' : 'submit'} donation. Please try again.`);
+    } finally {
+        // Restore button state
+        const submitBtn = document.querySelector('#addDonationModal .modal-footer .file-manager-btn');
+        submitBtn.innerHTML = isEdit ? 'Update Donation' : 'Save Donation';
+        submitBtn.disabled = false;
     }
 }
-
 function generateReceipt(donation) {
     // Create receipt HTML
     const receiptHTML = `
@@ -3082,30 +3112,25 @@ async function loadDonations() {
         const data = await response.json();
         donationsTable.innerHTML = '';
         
-        data.donations.forEach(donation => {
-            // Extract payment method from the purpose field or use default
-            let paymentMethod = 'Not specified';
-            if (donation.purpose) {
-                // This assumes payment method is stored in the purpose field
-                // You might need to adjust this based on your actual data structure
-                if (donation.purpose.includes('Mobile Money')) paymentMethod = 'Mobile Money';
-                else if (donation.purpose.includes('Bank Transfer')) paymentMethod = 'Bank Transfer';
-                else if (donation.purpose.includes('PayPal')) paymentMethod = 'PayPal';
-                else if (donation.purpose.includes('Cash')) paymentMethod = 'Cash';
-            }
-            
+        // Sort donations by date (newest first)
+        data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Display only the most recent donations (e.g., last 10)
+        const recentDonations = data.slice(0, 10);
+        
+        recentDonations.forEach(donation => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${donation.date}</td>
+                <td>${new Date(donation.date).toLocaleDateString()}</td>
                 <td>${donation.donor_name}</td>
                 <td>UGX ${donation.amount.toLocaleString()}</td>
-                <td>${paymentMethod}</td>
+                <td>${formatPaymentMethod(donation.payment_method)}</td>
                 <td>${donation.project || 'General Fund'}</td>
                 <td><span class="status-badge completed">Completed</span></td>
                 <td>
-                    <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view-btn" onclick="viewDonation(${donation.id})"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit-btn" onclick="editDonation(${donation.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn" onclick="deleteDonation(${donation.id})"><i class="fas fa-trash"></i></button>
                 </td>
             `;
             donationsTable.appendChild(row);
@@ -3114,6 +3139,18 @@ async function loadDonations() {
         console.error('Error loading donations:', error);
         donationsTable.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Failed to load donations</td></tr>';
     }
+}
+
+// Helper function to format payment method
+function formatPaymentMethod(method) {
+    const methodMap = {
+        'mobile_money': 'Mobile Money',
+        'bank_transfer': 'Bank Transfer',
+        'paypal': 'PayPal',
+        'cash': 'Cash',
+        'other': 'Other'
+    };
+    return methodMap[method.toLowerCase()] || method;
 }
         
 // Add these functions for CRUD operations
@@ -4030,6 +4067,86 @@ document.getElementById('downloadHistoryBtn').addEventListener('click', function
         alert('No donor selected');
     }
 });
+        async function viewDonation(donationId) {
+    try {
+        const response = await fetch(`https://man-m681.onrender.com/donations/${donationId}`);
+        if (!response.ok) throw new Error('Failed to fetch donation');
+        
+        const donation = await response.json();
+        
+        // Display donation details in a modal or alert
+        alert(`Donation Details:\n
+               Donor: ${donation.donor_name}\n
+               Amount: UGX ${donation.amount.toLocaleString()}\n
+               Date: ${new Date(donation.date).toLocaleDateString()}\n
+               Payment Method: ${formatPaymentMethod(donation.payment_method)}\n
+               Project: ${donation.project || 'General Fund'}\n
+               Notes: ${donation.notes || 'None'}`);
+    } catch (error) {
+        console.error('Error viewing donation:', error);
+        alert('Failed to view donation details. Please try again.');
+    }
+}
+
+async function editDonation(donationId) {
+    try {
+        const response = await fetch(`https://man-m681.onrender.com/donations/${donationId}`);
+        if (!response.ok) throw new Error('Failed to fetch donation');
+        
+        const donation = await response.json();
+        
+        // Populate the donation form with existing data
+        document.getElementById('donorName').value = donation.donor_name;
+        document.getElementById('donationAmount').value = donation.amount;
+        document.getElementById('paymentMethod').value = donation.payment_method;
+        document.getElementById('donationDate').value = donation.date.split('T')[0]; // Format date for input
+        document.getElementById('donationProject').value = donation.project || '';
+        document.getElementById('donationNotes').value = donation.notes || '';
+        
+        // Change modal title and button text
+        document.querySelector('#addDonationModal .modal-header h3').textContent = 'Edit Donation';
+        document.querySelector('#addDonationModal .modal-footer .file-manager-btn').textContent = 'Update Donation';
+        
+        // Store donation ID for update
+        document.getElementById('addDonationModal').dataset.donationId = donationId;
+        
+        // Open modal
+        document.getElementById('addDonationModal').classList.add('show');
+    } catch (error) {
+        console.error('Error editing donation:', error);
+        alert('Failed to load donation for editing. Please try again.');
+    }
+}
+
+async function deleteDonation(donationId) {
+    if (!confirm('Are you sure you want to delete this donation record?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`https://man-m681.onrender.com/donations/${donationId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete donation');
+        }
+        
+        // Remove the donation row from the table
+        document.querySelector(`.donations-table tbody tr[data-donation-id="${donationId}"]`)?.remove();
+        
+        // Remove the corresponding receipt
+        document.getElementById(`receipt-${donationId}`)?.remove();
+        
+        alert('Donation deleted successfully');
+        
+        // Refresh the donations list
+        loadDonations();
+    } catch (error) {
+        console.error('Error deleting donation:', error);
+        alert('Failed to delete donation. Please try again.');
+    }
+}
    
         
     </script>
