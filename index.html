@@ -3896,8 +3896,7 @@ async function downloadDonationHistory(donorId) {
                         <th>Date</th>
                         <th>Amount (UGX)</th>
                         <th>Payment Method</th>
-                        <th>Project</th>
-                        <th>Status</th>
+                        <th>Project Name</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -3907,7 +3906,6 @@ async function downloadDonationHistory(donorId) {
                             <td class="amount-cell">${donation.amount.toLocaleString()}</td>
                             <td>${donation.payment_method || 'Not specified'}</td>
                             <td>${donation.project || 'General Fund'}</td>
-                            <td>${donation.status || 'Completed'}</td>
                         </tr>
                     `).join('')}
                 </tbody>
