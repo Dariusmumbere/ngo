@@ -3004,11 +3004,11 @@
             body: JSON.stringify({
                 donor_name: donorName,
                 amount: donationAmount,
-                payment_method: paymentMethod, // Ensure this is included
+                payment_method: paymentMethod,
                 date: donationDate,
                 project: donationProject,
                 notes: donationNotes,
-                status: "completed" // Add status if your backend expects it
+                status: "completed"
             })
         });
 
@@ -3020,7 +3020,7 @@
         alert('Donation submitted successfully!');
         
         closeDonationModal();
-        loadDonations();
+        loadDonations(); // Refresh the donations table
         
         document.getElementById('donationForm').reset();
     } catch (error) {
@@ -3028,7 +3028,6 @@
         alert('Failed to submit donation. Please try again.');
     }
 }
-
         
 // Add this function to load donations
 async function loadDonations() {
@@ -3045,30 +3044,19 @@ async function loadDonations() {
         const data = await response.json();
         donationsTable.innerHTML = '';
         
-        data.donations.forEach(donation => {
-            // Extract payment method from the purpose field or use default
-            let paymentMethod = 'Not specified';
-            if (donation.purpose) {
-                // This assumes payment method is stored in the purpose field
-                // You might need to adjust this based on your actual data structure
-                if (donation.purpose.includes('Mobile Money')) paymentMethod = 'Mobile Money';
-                else if (donation.purpose.includes('Bank Transfer')) paymentMethod = 'Bank Transfer';
-                else if (donation.purpose.includes('PayPal')) paymentMethod = 'PayPal';
-                else if (donation.purpose.includes('Cash')) paymentMethod = 'Cash';
-            }
-            
+        data.forEach(donation => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${donation.date}</td>
-                <td>${donation.donor_name}</td>
+                <td>${donor.donor_name}</td>
                 <td>UGX ${donation.amount.toLocaleString()}</td>
-                <td>${paymentMethod}</td>
+                <td>${donation.payment_method || 'Not specified'}</td>
                 <td>${donation.project || 'General Fund'}</td>
-                <td><span class="status-badge completed">Completed</span></td>
+                <td><span class="status-badge completed">${donation.status || 'Completed'}</span></td>
                 <td>
-                    <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view-btn" onclick="viewDonation(${donation.id})"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit-btn" onclick="editDonation(${donation.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn" onclick="deleteDonation(${donation.id})"><i class="fas fa-trash"></i></button>
                 </td>
             `;
             donationsTable.appendChild(row);
