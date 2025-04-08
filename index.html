@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGO Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #3498db;
@@ -3004,10 +3005,11 @@
             body: JSON.stringify({
                 donor_name: donorName,
                 amount: donationAmount,
-                payment_method: paymentMethod, 
+                payment_method: paymentMethod, // Ensure this is included
                 date: donationDate,
                 project: donationProject,
-                notes: donationNotes
+                notes: donationNotes,
+                status: "completed" // Add status if your backend expects it
             })
         });
 
@@ -3018,11 +3020,9 @@
         const data = await response.json();
         alert('Donation submitted successfully!');
         
-        // Close the modal and refresh the donations table
         closeDonationModal();
         loadDonations();
         
-        // Reset form
         document.getElementById('donationForm').reset();
     } catch (error) {
         console.error('Error submitting donation:', error);
@@ -3698,7 +3698,6 @@ document.getElementById('addDonationBtn').addEventListener('click', function() {
         // Function to load donation history for a donor
 async function loadDonationHistory(donorId) {
     try {
-        // Fetch donor details and donation history in parallel
         const [donorResponse, historyResponse] = await Promise.all([
             fetch(`https://man-m681.onrender.com/donors/${donorId}`),
             fetch(`https://man-m681.onrender.com/donors/${donorId}/donations`)
@@ -3712,9 +3711,12 @@ async function loadDonationHistory(donorId) {
         const history = await historyResponse.json();
 
         // Update donor details
-        document.getElementById('historyProjectName').textContent = history.donations[0]?.project || 'Various Projects';
-        document.getElementById('historyDonorCategory').textContent = donor.category || 'Regular Donor';
-        document.getElementById('historyDonorAddress').textContent = donor.address || 'Not specified';
+        document.getElementById('historyProjectName').textContent = 
+            history.donations[0]?.project || 'Various Projects';
+        document.getElementById('historyDonorCategory').textContent = 
+            donor.category || 'Regular Donor';
+        document.getElementById('historyDonorAddress').textContent = 
+            donor.address || 'Not specified';
         document.getElementById('historyDonorId').textContent = donor.id;
         
         // Calculate time period
@@ -3723,7 +3725,8 @@ async function loadDonationHistory(donorId) {
             dates.sort((a, b) => a - b);
             const firstDate = dates[0].toLocaleDateString();
             const lastDate = dates[dates.length - 1].toLocaleDateString();
-            document.getElementById('historyTimePeriod').textContent = `${firstDate} - ${lastDate}`;
+            document.getElementById('historyTimePeriod').textContent = 
+                `${firstDate} - ${lastDate}`;
         } else {
             document.getElementById('historyTimePeriod').textContent = 'No donations yet';
         }
@@ -3740,7 +3743,7 @@ async function loadDonationHistory(donorId) {
             row.innerHTML = `
                 <td>${new Date(donation.date).toLocaleDateString()}</td>
                 <td class="amount-cell">${donation.amount.toLocaleString()}</td>
-                <td>${donation.payment_method || 'Not specified'}</td>
+                <td>${formatPaymentMethod(donation.payment_method)}</td>
                 <td>${donation.project || 'General Fund'}</td>
                 <td>${donation.status || 'Completed'}</td>
             `;
@@ -3748,8 +3751,10 @@ async function loadDonationHistory(donorId) {
         });
 
         // Update totals
-        document.getElementById('historyTotalAmount').textContent = totalAmount.toLocaleString();
-        document.getElementById('historyTableTotal').textContent = `UGX ${totalAmount.toLocaleString()}`;
+        document.getElementById('historyTotalAmount').textContent = 
+            totalAmount.toLocaleString();
+        document.getElementById('historyTableTotal').textContent = 
+            `UGX ${totalAmount.toLocaleString()}`;
         
         return { donor, history };
     } catch (error) {
@@ -3758,160 +3763,186 @@ async function loadDonationHistory(donorId) {
     }
 }
 
+// Helper function to format payment method
+function formatPaymentMethod(method) {
+    if (!method) return 'Not specified';
+    
+    const methodMap = {
+        'mobile_money': 'Mobile Money',
+        'bank_transfer': 'Bank Transfer',
+        'paypal': 'PayPal',
+        'cash': 'Cash',
+        'other': 'Other'
+    };
+    
+    return methodMap[method.toLowerCase()] || method;
+}
+
 // Function to generate and download donation history PDF
 async function downloadDonationHistory(donorId) {
     try {
-        // Show loading state
         const btn = document.getElementById('downloadHistoryBtn');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
         btn.disabled = true;
 
-        // Get the current donor data
+        // Load the latest data
         const { donor, history } = await loadDonationHistory(donorId);
         
-        // Create a printable version of the donation history
-        const printContent = `
-            <html>
-                <head>
-                    <title>Donation History - ${donor.name}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        h1 { color: #3498db; text-align: center; }
-                        .donor-info { margin-bottom: 20px; }
-                        .info-box { 
-                            display: inline-block; 
-                            margin-right: 15px; 
-                            margin-bottom: 10px;
-                            padding: 10px;
-                            border-left: 3px solid #3498db;
-                            background: #f9f9f9;
-                        }
-                        .info-label { font-weight: bold; color: #555; font-size: 0.9em; }
-                        .info-value { margin-top: 5px; }
-                        table { 
-                            width: 100%; 
-                            border-collapse: collapse;
-                            margin-top: 20px;
-                        }
-                        th { 
-                            background-color: #f8f9fa; 
-                            text-align: left; 
-                            padding: 10px;
-                            color: #555;
-                        }
-                        td { 
-                            padding: 10px; 
-                            border-bottom: 1px solid #f0f0f0; 
-                        }
-                        .total-row { 
-                            font-weight: bold; 
-                            background-color: #f1f8fe; 
-                        }
-                        .amount-cell { text-align: right; font-family: monospace; }
-                        .footer { 
-                            margin-top: 30px; 
-                            text-align: right; 
-                            font-size: 0.8em;
-                            color: #777;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Donation History</h1>
-                    
-                    <div class="donor-info">
-                        <div class="info-box">
-                            <div class="info-label">Charity/Organization Name</div>
-                            <div class="info-value">Rwenzori Community Development Network</div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">Donor Name</div>
-                            <div class="info-value">${donor.name}</div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">Project Name</div>
-                            <div class="info-value">${history.donations[0]?.project || 'Various Projects'}</div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">Donor Category</div>
-                            <div class="info-value">${donor.category || 'Regular Donor'}</div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">Donor Address</div>
-                            <div class="info-value">${donor.address || 'Not specified'}</div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">Donor ID</div>
-                            <div class="info-value">${donor.id}</div>
-                        </div>
-                        <div class="info-box">
-                            <div class="info-label">Time Period</div>
-                            <div class="info-value">${document.getElementById('historyTimePeriod').textContent}</div>
-                        </div>
+        // Create a printable element
+        const element = document.createElement('div');
+        element.innerHTML = `
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                h1 { color: #3498db; text-align: center; margin-bottom: 20px; }
+                .donor-info { margin-bottom: 30px; }
+                .info-grid { 
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                    gap: 15px;
+                    margin-bottom: 20px;
+                }
+                .info-box { 
+                    padding: 12px 15px;
+                    border-left: 3px solid #3498db;
+                    background: #f9f9f9;
+                    border-radius: 4px;
+                }
+                .info-label { 
+                    font-weight: bold; 
+                    color: #555; 
+                    font-size: 0.9em;
+                    margin-bottom: 5px;
+                }
+                .info-value { font-size: 1em; }
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                th { 
+                    background-color: #f8f9fa; 
+                    text-align: left; 
+                    padding: 10px;
+                    color: #555;
+                    border-bottom: 2px solid #eee;
+                }
+                td { 
+                    padding: 10px; 
+                    border-bottom: 1px solid #f0f0f0; 
+                }
+                .total-row { 
+                    font-weight: bold; 
+                    background-color: #f1f8fe; 
+                }
+                .amount-cell { text-align: right; }
+                .footer { 
+                    margin-top: 30px; 
+                    text-align: right; 
+                    font-size: 0.8em;
+                    color: #777;
+                }
+                .logo-header {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+                .logo-header img {
+                    height: 50px;
+                    margin-right: 15px;
+                }
+            </style>
+            <div class="logo-header">
+                <img src="logo.jpg" alt="Rwenzori Community Development Network">
+                <div>
+                    <h2>Rwenzori Community Development Network</h2>
+                    <p>Donation History Report</p>
+                </div>
+            </div>
+            
+            <div class="donor-info">
+                <h3>Donor Information</h3>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="info-label">Donor Name</div>
+                        <div class="info-value">${donor.name}</div>
                     </div>
-                    
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Amount (UGX)</th>
-                                <th>Payment Method</th>
-                                <th>Project</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${history.donations.map(donation => `
-                                <tr>
-                                    <td>${new Date(donation.date).toLocaleDateString()}</td>
-                                    <td class="amount-cell">${donation.amount.toLocaleString()}</td>
-                                    <td>${donation.payment_method || 'Not specified'}</td>
-                                    <td>${donation.project || 'General Fund'}</td>
-                                    <td>${donation.status || 'Completed'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                        <tfoot>
-                            <tr class="total-row">
-                                <td colspan="4">Total</td>
-                                <td class="amount-cell">UGX ${history.donations.reduce((sum, d) => sum + d.amount, 0).toLocaleString()}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    
-                    <div class="footer">
-                        Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
+                    <div class="info-box">
+                        <div class="info-label">Donor ID</div>
+                        <div class="info-value">${donor.id}</div>
                     </div>
-                    <center><h2>Thank you so much for your continued support</h2></center>
-                </body>
-            </html>
+                    <div class="info-box">
+                        <div class="info-label">Donor Category</div>
+                        <div class="info-value">${donor.category || 'Not specified'}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Address</div>
+                        <div class="info-value">${donor.address || 'Not specified'}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Time Period</div>
+                        <div class="info-value">${document.getElementById('historyTimePeriod').textContent}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Total Donations</div>
+                        <div class="info-value">UGX ${history.donations.reduce((sum, d) => sum + d.amount, 0).toLocaleString()}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Donation History</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount (UGX)</th>
+                        <th>Payment Method</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${history.donations.map(donation => `
+                        <tr>
+                            <td>${new Date(donation.date).toLocaleDateString()}</td>
+                            <td class="amount-cell">${donation.amount.toLocaleString()}</td>
+                            <td>${donation.payment_method || 'Not specified'}</td>
+                            <td>${donation.project || 'General Fund'}</td>
+                            <td>${donation.status || 'Completed'}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4">Total</td>
+                        <td class="amount-cell">UGX ${history.donations.reduce((sum, d) => sum + d.amount, 0).toLocaleString()}</td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <div class="footer">
+                Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
+            </div>
         `;
 
-        // Create a blob with the HTML content
-        const blob = new Blob([printContent], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        
-        // Create a temporary link to trigger the download
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Donation_History_${donor.name.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.html`;
-        document.body.appendChild(a);
-        a.click();
-        
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
+        // PDF generation options
+        const opt = {
+            margin: 10,
+            filename: `Donation_History_${donor.name.replace(/\s+/g, '_')}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Generate PDF
+        await html2pdf().set(opt).from(element).save();
 
     } catch (error) {
-        console.error('Error generating donation history:', error);
-        alert('Failed to generate donation history. Please try again.');
+        console.error('Error generating PDF:', error);
+        alert('Failed to generate PDF. Please try again.');
     } finally {
-        // Restore button state
         const btn = document.getElementById('downloadHistoryBtn');
-        btn.innerHTML = '<i class="fas fa-download"></i> Download Donation History';
+        btn.innerHTML = '<i class="fas fa-download"></i> Download PDF';
         btn.disabled = false;
     }
 }
