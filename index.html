@@ -1421,6 +1421,157 @@
 .receipt-message p {
     margin-bottom: 10px;
 }
+        /* Add to your existing CSS */
+.receipt-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.receipt-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+}
+
+.receipt-org-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.receipt-logo {
+    height: 60px;
+    margin-bottom: 10px;
+}
+
+.receipt-title {
+    text-align: right;
+    min-width: 250px;
+}
+
+.receipt-title h3 {
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.receipt-title p {
+    margin: 3px 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.receipt-body {
+    padding: 20px;
+}
+
+.receipt-donor-info {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #ddd;
+}
+
+.receipt-row {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.receipt-label {
+    font-weight: 600;
+    color: #555;
+    min-width: 150px;
+}
+
+.receipt-value {
+    flex: 1;
+}
+
+.receipt-message {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    line-height: 1.6;
+}
+
+.receipt-message p {
+    margin-bottom: 10px;
+}
+
+.receipt-contact-info {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.receipt-contact-info p {
+    margin: 5px 0;
+}
+
+.receipt-footer {
+    margin-top: 30px;
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+.receipt-signature {
+    margin-top: 50px;
+    text-align: right;
+}
+
+.receipt-signature p:first-child {
+    margin-bottom: 5px;
+}
+
+.receipt-signature p:last-child {
+    font-size: 0.9rem;
+}
+
+.receipt-actions {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .receipt-header {
+        flex-direction: column;
+    }
+    
+    .receipt-title {
+        text-align: left;
+        margin-top: 15px;
+    }
+    
+    .receipt-row {
+        flex-direction: column;
+    }
+    
+    .receipt-label {
+        margin-bottom: 3px;
+    }
+}
+        .no-receipts {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-style: italic;
+}
+
+.error {
+    color: #e74c3c;
+    text-align: center;
+    padding: 20px;
+}
     </style>
 </head>
 <body>
@@ -3021,45 +3172,80 @@
 }
 
 function generateReceipt(donation) {
-    // Create receipt HTML
+    // Create receipt HTML with the enhanced format
     const receiptHTML = `
         <div class="receipt-card" id="receipt-${donation.id}">
             <div class="receipt-header">
-                <h3>Donation Receipt</h3>
-                <span class="receipt-date">${donation.date}</span>
+                <div class="receipt-org-info">
+                    <img src="logo.jpg" alt="RCDNET Logo" class="receipt-logo">
+                    <h2>RWENZORI COMMUNITY DEVELOPMENT NETWORK (RCDNET)</h2>
+                </div>
+                <div class="receipt-title">
+                    <h3>DONATION RECEIPT</h3>
+                    <p>Receipt issued at RCDNET</p>
+                    <p>P.O.Box 558, Kasese, Western Uganda</p>
+                    <p>Tax ID No. 1027222682</p>
+                    <p>Registration No: 808593</p>
+                    <p>Community Registration No. CE/CBS/008</p>
+                </div>
             </div>
+            
             <div class="receipt-body">
-                <div class="receipt-row">
-                    <span class="receipt-label">Donor:</span>
-                    <span class="receipt-value">${donation.donor_name}</span>
+                <div class="receipt-donor-info">
+                    <div class="receipt-row">
+                        <span class="receipt-label">To:</span>
+                        <span class="receipt-value">${donation.donor_name}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Date:</span>
+                        <span class="receipt-value">${new Date(donation.date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Amount:</span>
+                        <span class="receipt-value">UGX ${donation.amount.toLocaleString()}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Payment Method:</span>
+                        <span class="receipt-value">${donation.payment_method}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Program Supported:</span>
+                        <span class="receipt-value">${donation.project || 'General Fund'}</span>
+                    </div>
                 </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Amount:</span>
-                    <span class="receipt-value">UGX ${donation.amount.toLocaleString()}</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Payment Method:</span>
-                    <span class="receipt-value">${donation.payment_method}</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Purpose:</span>
-                    <span class="receipt-value">${donation.project || 'General Donation'}</span>
-                </div>
+                
                 <div class="receipt-message">
-                    <p>Dear ${donation.donor_name}, RCDNET confirms receipt of your donation worth UGX ${donation.amount.toLocaleString()} on ${new Date(donation.date).toLocaleDateString()} at ${new Date().toLocaleTimeString()}. Thank you so much for caring about ${donation.project || 'our cause'}. We are deeply grateful for your generous gift.</p>
-                    <p>For enquiries call +256 704240309 or email to info@rwenzori-development.org</p>
-                    <p>Website: www.rwenzori-development.org</p>
-                    <p>YouTube: https://youtube.com/@rwenzoricommunitydevelopme7810?si=zYLqI2Iajh0iQuAq</p>
-                    <p>Instagram: https://www.instagram.com/rwenzoridevelopment_rcdnet</p>
-                    <p>Facebook: https://www.facebook.com/profile.php?id=100066779636297</p>
+                    <p>Dear ${donation.donor_name},</p>
+                    <p>RCDNET confirms your donation of UGX ${donation.amount.toLocaleString()} on ${new Date(donation.date).toLocaleDateString()} at ${new Date().toLocaleTimeString()}. Thank you so much for caring about ${donation.project || 'our cause'}. We are deeply grateful for your generous gift.</p>
+                    
+                    <div class="receipt-contact-info">
+                        <p>For enquiries call +256 704240309 or email to info@rwenzori-development.org</p>
+                        <p>Website: www.rwenzori-development.org</p>
+                        <p>YouTube: https://youtube.com/@rwenzoricommunitydevelopme7810?si=zYLqI2Iajh0iQuAq</p>
+                        <p>Instagram: https://www.instagram.com/rwenzoridevelopment_rcdnet</p>
+                        <p>Facebook: https://www.facebook.com/profile.php?id=100066779636297</p>
+                    </div>
+                </div>
+                
+                <div class="receipt-footer">
+                    <p>This receipt serves as official confirmation of your donation to RCDNET.</p>
+                    <p>Thank you for your support!</p>
+                    <div class="receipt-signature">
+                        <p>_________________________</p>
+                        <p>Authorized Signature</p>
+                    </div>
                 </div>
             </div>
+            
             <div class="receipt-actions">
                 <button class="file-manager-btn" onclick="downloadReceipt(${donation.id})">
                     <i class="fas fa-download"></i> Download PDF
                 </button>
                 <button class="file-manager-btn secondary" onclick="emailReceipt(${donation.id})">
                     <i class="fas fa-envelope"></i> Email Receipt
+                </button>
+                <button class="file-manager-btn secondary" onclick="printReceipt(${donation.id})">
+                    <i class="fas fa-print"></i> Print Receipt
                 </button>
             </div>
         </div>
@@ -3079,19 +3265,93 @@ function downloadReceipt(donationId) {
         return;
     }
 
+    // Create a clone of the receipt element to avoid modifying the original
+    const receiptClone = receiptElement.cloneNode(true);
+    
+    // Remove the action buttons from the clone
+    const actions = receiptClone.querySelector('.receipt-actions');
+    if (actions) actions.remove();
+
     // Options for PDF generation
     const opt = {
         margin: 10,
-        filename: `Donation_Receipt_${donationId}.pdf`,
+        filename: `RCDNET_Donation_Receipt_${donationId}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        html2canvas: { 
+            scale: 2,
+            logging: true,
+            useCORS: true,
+            allowTaint: true
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait',
+            hotfixes: ["px_scaling"] 
+        }
     };
 
     // Generate PDF
-    html2pdf().set(opt).from(receiptElement).save();
+    html2pdf().set(opt).from(receiptClone).save();
+}
+function printReceipt(donationId) {
+    const receiptElement = document.getElementById(`receipt-${donationId}`);
+    if (!receiptElement) {
+        alert('Receipt not found');
+        return;
+    }
+
+    // Create a clone of the receipt element
+    const receiptClone = receiptElement.cloneNode(true);
+    
+    // Remove the action buttons from the clone
+    const actions = receiptClone.querySelector('.receipt-actions');
+    if (actions) actions.remove();
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>RCDNET Donation Receipt</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                .receipt-card { max-width: 800px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
+                .receipt-header { display: flex; justify-content: space-between; padding: 20px; background-color: #f9f9f9; border-bottom: 1px solid #eee; }
+                .receipt-org-info { flex: 1; }
+                .receipt-logo { height: 80px; margin-bottom: 10px; }
+                .receipt-title { text-align: right; }
+                .receipt-body { padding: 20px; }
+                .receipt-row { display: flex; margin-bottom: 10px; }
+                .receipt-label { font-weight: bold; min-width: 150px; }
+                .receipt-message { margin-top: 30px; padding: 15px; background-color: #f9f9f9; border-radius: 5px; }
+                .receipt-contact-info { margin-top: 20px; font-size: 0.9em; }
+                .receipt-footer { margin-top: 30px; text-align: center; }
+                .receipt-signature { margin-top: 50px; text-align: right; }
+                @media print {
+                    body { padding: 0; }
+                    .receipt-card { border: none; box-shadow: none; }
+                }
+            </style>
+        </head>
+        <body>
+            ${receiptClone.outerHTML}
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                        window.close();
+                    }, 200);
+                };
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
 }
 
+        
 function emailReceipt(donationId) {
     // This would be implemented with your email service
     alert(`Email receipt for donation ${donationId} would be sent here`);
@@ -3225,13 +3485,16 @@ async function loadReceipts() {
         const receiptsGrid = document.getElementById('receiptsGrid');
         receiptsGrid.innerHTML = '';
         
+        // Sort donations by date (newest first)
+        donations.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
         // Generate receipts for all donations
         donations.forEach(donation => {
             generateReceipt(donation);
         });
         
         if (donations.length === 0) {
-            receiptsGrid.innerHTML = '<p>No receipts available. Add a donation to generate receipts.</p>';
+            receiptsGrid.innerHTML = '<p class="no-receipts">No receipts available. Add a donation to generate receipts.</p>';
         }
     } catch (error) {
         console.error('Error loading receipts:', error);
@@ -3239,7 +3502,6 @@ async function loadReceipts() {
             '<p class="error">Failed to load receipts. Please try again.</p>';
     }
 }
-
 
 // Call this function when the donations content is shown
 // Update your showDonationsContent function
