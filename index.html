@@ -3272,7 +3272,7 @@ function downloadReceipt(donationId) {
     // Options for PDF generation
     const opt = {
         margin: [10, 10, 10, 10], // [top, left, bottom, right]
-        filename: `RCDNET_Donation_Receipt_${donationId}.pdf`,
+        filename: `RCDNET_Donation_Receipt_${donation.donor_name}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
             scale: 2, // Increase scale for better quality
