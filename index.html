@@ -4405,6 +4405,16 @@ function closeModal(modalId) {
         modal.remove();
     }
 }
+function emailReceipt(donationId) {
+    const recipient = "dariusmumbere@gmail.com"; // You can make this dynamic
+    const subject = encodeURIComponent("Receipt for Donation");
+    const body = encodeURIComponent(
+      `Hello,`
+    );
+
+    const mailtoLink = `mailto:${recipient}?subject=${subject}&body=${body}`;
+    window.location.href = mailtoLink;
+  }
 
    
         
