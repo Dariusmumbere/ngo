@@ -3181,7 +3181,7 @@ function generateReceipt(donation) {
                     <h2>RWENZORI COMMUNITY DEVELOPMENT NETWORK (RCDNET)</h2>
                 </div>
                 <div class="receipt-title">
-                    <h3>DONATION CONFIRMATION/RECEIPT</h3>
+                    <h3>DONATION CONFIRMATION</h3>
                     <p>Receipt issued at RCDNET</p>
                     <p>P.O.Box 558, Kasese, Western Uganda</p>
                     <p>Tax ID No. 1027222682</p>
@@ -3210,13 +3210,13 @@ function generateReceipt(donation) {
                     </div>
                     <div class="receipt-row">
                         <span class="receipt-label">Program Supported:</span>
-                        <span class="receipt-value">${donation.project || 'General Fund'}</span>
+                        <span class="receipt-value">${donation.project.toLocaleString()}</span>
                     </div>
                 </div>
                 
                 <div class="receipt-message">
                     <p>Dear ${donation.donor_name},</p>
-                    <p>RCDNET confirms your donation of UGX ${donation.amount.toLocaleString()} on ${new Date(donation.date).toLocaleDateString()} at ${new Date().toLocaleTimeString()}. Thank you so much for caring about ${donation.project || 'our cause'}. We are deeply grateful for your generous gift.</p>
+                    <p>RCDNET confirms your donation of UGX ${donation.amount.toLocaleString()} on ${new Date(donation.date).toLocaleDateString()} at ${new Date().toLocaleTimeString()}. Thank you so much for caring about ${donation.project.toLocaleString()}. We are deeply grateful for your generous gift.</p>
                     
                     <div class="receipt-contact-info">
                         <p>For enquiries call +256 704240309 or email to info@rwenzori-development.org</p>
@@ -3271,14 +3271,15 @@ function downloadReceipt(donationId) {
 
     // Options for PDF generation
     const opt = {
-        margin: 10,
+        margin: [10, 10, 10, 10], // [top, left, bottom, right]
         filename: `RCDNET_Donation_Receipt_${donationId}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-            scale: 2,
+            scale: 2, // Increase scale for better quality
             logging: true,
             useCORS: true,
-            allowTaint: true
+            scrollY: 0, // Important to start from top
+            windowHeight: receiptClone.scrollHeight // Set window height to content height
         },
         jsPDF: { 
             unit: 'mm', 
