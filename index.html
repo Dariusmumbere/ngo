@@ -4410,10 +4410,10 @@ function emailReceipt(donationId) {
   const recipient = "dariusmumbere@gmail.com.com";
   const subject = encodeURIComponent("Donation acknowledgement");
   const body = encodeURIComponent(
-    `Dear ${donation.donor_name}, we are thrilled to receive your generous support. Your donation has been well received. Kindly find the donation confirmation attached here in.`
-    `With kind regards.`
-    `Mrs. Muhindo Justine.`
-    `Board treasurer`
+    `Dear ${donation.donor_name}, we are thrilled to receive your generous support. Your donation has been well received. Kindly find the donation confirmation attached here in.
+     With kind regards.
+     Mrs. Muhindo Justine.
+     Board treasurer`
   );
 
   const gmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${subject}&body=${body}`;
