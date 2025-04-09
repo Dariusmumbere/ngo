@@ -3019,6 +3019,7 @@
         submitBtn.disabled = false;
     }
 }
+
 function generateReceipt(donation) {
     // Create receipt HTML
     const receiptHTML = `
@@ -3120,6 +3121,7 @@ async function loadDonations() {
         
         recentDonations.forEach(donation => {
             const row = document.createElement('tr');
+            row.setAttribute('data-donation-id', donation.id);
             row.innerHTML = `
                 <td>${new Date(donation.date).toLocaleDateString()}</td>
                 <td>${donation.donor_name}</td>
@@ -4074,22 +4076,73 @@ document.getElementById('downloadHistoryBtn').addEventListener('click', function
         
         const donation = await response.json();
         
-        // Display donation details in a modal or alert
-        alert(`Donation Details:\n
-               Donor: ${donation.donor_name}\n
-               Amount: UGX ${donation.amount.toLocaleString()}\n
-               Date: ${new Date(donation.date).toLocaleDateString()}\n
-               Payment Method: ${formatPaymentMethod(donation.payment_method)}\n
-               Project: ${donation.project || 'General Fund'}\n
-               Notes: ${donation.notes || 'None'}`);
+        // Create a modal to display donation details
+        const modalHTML = `
+            <div class="donation-modal show" id="viewDonationModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Donation Details</h3>
+                        <button class="close-btn" onclick="closeModal('viewDonationModal')">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="donor-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Donor Name:</span>
+                                <span class="stat-value">${donation.donor_name}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Amount:</span>
+                                <span class="stat-value">UGX ${donation.amount.toLocaleString()}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Date:</span>
+                                <span class="stat-value">${new Date(donation.date).toLocaleDateString()}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Payment Method:</span>
+                                <span class="stat-value">${formatPaymentMethod(donation.payment_method)}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Project:</span>
+                                <span class="stat-value">${donation.project || 'General Fund'}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Status:</span>
+                                <span class="stat-value">${donation.status}</span>
+                            </div>
+                            ${donation.notes ? `
+                            <div class="stat-item">
+                                <span class="stat-label">Notes:</span>
+                                <span class="stat-value">${donation.notes}</span>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="file-manager-btn" onclick="editDonation(${donation.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="file-manager-btn secondary" onclick="closeModal('viewDonationModal')">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to DOM
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
     } catch (error) {
         console.error('Error viewing donation:', error);
         alert('Failed to view donation details. Please try again.');
     }
 }
 
+
 async function editDonation(donationId) {
     try {
+        // Close any open modals
+        closeModal('viewDonationModal');
+        
         const response = await fetch(`https://man-m681.onrender.com/donations/${donationId}`);
         if (!response.ok) throw new Error('Failed to fetch donation');
         
@@ -4147,6 +4200,15 @@ async function deleteDonation(donationId) {
         alert('Failed to delete donation. Please try again.');
     }
 }
+
+// Helper function to close modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.remove();
+    }
+}
+
    
         
     </script>
