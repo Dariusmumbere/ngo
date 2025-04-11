@@ -1697,6 +1697,168 @@
     background-color: #f0f0f0;
     color: #666;
 }
+        /* Add this to your existing CSS */
+.projects-table, .activities-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.projects-table th, 
+.projects-table td,
+.activities-table th,
+.activities-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.projects-table th,
+.activities-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+}
+
+.projects-table tr:last-child td,
+.activities-table tr:last-child td {
+    border-bottom: none;
+}
+
+.projects-table tr:hover,
+.activities-table tr:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Status badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.status-badge.active {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #27ae60;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.status-badge.planned {
+    background-color: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+    border: 1px solid rgba(243, 156, 18, 0.2);
+}
+
+.status-badge.completed {
+    background-color: rgba(149, 165, 166, 0.1);
+    color: #7f8c8d;
+    border: 1px solid rgba(149, 165, 166, 0.2);
+}
+
+.status-badge.in_progress {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: #2980b9;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+/* Action buttons */
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin: 0 2px;
+    color: #95a5a6;
+    transition: all 0.2s;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--primary-color);
+}
+
+.action-btn.delete-btn:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--accent-color);
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .projects-table, 
+    .activities-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .projects-table th,
+    .projects-table td,
+    .activities-table th,
+    .activities-table td {
+        padding: 10px 12px;
+    }
+}
+
+/* Modern striped rows */
+.projects-table tbody tr:nth-child(even),
+.activities-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.projects-table tbody tr:nth-child(even):hover,
+.activities-table tbody tr:nth-child(even):hover {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Add subtle animation to row hover */
+.projects-table tbody tr,
+.activities-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+/* Modern scrollbar for table container */
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
     </style>
 </head>
 <body>
