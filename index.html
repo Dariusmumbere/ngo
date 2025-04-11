@@ -4710,6 +4710,15 @@ function selectRole(role) {
         document.getElementById('roleSelection').style.display = 'none';
         document.getElementById('directorDashboard').style.display = 'block';
         loadProjects();
+        
+        // Add event listener for create project button
+        document.getElementById('createProjectBtn').addEventListener('click', function() {
+            document.getElementById('projectForm').reset();
+            document.getElementById('createProjectModal').classList.add('show');
+        });
+        
+        // Add event listener for submit project button
+        document.getElementById('submitProjectBtn').addEventListener('click', createProject);
     } else {
         alert(`${role.replace('_', ' ').toUpperCase()} functionality will be implemented later`);
     }
