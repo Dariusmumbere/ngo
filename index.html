@@ -5045,23 +5045,24 @@ async function loadActivities() {
         
         const data = await response.json();
         
-        // Check if data is in expected format
-        if (!data.activities || !Array.isArray(data.activities)) {
-            throw new Error('Invalid data format received from server');
-        }
+        // Debug: Log the received data to see its structure
+        console.log('Received activities data:', data);
+        
+        // Handle both array response and object with activities property
+        const activities = Array.isArray(data) ? data : (data.activities || []);
         
         tableBody.innerHTML = '';
         
-        if (data.activities.length === 0) {
+        if (activities.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No activities found</td></tr>';
             return;
         }
         
-        data.activities.forEach(activity => {
+        activities.forEach(activity => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${activity.name || 'N/A'}</td>
-                <td>${activity.project_name || 'N/A'}</td>
+                <td>${activity.project_name || activity.project_id || 'N/A'}</td>
                 <td>${activity.start_date || 'N/A'}</td>
                 <td>${activity.end_date || 'N/A'}</td>
                 <td>UGX ${activity.budget ? activity.budget.toLocaleString() : '0'}</td>
@@ -5082,8 +5083,6 @@ async function loadActivities() {
             `;
             tableBody.appendChild(row);
         });
-        
-        updateTableInfo(); // Update the showing/total counts
         
     } catch (error) {
         console.error('Error loading activities:', error);
