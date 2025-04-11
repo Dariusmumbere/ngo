@@ -2898,13 +2898,15 @@
     donationsContent.style.display = 'none';
     document.getElementById('implementProjectContent').style.display = 'block';
     
-    // Show role selection by default
+    // Show role selection by default and hide all dashboards
     document.getElementById('roleSelection').style.display = 'block';
     document.getElementById('directorDashboard').style.display = 'none';
+    document.getElementById('programOfficerDashboard').style.display = 'none';
+    document.getElementById('humanResourceDashboard').style.display = 'none';
+    document.getElementById('financeDashboard').style.display = 'none';
     
     setActiveNavItem(this);
 });
-
     
 
     // Initialize with saved path or empty
