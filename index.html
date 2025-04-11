@@ -1992,6 +1992,17 @@
             color: #7f8c8d;
             font-style: italic;
         }
+        .project-tabs .tab-btn.active {
+    /* active tab styles */
+}
+
+#implementProjectContent .tab-content {
+    display: none;
+}
+
+#implementProjectContent .tab-content.active {
+    display: block;
+}
     </style>
 </head>
 <body>
@@ -5613,15 +5624,31 @@ async function deleteFundAllocation(allocationId) {
 }
         document.addEventListener('DOMContentLoaded', function() {
             // Get the implement project link from the sidebar
-            const implementProjectLink = document.querySelector('.sidebar-menu li a[href="#"] span:contains("Implement Project")').closest('a');
+            const implementProjectLink = document.getElementById('implementProjectLink');
             
-            // Add click event to show implement project content
-            implementProjectLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                hideAllContent();
-                document.getElementById('implementProjectContent').style.display = 'block';
-                setActiveNavItem(implementProjectLink);
-            });
+           if (implementProjectLink) {
+        implementProjectLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Hide all other content sections
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('fileManagerContent').style.display = 'none';
+            document.getElementById('donationsContent').style.display = 'none';
+            
+            // Show the implement project content
+            document.getElementById('implementProjectContent').style.display = 'block';
+            
+            // Set the first tab as active
+            const firstTabBtn = document.querySelector('.project-tabs .tab-btn');
+            if (firstTabBtn) {
+                firstTabBtn.classList.add('active');
+                document.getElementById('createProject').classList.add('active');
+            }
+            
+            // Load projects when showing this content
+            loadProjects();
+        });
+    }
 
             // Role selection functionality
             document.getElementById('directorRole').addEventListener('click', function() {
@@ -5913,6 +5940,25 @@ async function deleteFundAllocation(allocationId) {
             document.getElementById('donationsContent').style.display = 'none';
             document.getElementById('implementProjectContent').style.display = 'none';
         }
+      document.getElementById('implementProjectLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Hide all other content sections
+    document.getElementById('dashboardContent').style.display = 'none';
+    document.getElementById('fileManagerContent').style.display = 'none';
+    document.getElementById('donationsContent').style.display = 'none';
+    
+    // Show the implement project content
+    document.getElementById('implementProjectContent').style.display = 'block';
+    
+    // Set the first tab as active
+    const firstTabBtn = document.querySelector('.project-tabs .tab-btn');
+    firstTabBtn.classList.add('active');
+    document.getElementById('createProject').classList.add('active');
+    
+    // Load projects when showing this content
+    loadProjects();
+});  
 
    
         
