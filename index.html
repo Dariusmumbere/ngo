@@ -5290,7 +5290,16 @@ document.getElementById('createProjectBtn').addEventListener('click', function()
     document.getElementById('projectForm').reset();
     openModal('createProjectModal');
 });
-        // Implement Project Navigation
+function updateTableInfo() {
+    const totalRows = document.querySelectorAll('#activitiesTableBody tr').length;
+    const visibleRows = document.querySelectorAll('#activitiesTableBody tr:not([style*="display: none"])').length;
+    
+    document.getElementById('showingCount').textContent = visibleRows;
+    document.getElementById('totalCount').textContent = totalRows;
+}
+
+// Initialize table info
+updateTableInfo();
 
    
         
