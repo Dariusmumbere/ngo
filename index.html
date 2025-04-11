@@ -2646,6 +2646,20 @@
     const uploadProgress = document.getElementById('uploadProgress');
     const progressBarFill = document.getElementById('progressBarFill');
     const donationsContent = document.getElementById('donationsContent');
+            document.getElementById('implementProjectLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    dashboardContent.style.display = 'none';
+    fileManagerContent.style.display = 'none';
+    donationsContent.style.display = 'none';
+    document.getElementById('implementProjectContent').style.display = 'block';
+    
+    // Show role selection by default
+    document.getElementById('roleSelection').style.display = 'block';
+    document.getElementById('directorDashboard').style.display = 'none';
+    
+    setActiveNavItem(this);
+});
+
     
 
     // Initialize with saved path or empty
@@ -4820,19 +4834,6 @@ document.getElementById('createProjectBtn').addEventListener('click', function()
     openModal('createProjectModal');
 });
         // Implement Project Navigation
-document.getElementById('implementProjectLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    dashboardContent.style.display = 'none';
-    fileManagerContent.style.display = 'none';
-    donationsContent.style.display = 'none';
-    document.getElementById('implementProjectContent').style.display = 'block';
-    
-    // Show role selection by default
-    document.getElementById('roleSelection').style.display = 'block';
-    document.getElementById('directorDashboard').style.display = 'none';
-    
-    setActiveNavItem(this);
-});
 
    
         
