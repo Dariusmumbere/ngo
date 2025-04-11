@@ -2502,8 +2502,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Add this inside your main-content div, after the existing content -->
-<div id="implementProjectContent" style="display: none;">
+            <div id="implementProjectContent" style="display: none;">
     <h1 class="page-title">
         <i class="fas fa-project-diagram"></i>
         Implement Project
@@ -2578,6 +2577,38 @@
         </div>
     </div>
 
+    <!-- Program Officer Dashboard (initially hidden) -->
+    <div class="program-officer-dashboard" id="programOfficerDashboard" style="display: none;">
+        <div class="section-header">
+            <h2 class="section-title">Program Officer Dashboard</h2>
+            <button class="file-manager-btn" id="createActivityBtn">
+                <i class="fas fa-plus"></i> Create New Activity
+            </button>
+        </div>
+
+        <div class="activities-list">
+            <h3>Current Activities</h3>
+            <div class="table-responsive">
+                <table class="activities-table">
+                    <thead>
+                        <tr>
+                            <th>Activity Name</th>
+                            <th>Project</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activitiesTableBody">
+                        <!-- Activities will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- Create Project Modal -->
     <div class="project-modal" id="createProjectModal">
         <div class="modal-content">
@@ -2620,6 +2651,58 @@
             <div class="modal-footer">
                 <button class="file-manager-btn secondary" onclick="closeModal('createProjectModal')">Cancel</button>
                 <button class="file-manager-btn" onclick="createProject()">Create Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Activity Modal -->
+    <div class="project-modal" id="createActivityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Activity</h3>
+                <button class="close-btn" onclick="closeModal('createActivityModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="activityForm">
+                    <div class="form-group">
+                        <label for="activityName">Activity Name*</label>
+                        <input type="text" id="activityName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityProject">Project*</label>
+                        <select id="activityProject" required>
+                            <!-- Projects will be loaded here -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityDescription">Description</label>
+                        <textarea id="activityDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityStartDate">Start Date*</label>
+                        <input type="date" id="activityStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityEndDate">End Date*</label>
+                        <input type="date" id="activityEndDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityBudget">Budget (UGX)*</label>
+                        <input type="number" id="activityBudget" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityStatus">Status</label>
+                        <select id="activityStatus">
+                            <option value="planned">Planned</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" onclick="closeModal('createActivityModal')">Cancel</button>
+                <button class="file-manager-btn" onclick="createActivity()">Create Activity</button>
             </div>
         </div>
     </div>
@@ -4706,8 +4789,12 @@ document.querySelector('.sidebar-menu a[href="#implementProject"]').addEventList
 
 // Role Selection
 function selectRole(role) {
+    // Hide all dashboards first
+    document.getElementById('directorDashboard').style.display = 'none';
+    document.getElementById('programOfficerDashboard').style.display = 'none';
+    document.getElementById('roleSelection').style.display = 'none';
+    
     if (role === 'director') {
-        document.getElementById('roleSelection').style.display = 'none';
         document.getElementById('directorDashboard').style.display = 'block';
         loadProjects();
         
@@ -4716,14 +4803,43 @@ function selectRole(role) {
             document.getElementById('projectForm').reset();
             document.getElementById('createProjectModal').classList.add('show');
         });
+    } 
+    else if (role === 'program_officer') {
+        document.getElementById('programOfficerDashboard').style.display = 'block';
+        loadActivities();
         
-        // Add event listener for submit project button
-        document.getElementById('submitProjectBtn').addEventListener('click', createProject);
-    } else {
+        // Add event listener for create activity button
+        document.getElementById('createActivityBtn').addEventListener('click', function() {
+            document.getElementById('activityForm').reset();
+            loadProjectsForActivities();
+            document.getElementById('createActivityModal').classList.add('show');
+        });
+    } 
+    else {
         alert(`${role.replace('_', ' ').toUpperCase()} functionality will be implemented later`);
     }
 }
 
+async function loadProjectsForActivities() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/projects/');
+        if (!response.ok) throw new Error('Failed to fetch projects');
+        
+        const data = await response.json();
+        const projectSelect = document.getElementById('activityProject');
+        projectSelect.innerHTML = '';
+        
+        data.projects.forEach(project => {
+            const option = document.createElement('option');
+            option.value = project.id;
+            option.textContent = project.name;
+            projectSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading projects for activities:', error);
+        alert('Failed to load projects for activities dropdown');
+    }
+}
 // Project Management Functions
 function loadProjects() {
     fetch('https://man-m681.onrender.com/projects/')
@@ -4753,6 +4869,151 @@ function loadProjects() {
             console.error('Error loading projects:', error);
             alert('Failed to load projects');
         });
+}
+async function loadActivities() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/activities/');
+        if (!response.ok) throw new Error('Failed to fetch activities');
+        
+        const data = await response.json();
+        const tableBody = document.getElementById('activitiesTableBody');
+        tableBody.innerHTML = '';
+        
+        data.activities.forEach(activity => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${activity.name}</td>
+                <td>${activity.project_name}</td>
+                <td>${activity.start_date}</td>
+                <td>${activity.end_date}</td>
+                <td>UGX ${activity.budget.toLocaleString()}</td>
+                <td><span class="status-badge ${activity.status.replace(' ', '_')}">${activity.status}</span></td>
+                <td>
+                    <button class="action-btn view-btn" onclick="viewActivity(${activity.id})"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit-btn" onclick="editActivity(${activity.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn" onclick="deleteActivity(${activity.id})"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading activities:', error);
+        alert('Failed to load activities');
+    }
+}
+
+// Create a new activity
+async function createActivity() {
+    const activityData = {
+        name: document.getElementById('activityName').value,
+        project_id: document.getElementById('activityProject').value,
+        description: document.getElementById('activityDescription').value,
+        start_date: document.getElementById('activityStartDate').value,
+        end_date: document.getElementById('activityEndDate').value,
+        budget: parseFloat(document.getElementById('activityBudget').value),
+        status: document.getElementById('activityStatus').value
+    };
+    
+    // Validate required fields
+    if (!activityData.name || !activityData.project_id || !activityData.start_date || 
+        !activityData.end_date || !activityData.budget) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    try {
+        const response = await fetch('https://man-m681.onrender.com/activities/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(activityData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to create activity');
+        }
+        
+        alert('Activity created successfully');
+        closeModal('createActivityModal');
+        loadActivities();
+    } catch (error) {
+        console.error('Error creating activity:', error);
+        alert('Failed to create activity');
+    }
+}
+
+// View activity details
+async function viewActivity(activityId) {
+    try {
+        const response = await fetch(`https://man-m681.onrender.com/activities/${activityId}`);
+        if (!response.ok) throw new Error('Failed to fetch activity');
+        
+        const activity = await response.json();
+        
+        alert(`Activity Details:\nName: ${activity.name}\nProject: ${activity.project_name}\nStatus: ${activity.status}`);
+    } catch (error) {
+        console.error('Error viewing activity:', error);
+        alert('Failed to view activity details');
+    }
+}
+
+// Edit activity
+async function editActivity(activityId) {
+    try {
+        const response = await fetch(`https://man-m681.onrender.com/activities/${activityId}`);
+        if (!response.ok) throw new Error('Failed to fetch activity');
+        
+        const activity = await response.json();
+        
+        // Populate the activity form with existing data
+        document.getElementById('activityName').value = activity.name;
+        document.getElementById('activityDescription').value = activity.description;
+        document.getElementById('activityStartDate').value = activity.start_date.split('T')[0];
+        document.getElementById('activityEndDate').value = activity.end_date.split('T')[0];
+        document.getElementById('activityBudget').value = activity.budget;
+        document.getElementById('activityStatus').value = activity.status;
+        
+        // Load projects and select the current one
+        await loadProjectsForActivities();
+        document.getElementById('activityProject').value = activity.project_id;
+        
+        // Change modal title and button text
+        document.querySelector('#createActivityModal .modal-header h3').textContent = 'Edit Activity';
+        document.querySelector('#createActivityModal .modal-footer .file-manager-btn').textContent = 'Update Activity';
+        
+        // Store activity ID for update
+        document.getElementById('createActivityModal').dataset.activityId = activityId;
+        
+        // Open modal
+        document.getElementById('createActivityModal').classList.add('show');
+    } catch (error) {
+        console.error('Error editing activity:', error);
+        alert('Failed to load activity for editing');
+    }
+}
+
+// Delete activity
+async function deleteActivity(activityId) {
+    if (!confirm('Are you sure you want to delete this activity?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`https://man-m681.onrender.com/activities/${activityId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete activity');
+        }
+        
+        alert('Activity deleted successfully');
+        loadActivities();
+    } catch (error) {
+        console.error('Error deleting activity:', error);
+        alert('Failed to delete activity');
+    }
 }
 
 function createProject() {
