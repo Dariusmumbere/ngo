@@ -874,26 +874,6 @@
             closeRoleModal('financeModal');
         }
 
-        // Add this to your DOMContentLoaded event listener
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add click handler for the Implement Project nav link
-            const implementProjectLink = document.querySelector('.sidebar-menu li a[href="#implementProject"]');
-            if (implementProjectLink) {
-                implementProjectLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // Hide other content sections
-                    document.getElementById('dashboardContent').style.display = 'none';
-                    document.getElementById('fileManagerContent').style.display = 'none';
-                    document.getElementById('donationsContent').style.display = 'none';
-                    
-                    // Show implement project content
-                    document.getElementById('implementProjectContent').style.display = 'block';
-                    
-                    // Set active nav item
-                    setActiveNavItem(implementProjectLink);
-                });
-            }
-        });
 
         // Expose functions to global scope
         window.openRoleModal = openRoleModal;
