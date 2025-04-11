@@ -1572,426 +1572,131 @@
     text-align: center;
     padding: 20px;
 }
-        /* Project Management Styles */
-.project-container {
+        /* Role Selection Styles */
+.role-selection {
     background-color: white;
     border-radius: 10px;
-    padding: 20px;
+    padding: 30px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
 }
 
-.project-tabs {
-    display: flex;
-    border-bottom: 1px solid #ddd;
+.role-selection h2 {
+    color: var(--dark-color);
     margin-bottom: 20px;
+    text-align: center;
 }
 
-.project-form {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.form-row {
-    display: flex;
-    gap: 20px;
-}
-
-.form-row .form-group {
-    flex: 1;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.projects-grid {
+.role-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-    margin-top: 20px;
 }
 
-.project-card {
+.role-card {
     border: 1px solid #eee;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-.project-card:hover {
+.role-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
 }
 
-.project-card h3 {
-    margin-top: 0;
-    color: var(--primary-color);
-}
-
-.project-meta {
+.role-icon {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: 50%;
     display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-    font-size: 0.9rem;
-    color: #777;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    color: var(--primary-color);
+    font-size: 1.5rem;
 }
 
-.project-status {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 12px;
+.role-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--dark-color);
+}
+
+.role-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Project Modal Styles */
+.project-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.project-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Projects Table Styles */
+.projects-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.projects-table th, 
+.projects-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.projects-table th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+}
+
+.projects-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
 }
 
-.status-planned {
-    background-color: #e3f2fd;
-    color: #1976d2;
+.status-badge.active {
+    background-color: #e6f7ee;
+    color: var(--success-color);
 }
 
-.status-active {
-    background-color: #e8f5e9;
-    color: #388e3c;
+.status-badge.planned {
+    background-color: #fff5e6;
+    color: var(--warning-color);
 }
 
-.status-on-hold {
-    background-color: #fff3e0;
-    color: #f57c00;
-}
-
-.status-completed {
-    background-color: #f3e5f5;
-    color: #8e24aa;
-}
-
-.project-progress {
-    margin: 15px 0;
-}
-
-.progress-bar {
-    height: 8px;
-    background-color: #eee;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: var(--primary-color);
-    border-radius: 4px;
-}
-
-.project-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.search-box {
-    position: relative;
-    width: 300px;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 8px 15px 8px 35px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-}
-
-.search-box i {
-    position: absolute;
-    left: 12px;
-    top: 10px;
-    color: #777;
-}
-
-.project-modal .modal-content {
-    max-width: 800px;
-}
-
-.project-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
-
-.project-description {
-    margin: 20px 0;
-    padding: 15px;
-    background-color: white;
-    border-radius: 5px;
-    border-left: 3px solid var(--primary-color);
-}
-
-.project-timeline {
-    margin-top: 30px;
-}
-
-.activity-list {
-    list-style: none;
-    padding: 0;
-}
-
-.activity-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-}
-
-.activity-item:last-child {
-    border-bottom: none;
-}
-
-.activity-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+.status-badge.completed {
     background-color: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    color: var(--primary-color);
+    color: #666;
 }
-
-.activity-content {
-    flex: 1;
-}
-
-.activity-title {
-    font-weight: 500;
-    margin-bottom: 3px;
-}
-
-.activity-time {
-    font-size: 0.8rem;
-    color: #777;
-}
-        .roles-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .role-card {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .role-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .role-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: #3498db;
-        }
-
-        .role-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .role-description {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        /* Project Modal Styles */
-        .project-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .project-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            color: #2c3e50;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #7f8c8d;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        .modal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        /* Projects List Styles */
-        .projects-list {
-            margin-top: 30px;
-        }
-
-        .projects-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .projects-table th {
-            background-color: #f8f9fa;
-            padding: 12px 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .projects-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .projects-table tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-badge.active {
-            background-color: #e6f7ee;
-            color: #2ecc71;
-        }
-
-        .status-badge.planned {
-            background-color: #fff5e6;
-            color: #f39c12;
-        }
-
-        .status-badge.completed {
-            background-color: #e6f0ff;
-            color: #3498db;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            margin: 0 3px;
-            color: #777;
-            transition: color 0.2s;
-        }
-
-        .action-btn:hover {
-            color: #3498db;
-        }
-
-        .action-btn.delete-btn:hover {
-            color: #e74c3c;
-        }
-
-        .no-projects {
-            text-align: center;
-            padding: 30px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
     </style>
 </head>
 <body>
@@ -2052,7 +1757,7 @@
                         <i class="fas fa-chevron-down ml-auto" id="reportsArrow"></i>
                     </a>
                     <ul class="submenu" id="reportsSubmenu">
-                        <li><a href="#" id="implementProjectLink"><span>Implement Project</span></a></li>
+                        <li><a href="#"><span>Implement Project</span></a></li>
                         <li><a href="#"><span>Project Report</span></a></li>
                         <li><a href="#"><span>Staff</span></a></li>
                         <li><a href="#"><span>Budget</span></a></li>
@@ -2792,348 +2497,128 @@
                     </div>
                 </div>
             </div>
-            <div id="implementProjectContent" class="project-container" style="display: none;">
+            <!-- Add this inside your main-content div, after the existing content -->
+<div id="implementProjectContent" style="display: none;">
     <h1 class="page-title">
         <i class="fas fa-project-diagram"></i>
         Implement Project
     </h1>
 
-    <div class="project-tabs">
-        <button class="tab-btn active" data-tab="createProject">Create Project</button>
-        <button class="tab-btn" data-tab="projectList">Project List</button>
-        <button class="tab-btn" data-tab="fundAllocation">Fund Allocation</button>
-    </div>
-
-    <div class="tab-content active" id="createProject">
-        <div class="project-form">
-            <div class="form-group">
-                <label for="projectName">Project Name*</label>
-                <input type="text" id="projectName" required>
-                <div class="validation-error" id="projectNameError">Please enter project name</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="projectDescription">Description</label>
-                <textarea id="projectDescription" rows="3"></textarea>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="startDate">Start Date*</label>
-                    <input type="date" id="startDate" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="endDate">End Date*</label>
-                    <input type="date" id="endDate" required>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="projectManager">Project Manager</label>
-                <input type="text" id="projectManager">
-            </div>
-            
-            <div class="form-group">
-                <label for="projectStatus">Status</label>
-                <select id="projectStatus">
-                    <option value="planned">Planned</option>
-                    <option value="active">Active</option>
-                    <option value="on-hold">On Hold</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            
-            <div class="form-actions">
-                <button class="file-manager-btn secondary" id="resetProjectForm">Reset</button>
-                <button class="file-manager-btn" id="submitProject">Create Project</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="tab-content" id="projectList">
-        <div class="section-header">
-            <h2 class="section-title">Active Projects</h2>
-            <div class="search-box">
-                <input type="text" id="projectSearch" placeholder="Search projects...">
-                <i class="fas fa-search"></i>
-            </div>
-        </div>
-        
-        <div class="projects-grid" id="projectsGrid">
-            <!-- Projects will be loaded here -->
-        </div>
-    </div>
-    
-    <div class="tab-content" id="fundAllocation">
-        <div class="section-header">
-            <h2 class="section-title">Allocate Funds to Projects</h2>
-            <button class="file-manager-btn" id="addFundAllocationBtn">
-                <i class="fas fa-plus"></i> Add Allocation
-            </button>
-        </div>
-        
-        <div class="table-responsive">
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>Amount (UGX)</th>
-                        <th>Allocation Date</th>
-                        <th>Source</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="fundAllocationsTable">
-                    <!-- Fund allocations will be loaded here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Project Details Modal -->
-<div class="project-modal" id="projectDetailsModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="projectModalTitle">Project Details</h3>
-            <button class="close-btn" onclick="closeProjectModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="project-stats">
-                <div class="stat-item">
-                    <span class="stat-label">Status:</span>
-                    <span class="stat-value" id="projectDetailStatus"></span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Start Date:</span>
-                    <span class="stat-value" id="projectDetailStartDate"></span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">End Date:</span>
-                    <span class="stat-value" id="projectDetailEndDate"></span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Manager:</span>
-                    <span class="stat-value" id="projectDetailManager"></span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Total Allocated:</span>
-                    <span class="stat-value" id="projectDetailAllocated"></span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Total Spent:</span>
-                    <span class="stat-value" id="projectDetailSpent"></span>
-                </div>
-            </div>
-            
-            <div class="project-description">
-                <h4>Description</h4>
-                <p id="projectDetailDescription"></p>
-            </div>
-            
-            <div class="project-timeline">
-                <h4>Recent Activities</h4>
-                <ul class="activity-list" id="projectActivityList">
-                    <!-- Activities will be loaded here -->
-                </ul>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="file-manager-btn secondary" onclick="closeProjectModal()">Close</button>
-            <button class="file-manager-btn" id="editProjectBtn">Edit Project</button>
-        </div>
-    </div>
-</div>
-
-<!-- Fund Allocation Modal -->
-<div class="project-modal" id="fundAllocationModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="fundAllocationModalTitle">Add Fund Allocation</h3>
-            <button class="close-btn" onclick="closeFundAllocationModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="fundAllocationForm">
-                <input type="hidden" id="allocationId">
-                
-                <div class="form-group">
-                    <label for="allocationProject">Project*</label>
-                    <select id="allocationProject" required>
-                        <!-- Projects will be loaded here -->
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="allocationAmount">Amount (UGX)*</label>
-                    <input type="number" id="allocationAmount" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="allocationDate">Allocation Date*</label>
-                    <input type="date" id="allocationDate" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="allocationSource">Funding Source*</label>
-                    <select id="allocationSource" required>
-                        <option value="">Select source</option>
-                        <option value="donation">Donation</option>
-                        <option value="grant">Grant</option>
-                        <option value="internal">Internal Funds</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="allocationNotes">Notes</label>
-                    <textarea id="allocationNotes" rows="3"></textarea>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="file-manager-btn secondary" onclick="closeFundAllocationModal()">Cancel</button>
-            <button class="file-manager-btn" id="saveAllocationBtn">Save Allocation</button>
-        </div>
-    </div>
-</div>
-            <div id="implementProjectContent" style="display: none;">
-        <h1 class="page-title">
-            <i class="fas fa-project-diagram"></i>
-            Implement Project
-        </h1>
-
-        <div class="section-header">
-            <h2 class="section-title">Select Your Role</h2>
-        </div>
-
-        <div class="roles-container">
-            <div class="role-card" id="directorRole">
+    <!-- Role Selection Section -->
+    <div class="role-selection" id="roleSelection">
+        <h2>Select Your Role</h2>
+        <div class="role-cards">
+            <div class="role-card" onclick="selectRole('director')">
                 <div class="role-icon">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <h3 class="role-title">Director</h3>
-                <p class="role-description">Create projects, allocate funds, and oversee project implementation</p>
+                <h3>Director</h3>
+                <p>Create projects, allocate funds, and oversee implementation</p>
             </div>
-
-            <div class="role-card" id="programOfficerRole">
+            
+            <div class="role-card" onclick="selectRole('program_officer')">
                 <div class="role-icon">
-                    <i class="fas fa-tasks"></i>
+                    <i class="fas fa-user-cog"></i>
                 </div>
-                <h3 class="role-title">Program Officer</h3>
-                <p class="role-description">Manage project activities, track progress, and report on outcomes</p>
+                <h3>Program Officer</h3>
+                <p>Manage project activities and coordinate implementation</p>
             </div>
-
-            <div class="role-card" id="hrRole">
+            
+            <div class="role-card" onclick="selectRole('human_resource')">
                 <div class="role-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <h3 class="role-title">Human Resource</h3>
-                <p class="role-description">Manage project staff, handle contracts, and oversee personnel needs</p>
+                <h3>Human Resource</h3>
+                <p>Manage staff assignments and project teams</p>
             </div>
-
-            <div class="role-card" id="financeRole">
+            
+            <div class="role-card" onclick="selectRole('finance')">
                 <div class="role-icon">
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
-                <h3 class="role-title">Finance</h3>
-                <p class="role-description">Handle project budgets, process payments, and manage financial reporting</p>
-            </div>
-        </div>
-
-        <!-- Director Content -->
-        <div id="directorContent" style="display: none;">
-            <div class="section-header">
-                <h2 class="section-title">Project Management</h2>
-                <button class="file-manager-btn" id="createProjectBtn">
-                    <i class="fas fa-plus"></i> Create Project
-                </button>
-            </div>
-
-            <div class="projects-list">
-                <div class="table-responsive">
-                    <table class="projects-table">
-                        <thead>
-                            <tr>
-                                <th>Project Name</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Budget (UGX)</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="projectsTableBody">
-                            <!-- Projects will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="noProjectsMessage" class="no-projects">
-                    <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                    <p>No projects found. Create a new project to get started.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Create Project Modal -->
-        <div class="project-modal" id="createProjectModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Create New Project</h3>
-                    <button class="close-btn" onclick="closeProjectModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="projectForm">
-                        <div class="form-group">
-                            <label for="projectName">Project Name*</label>
-                            <input type="text" id="projectName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectDescription">Description</label>
-                            <textarea id="projectDescription"></textarea>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="startDate">Start Date*</label>
-                                <input type="date" id="startDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="endDate">End Date*</label>
-                                <input type="date" id="endDate" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectBudget">Budget (UGX)*</label>
-                            <input type="number" id="projectBudget" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectStatus">Status*</label>
-                            <select id="projectStatus" required>
-                                <option value="planned">Planned</option>
-                                <option value="active">Active</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectFunds">Attach Funds From</label>
-                            <select id="projectFunds" multiple>
-                                <option value="general">General Fund</option>
-                                <option value="donation1">Agriculture Donation Fund</option>
-                                <option value="donation2">Education Donation Fund</option>
-                                <option value="grant1">KELA Foundation Grant</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="file-manager-btn secondary" onclick="closeProjectModal()">Cancel</button>
-                    <button class="file-manager-btn" onclick="submitProject()">Create Project</button>
-                </div>
+                <h3>Finance</h3>
+                <p>Handle project budgets and financial reporting</p>
             </div>
         </div>
     </div>
 
+    <!-- Director Dashboard (initially hidden) -->
+    <div class="director-dashboard" id="directorDashboard" style="display: none;">
+        <div class="section-header">
+            <h2 class="section-title">Director Dashboard</h2>
+            <button class="file-manager-btn" id="createProjectBtn">
+                <i class="fas fa-plus"></i> Create New Project
+            </button>
+        </div>
 
+        <div class="projects-list">
+            <h3>Current Projects</h3>
+            <div class="table-responsive">
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTableBody">
+                        <!-- Projects will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Project Modal -->
+    <div class="project-modal" id="createProjectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Project</h3>
+                <button class="close-btn" onclick="closeModal('createProjectModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label for="projectName">Project Name*</label>
+                        <input type="text" id="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Description</label>
+                        <textarea id="projectDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStartDate">Start Date*</label>
+                        <input type="date" id="projectStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEndDate">End Date*</label>
+                        <input type="date" id="projectEndDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectBudget">Budget (UGX)*</label>
+                        <input type="number" id="projectBudget" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectFunds">Attach Funds From</label>
+                        <select id="projectFunds">
+                            <option value="general">General Funds</option>
+                            <option value="donation">Specific Donation</option>
+                            <option value="grant">Grant Funding</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" onclick="closeModal('createProjectModal')">Cancel</button>
+                <button class="file-manager-btn" onclick="createProject()">Create Project</button>
+            </div>
+        </div>
+    </div>
+</div>
         </main>
     </div>
 
@@ -5183,764 +4668,155 @@ function emailReceipt(donationId) {
   const gmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${subject}&body=${body}`;
   window.open(gmailURL, '_blank'); // Opens in new tab
 }
-// Project Management Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const implementProjectLink = document.getElementById('implementProjectLink');
-    const implementProjectContent = document.getElementById('implementProjectContent');
-    const projectManagementMenu = document.getElementById('projectManagementMenu');
-    const projectManagementSubmenu = document.getElementById('projectManagementSubmenu');
-    const projectManagementArrow = document.getElementById('projectManagementArrow');
+        // Add this to your existing JavaScript
+
+// Implement Project Navigation
+document.querySelector('.sidebar-menu a[href="#implementProject"]').addEventListener('click', function(e) {
+    e.preventDefault();
+    dashboardContent.style.display = 'none';
+    fileManagerContent.style.display = 'none';
+    donationsContent.style.display = 'none';
+    implementProjectContent.style.display = 'block';
     
-    // Toggle project management submenu
-    projectManagementMenu.addEventListener('click', function(e) {
-        e.preventDefault();
-        projectManagementSubmenu.classList.toggle('show');
-        projectManagementArrow.classList.toggle('fa-chevron-down');
-        projectManagementArrow.classList.toggle('fa-chevron-up');
-    });
+    // Show role selection by default
+    document.getElementById('roleSelection').style.display = 'block';
+    document.getElementById('directorDashboard').style.display = 'none';
     
-    // Show implement project content
-    implementProjectLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        dashboardContent.style.display = 'none';
-        fileManagerContent.style.display = 'none';
-        donationsContent.style.display = 'none';
-        implementProjectContent.style.display = 'block';
-        
-        // Load projects and allocations when the tab is shown
-        loadProjects();
-        loadFundAllocations();
-    });
-    
-    // Tab switching for project management
-    const projectTabBtns = document.querySelectorAll('.project-tabs .tab-btn');
-    const projectTabContents = document.querySelectorAll('#implementProjectContent .tab-content');
-    
-    projectTabBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Remove active class from all buttons and contents
-            projectTabBtns.forEach(b => b.classList.remove('active'));
-            projectTabContents.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked button and corresponding content
-            this.classList.add('active');
-            const tabId = this.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
-        });
-    });
-    
-    // Project form submission
-    document.getElementById('submitProject').addEventListener('click', createProject);
-    document.getElementById('resetProjectForm').addEventListener('click', resetProjectForm);
-    
-    // Fund allocation modal
-    document.getElementById('addFundAllocationBtn').addEventListener('click', openFundAllocationModal);
-    document.getElementById('saveAllocationBtn').addEventListener('click', saveFundAllocation);
+    setActiveNavItem(this);
 });
 
-// Project functions
-async function createProject() {
-    const projectName = document.getElementById('projectName').value.trim();
-    const description = document.getElementById('projectDescription').value.trim();
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    const manager = document.getElementById('projectManager').value.trim();
-    const status = document.getElementById('projectStatus').value;
-    
-    // Validate required fields
-    if (!projectName || !startDate || !endDate) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    try {
-        const response = await fetch('https://man-m681.onrender.com/projects/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: projectName,
-                description: description,
-                start_date: startDate,
-                end_date: endDate,
-                manager: manager,
-                status: status
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to create project');
-        }
-        
-        const data = await response.json();
-        alert('Project created successfully!');
-        resetProjectForm();
+// Role Selection
+function selectRole(role) {
+    if (role === 'director') {
+        document.getElementById('roleSelection').style.display = 'none';
+        document.getElementById('directorDashboard').style.display = 'block';
         loadProjects();
-    } catch (error) {
-        console.error('Error creating project:', error);
-        alert('Failed to create project. Please try again.');
-    }
-}
-
-function resetProjectForm() {
-    document.getElementById('projectName').value = '';
-    document.getElementById('projectDescription').value = '';
-    document.getElementById('startDate').value = '';
-    document.getElementById('endDate').value = '';
-    document.getElementById('projectManager').value = '';
-    document.getElementById('projectStatus').value = 'planned';
-}
-
-async function loadProjects() {
-    try {
-        const response = await fetch('https://man-m681.onrender.com/projects/');
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch projects');
-        }
-        
-        const projects = await response.json();
-        const projectsGrid = document.getElementById('projectsGrid');
-        projectsGrid.innerHTML = '';
-        
-        if (projects.length === 0) {
-            projectsGrid.innerHTML = '<p>No projects found. Create your first project.</p>';
-            return;
-        }
-        
-        projects.forEach(project => {
-            const projectCard = document.createElement('div');
-            projectCard.className = 'project-card';
-            projectCard.innerHTML = `
-                <h3>${project.name}</h3>
-                <div class="project-meta">
-                    <span>${formatDate(project.start_date)} - ${formatDate(project.end_date)}</span>
-                    <span class="project-status status-${project.status.replace(' ', '-')}">${project.status}</span>
-                </div>
-                <p>${project.description || 'No description provided'}</p>
-                <div class="project-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${project.progress || 0}%"></div>
-                    </div>
-                </div>
-                <div class="project-actions">
-                    <button class="file-manager-btn secondary" onclick="viewProjectDetails(${project.id})">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="file-manager-btn" onclick="editProject(${project.id})">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                </div>
-            `;
-            projectsGrid.appendChild(projectCard);
-        });
-    } catch (error) {
-        console.error('Error loading projects:', error);
-        document.getElementById('projectsGrid').innerHTML = '<p>Failed to load projects. Please try again.</p>';
-    }
-}
-
-async function loadFundAllocations() {
-    try {
-        const response = await fetch('https://man-m681.onrender.com/projects/allocations/');
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch fund allocations');
-        }
-        
-        const allocations = await response.json();
-        const allocationsTable = document.getElementById('fundAllocationsTable');
-        allocationsTable.innerHTML = '';
-        
-        if (allocations.length === 0) {
-            allocationsTable.innerHTML = '<tr><td colspan="6">No fund allocations found</td></tr>';
-            return;
-        }
-        
-        allocations.forEach(allocation => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${allocation.project_name}</td>
-                <td>UGX ${allocation.amount.toLocaleString()}</td>
-                <td>${formatDate(allocation.allocation_date)}</td>
-                <td>${allocation.source}</td>
-                <td><span class="status-badge completed">${allocation.status}</span></td>
-                <td>
-                    <button class="action-btn edit-btn" onclick="editFundAllocation(${allocation.id})"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete-btn" onclick="deleteFundAllocation(${allocation.id})"><i class="fas fa-trash"></i></button>
-                </td>
-            `;
-            allocationsTable.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error loading fund allocations:', error);
-        document.getElementById('fundAllocationsTable').innerHTML = '<tr><td colspan="6">Failed to load allocations</td></tr>';
-    }
-}
-
-function formatDate(dateString) {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-}
-
-function viewProjectDetails(projectId) {
-    fetch(`https://man-m681.onrender.com/projects/${projectId}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Project not found');
-            return response.json();
-        })
-        .then(project => {
-            document.getElementById('projectModalTitle').textContent = project.name;
-            document.getElementById('projectDetailStatus').textContent = project.status;
-            document.getElementById('projectDetailStartDate').textContent = formatDate(project.start_date);
-            document.getElementById('projectDetailEndDate').textContent = formatDate(project.end_date);
-            document.getElementById('projectDetailManager').textContent = project.manager || 'Not assigned';
-            document.getElementById('projectDetailAllocated').textContent = `UGX ${(project.total_allocated || 0).toLocaleString()}`;
-            document.getElementById('projectDetailSpent').textContent = `UGX ${(project.total_spent || 0).toLocaleString()}`;
-            document.getElementById('projectDetailDescription').textContent = project.description || 'No description provided';
-            
-            // Load project activities
-            const activityList = document.getElementById('projectActivityList');
-            activityList.innerHTML = '';
-            
-            if (project.activities && project.activities.length > 0) {
-                project.activities.forEach(activity => {
-                    const activityItem = document.createElement('li');
-                    activityItem.className = 'activity-item';
-                    activityItem.innerHTML = `
-                        <div class="activity-icon">
-                            <i class="fas fa-${getActivityIcon(activity.type)}"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">${activity.title}</div>
-                            <div class="activity-time">${formatDateTime(activity.date)} by ${activity.user}</div>
-                        </div>
-                    `;
-                    activityList.appendChild(activityItem);
-                });
-            } else {
-                activityList.innerHTML = '<li>No recent activities</li>';
-            }
-            
-            document.getElementById('projectDetailsModal').classList.add('show');
-        })
-        .catch(error => {
-            console.error('Error loading project details:', error);
-            alert('Failed to load project details');
-        });
-}
-
-function getActivityIcon(activityType) {
-    const icons = {
-        'creation': 'plus',
-        'update': 'edit',
-        'funding': 'money-bill-wave',
-        'milestone': 'flag',
-        'note': 'sticky-note'
-    };
-    return icons[activityType] || 'info-circle';
-}
-
-function formatDateTime(dateTimeString) {
-    if (!dateTimeString) return '';
-    const date = new Date(dateTimeString);
-    return date.toLocaleString();
-}
-
-function closeProjectModal() {
-    document.getElementById('projectDetailsModal').classList.remove('show');
-}
-
-function editProject(projectId) {
-    // Similar to view but with editable fields
-    fetch(`https://man-m681.onrender.com/projects/${projectId}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Project not found');
-            return response.json();
-        })
-        .then(project => {
-            document.getElementById('projectModalTitle').textContent = `Edit ${project.name}`;
-            // Populate form fields with project data
-            // ...
-            document.getElementById('projectDetailsModal').classList.add('show');
-        })
-        .catch(error => {
-            console.error('Error loading project for edit:', error);
-            alert('Failed to load project for editing');
-        });
-}
-
-function openFundAllocationModal(allocationId = null) {
-    const modal = document.getElementById('fundAllocationModal');
-    const title = document.getElementById('fundAllocationModalTitle');
-    const saveBtn = document.getElementById('saveAllocationBtn');
-    
-    if (allocationId) {
-        title.textContent = 'Edit Fund Allocation';
-        saveBtn.textContent = 'Update Allocation';
-        
-        // Load existing allocation data
-        fetch(`https://man-m681.onrender.com/projects/allocations/${allocationId}`)
-            .then(response => {
-                if (!response.ok) throw new Error('Allocation not found');
-                return response.json();
-            })
-            .then(allocation => {
-                document.getElementById('allocationId').value = allocation.id;
-                document.getElementById('allocationAmount').value = allocation.amount;
-                document.getElementById('allocationDate').value = allocation.allocation_date.split('T')[0];
-                document.getElementById('allocationSource').value = allocation.source;
-                document.getElementById('allocationNotes').value = allocation.notes || '';
-            })
-            .catch(error => {
-                console.error('Error loading allocation:', error);
-                alert('Failed to load allocation data');
-            });
     } else {
-        title.textContent = 'Add Fund Allocation';
-        saveBtn.textContent = 'Save Allocation';
-        document.getElementById('fundAllocationForm').reset();
+        alert(`${role.replace('_', ' ').toUpperCase()} functionality will be implemented later`);
     }
-    
-    // Load projects for dropdown
+}
+
+// Project Management Functions
+function loadProjects() {
     fetch('https://man-m681.onrender.com/projects/')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to load projects');
-            return response.json();
-        })
-        .then(projects => {
-            const projectSelect = document.getElementById('allocationProject');
-            projectSelect.innerHTML = '<option value="">Select project</option>';
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('projectsTableBody');
+            tableBody.innerHTML = '';
             
-            projects.forEach(project => {
-                const option = document.createElement('option');
-                option.value = project.id;
-                option.textContent = project.name;
-                projectSelect.appendChild(option);
+            data.projects.forEach(project => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${project.name}</td>
+                    <td>${project.start_date}</td>
+                    <td>${project.end_date}</td>
+                    <td>UGX ${project.budget.toLocaleString()}</td>
+                    <td><span class="status-badge ${project.status}">${project.status}</span></td>
+                    <td>
+                        <button class="action-btn view-btn" onclick="viewProject(${project.id})"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn edit-btn" onclick="editProject(${project.id})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteProject(${project.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
             });
-            
-            if (allocationId) {
-                // Set the selected project if editing
-                projectSelect.value = allocation.project_id;
-            }
         })
         .catch(error => {
             console.error('Error loading projects:', error);
-            alert('Failed to load projects for selection');
+            alert('Failed to load projects');
         });
-    
-    modal.classList.add('show');
 }
 
-function closeFundAllocationModal() {
-    document.getElementById('fundAllocationModal').classList.remove('show');
-}
-
-async function saveFundAllocation() {
-    const allocationId = document.getElementById('allocationId').value;
-    const projectId = document.getElementById('allocationProject').value;
-    const amount = parseFloat(document.getElementById('allocationAmount').value);
-    const allocationDate = document.getElementById('allocationDate').value;
-    const source = document.getElementById('allocationSource').value;
-    const notes = document.getElementById('allocationNotes').value;
+function createProject() {
+    const projectData = {
+        name: document.getElementById('projectName').value,
+        description: document.getElementById('projectDescription').value,
+        start_date: document.getElementById('projectStartDate').value,
+        end_date: document.getElementById('projectEndDate').value,
+        budget: parseFloat(document.getElementById('projectBudget').value),
+        funding_source: document.getElementById('projectFunds').value,
+        status: 'planned'
+    };
     
     // Validate required fields
-    if (!projectId || !amount || !allocationDate || !source) {
+    if (!projectData.name || !projectData.start_date || !projectData.end_date || !projectData.budget) {
         alert('Please fill in all required fields');
         return;
     }
     
-    try {
-        const url = allocationId 
-            ? `https://man-m681.onrender.com/projects/allocations/${allocationId}`
-            : 'https://man-m681.onrender.com/projects/allocations/';
-            
-        const method = allocationId ? 'PUT' : 'POST';
-        
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                project_id: projectId,
-                amount: amount,
-                allocation_date: allocationDate,
-                source: source,
-                notes: notes
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to save allocation');
-        }
-        
-        closeFundAllocationModal();
-        loadFundAllocations();
-        alert('Fund allocation saved successfully!');
-    } catch (error) {
-        console.error('Error saving fund allocation:', error);
-        alert('Failed to save fund allocation. Please try again.');
-    }
-}
-
-function editFundAllocation(allocationId) {
-    openFundAllocationModal(allocationId);
-}
-
-async function deleteFundAllocation(allocationId) {
-    if (!confirm('Are you sure you want to delete this fund allocation?')) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`https://man-m681.onrender.com/projects/allocations/${allocationId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to delete allocation');
-        }
-        
-        loadFundAllocations();
-        alert('Fund allocation deleted successfully');
-    } catch (error) {
-        console.error('Error deleting fund allocation:', error);
-        alert('Failed to delete fund allocation. Please try again.');
-    }
-}
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get the implement project link from the sidebar
-            const implementProjectLink = document.querySelector('.sidebar-menu li a[href="#"] span:contains("Implement Project")').closest('a');
-            
-            // Add click event to show implement project content
-            implementProjectLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                hideAllContent();
-                document.getElementById('implementProjectContent').style.display = 'block';
-                setActiveNavItem(implementProjectLink);
-            });
-
-            // Role selection functionality
-            document.getElementById('directorRole').addEventListener('click', function() {
-                showDirectorContent();
-            });
-
-            document.getElementById('programOfficerRole').addEventListener('click', function() {
-                alert('Program Officer functionality will be implemented in the next phase');
-            });
-
-            document.getElementById('hrRole').addEventListener('click', function() {
-                alert('Human Resource functionality will be implemented in the next phase');
-            });
-
-            document.getElementById('financeRole').addEventListener('click', function() {
-                alert('Finance functionality will be implemented in the next phase');
-            });
-
-            // Project creation button
-            document.getElementById('createProjectBtn').addEventListener('click', function() {
-                document.getElementById('createProjectModal').classList.add('show');
-            });
-
-            // Load projects when director content is shown
-            function showDirectorContent() {
-                document.getElementById('directorContent').style.display = 'block';
-                loadProjects();
-            }
-
-            // Close modal when clicking outside
-            window.addEventListener('click', function(e) {
-                if (e.target === document.getElementById('createProjectModal')) {
-                    closeProjectModal();
-                }
-            });
-        });
-
-        function closeProjectModal() {
-            document.getElementById('createProjectModal').classList.remove('show');
-        }
-
-        async function loadProjects() {
-            try {
-                const response = await fetch('https://man-m681.onrender.com/projects/');
-                if (!response.ok) throw new Error('Failed to fetch projects');
-                
-                const projects = await response.json();
-                const tbody = document.getElementById('projectsTableBody');
-                tbody.innerHTML = '';
-                
-                if (projects.length === 0) {
-                    document.getElementById('noProjectsMessage').style.display = 'block';
-                    return;
-                }
-                
-                document.getElementById('noProjectsMessage').style.display = 'none';
-                
-                projects.forEach(project => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${project.name}</td>
-                        <td>${new Date(project.start_date).toLocaleDateString()}</td>
-                        <td>${new Date(project.end_date).toLocaleDateString()}</td>
-                        <td>${project.budget.toLocaleString()}</td>
-                        <td><span class="status-badge ${project.status}">${project.status.charAt(0).toUpperCase() + project.status.slice(1)}</span></td>
-                        <td>
-                            <button class="action-btn view-btn" onclick="viewProject(${project.id})"><i class="fas fa-eye"></i></button>
-                            <button class="action-btn edit-btn" onclick="editProject(${project.id})"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn delete-btn" onclick="deleteProject(${project.id})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error loading projects:', error);
-                document.getElementById('projectsTableBody').innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; color: red;">Failed to load projects. Please try again.</td>
-                    </tr>
-                `;
-            }
-        }
-
-        async function submitProject() {
-            const projectName = document.getElementById('projectName').value;
-            const projectDescription = document.getElementById('projectDescription').value;
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const projectBudget = document.getElementById('projectBudget').value;
-            const projectStatus = document.getElementById('projectStatus').value;
-            
-            if (!projectName || !startDate || !endDate || !projectBudget) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            try {
-                const response = await fetch('https://man-m681.onrender.com/projects/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: projectName,
-                        description: projectDescription,
-                        start_date: startDate,
-                        end_date: endDate,
-                        budget: parseFloat(projectBudget),
-                        status: projectStatus
-                    })
-                });
-                
-                if (!response.ok) throw new Error('Failed to create project');
-                
-                const newProject = await response.json();
-                
-                // Add the new project to the table
-                const tbody = document.getElementById('projectsTableBody');
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${newProject.name}</td>
-                    <td>${new Date(newProject.start_date).toLocaleDateString()}</td>
-                    <td>${new Date(newProject.end_date).toLocaleDateString()}</td>
-                    <td>${newProject.budget.toLocaleString()}</td>
-                    <td><span class="status-badge ${newProject.status}">${newProject.status.charAt(0).toUpperCase() + newProject.status.slice(1)}</span></td>
-                    <td>
-                        <button class="action-btn view-btn" onclick="viewProject(${newProject.id})"><i class="fas fa-eye"></i></button>
-                        <button class="action-btn edit-btn" onclick="editProject(${newProject.id})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn delete-btn" onclick="deleteProject(${newProject.id})"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-                
-                // Hide the "no projects" message if it's shown
-                document.getElementById('noProjectsMessage').style.display = 'none';
-                
-                // Close the modal and reset the form
-                closeProjectModal();
-                document.getElementById('projectForm').reset();
-                
-                alert('Project created successfully!');
-            } catch (error) {
-                console.error('Error creating project:', error);
-                alert('Failed to create project. Please try again.');
-            }
-        }
-
-        async function viewProject(projectId) {
-            try {
-                const response = await fetch(`https://man-m681.onrender.com/projects/${projectId}`);
-                if (!response.ok) throw new Error('Failed to fetch project');
-                
-                const project = await response.json();
-                
-                // Create a modal to display project details
-                const modalHTML = `
-                    <div class="project-modal show" id="viewProjectModal">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3>Project Details</h3>
-                                <button class="close-btn" onclick="closeModal('viewProjectModal')">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Project Name:</label>
-                                    <p>${project.name}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Description:</label>
-                                    <p>${project.description || 'Not provided'}</p>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Start Date:</label>
-                                        <p>${new Date(project.start_date).toLocaleDateString()}</p>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>End Date:</label>
-                                        <p>${new Date(project.end_date).toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Budget:</label>
-                                        <p>UGX ${project.budget.toLocaleString()}</p>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Status:</label>
-                                        <p><span class="status-badge ${project.status}">${project.status.charAt(0).toUpperCase() + project.status.slice(1)}</span></p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Attached Funds:</label>
-                                    <p>${project.funds ? project.funds.join(', ') : 'No funds attached'}</p>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="file-manager-btn" onclick="editProject(${project.id})">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="file-manager-btn secondary" onclick="closeModal('viewProjectModal')">
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.insertAdjacentHTML('beforeend', modalHTML);
-            } catch (error) {
-                console.error('Error viewing project:', error);
-                alert('Failed to view project details. Please try again.');
-            }
-        }
-
-        async function editProject(projectId) {
-            try {
-                // Close any open modals
-                closeModal('viewProjectModal');
-                
-                const response = await fetch(`https://man-m681.onrender.com/projects/${projectId}`);
-                if (!response.ok) throw new Error('Failed to fetch project');
-                
-                const project = await response.json();
-                
-                // Populate the form with existing data
-                document.getElementById('projectName').value = project.name;
-                document.getElementById('projectDescription').value = project.description || '';
-                document.getElementById('startDate').value = project.start_date.split('T')[0];
-                document.getElementById('endDate').value = project.end_date.split('T')[0];
-                document.getElementById('projectBudget').value = project.budget;
-                document.getElementById('projectStatus').value = project.status;
-                
-                // Change modal title and button text
-                document.querySelector('#createProjectModal .modal-header h3').textContent = 'Edit Project';
-                document.querySelector('#createProjectModal .modal-footer .file-manager-btn').textContent = 'Update Project';
-                
-                // Store project ID for update
-                document.getElementById('createProjectModal').dataset.projectId = projectId;
-                
-                // Open modal
-                document.getElementById('createProjectModal').classList.add('show');
-            } catch (error) {
-                console.error('Error editing project:', error);
-                alert('Failed to load project for editing. Please try again.');
-            }
-        }
-
-        async function deleteProject(projectId) {
-            if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`https://man-m681.onrender.com/projects/${projectId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to delete project');
-                }
-                
-                // Remove the project row from the table
-                document.querySelector(`.projects-table tbody tr[data-project-id="${projectId}"]`)?.remove();
-                
-                alert('Project deleted successfully');
-                
-                // Check if there are no projects left
-                const tbody = document.getElementById('projectsTableBody');
-                if (tbody.children.length === 0) {
-                    document.getElementById('noProjectsMessage').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error deleting project:', error);
-                alert('Failed to delete project. Please try again.');
-            }
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.remove();
-            }
-        }
-
-        function hideAllContent() {
-            document.getElementById('dashboardContent').style.display = 'none';
-            document.getElementById('fileManagerContent').style.display = 'none';
-            document.getElementById('donationsContent').style.display = 'none';
-            document.getElementById('implementProjectContent').style.display = 'none';
-        }
-        // Get the implement project link
-const implementProjectLink = document.getElementById('implementProjectLink');
-
-// Add click event to show implement project content
-implementProjectLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    // Hide all other content sections
-    document.getElementById('dashboardContent').style.display = 'none';
-    document.getElementById('fileManagerContent').style.display = 'none';
-    document.getElementById('donationsContent').style.display = 'none';
-    
-    // Show the implement project content
-    document.getElementById('implementProjectContent').style.display = 'block';
-    
-    // Set the link as active
-    setActiveNavItem(implementProjectLink);
-    
-    // Load projects data when the tab is shown
-    loadProjects();
-});
-        function setActiveNavItem(activeItem) {
-    const menuItems = document.querySelectorAll('.sidebar-menu li a');
-    menuItems.forEach(item => {
-        item.classList.remove('active');
+    fetch('https://man-m681.onrender.com/projects/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(projectData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Project created successfully');
+        closeModal('createProjectModal');
+        loadProjects();
+    })
+    .catch(error => {
+        console.error('Error creating project:', error);
+        alert('Failed to create project');
     });
-    activeItem.classList.add('active');
 }
+
+function viewProject(projectId) {
+    fetch(`https://man-m681.onrender.com/projects/${projectId}`)
+        .then(response => response.json())
+        .then(project => {
+            alert(`Project Details:\nName: ${project.name}\nBudget: UGX ${project.budget}\nStatus: ${project.status}`);
+        })
+        .catch(error => {
+            console.error('Error viewing project:', error);
+            alert('Failed to view project details');
+        });
+}
+
+function editProject(projectId) {
+    // Similar to create but with existing data
+    alert('Edit project functionality will be implemented');
+}
+
+function deleteProject(projectId) {
+    if (confirm('Are you sure you want to delete this project?')) {
+        fetch(`https://man-m681.onrender.com/projects/${projectId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Project deleted successfully');
+                loadProjects();
+            } else {
+                throw new Error('Failed to delete project');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting project:', error);
+            alert('Failed to delete project');
+        });
+    }
+}
+
+// Modal helper functions
+function openModal(modalId) {
+    document.getElementById(modalId).classList.add('show');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('show');
+}
+
+// Event listeners
+document.getElementById('createProjectBtn').addEventListener('click', function() {
+    document.getElementById('projectForm').reset();
+    openModal('createProjectModal');
+});
+
+   
+        
     </script>
 </body>
 </html>
