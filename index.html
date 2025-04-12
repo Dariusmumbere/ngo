@@ -3154,22 +3154,15 @@
     fileManagerContent.style.display = 'none';
     donationsContent.style.display = 'none';
     document.getElementById('implementProjectContent').style.display = 'block';
+    projectManagementContent.style.display = 'block';
+    implementProjectContent.style.display = 'none';
     
     // Show role selection by default
     document.getElementById('roleSelection').style.display = 'block';
     document.getElementById('directorDashboard').style.display = 'none';
     
     setActiveNavItem(this);
-                document.getElementById('projectManagementLink').addEventListener('click', function(e) {
-        e.preventDefault();
-        dashboardContent.style.display = 'none';
-        fileManagerContent.style.display = 'none';
-        donationsContent.style.display = 'none';
-        implementProjectContent.style.display = 'none';
-        projectManagementContent.style.display = 'block';
-        
-        setActiveNavItem(this);
-        loadProjectsForManagement();
+                
 });
 
     
