@@ -6155,6 +6155,35 @@ document.getElementById('exportBudgetBtn').addEventListener('click', function() 
             alert('Failed to load project details');
         });
 });
+        // Add this to your existing JavaScript
+const projectManagementContent = document.getElementById('projectManagementContent');
+
+document.getElementById('projectManagementLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('Project management link clicked'); // Debug log
+    
+    // Hide all other content sections
+    document.querySelectorAll('.main-content > div').forEach(div => {
+        div.style.display = 'none';
+    });
+    
+    // Show project management content
+    projectManagementContent.style.display = 'block';
+    
+    // Set active nav item
+    setActiveNavItem(this);
+    
+    // Load projects
+    loadProjectsForManagement();
+});
+
+function setActiveNavItem(activeItem) {
+    const menuItems = document.querySelectorAll('.sidebar-menu li a');
+    menuItems.forEach(item => {
+        item.classList.remove('active');
+    });
+    activeItem.classList.add('active');
+}
 
    
         
