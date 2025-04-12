@@ -6,6 +6,7 @@
     <title>NGO Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #3498db;
@@ -1859,76 +1860,62 @@
 .table-responsive::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
-        /* Manage Projects Modal Styles */
-.budget-design-container {
+        /* Add these styles to your existing CSS */
+
+/* Project Management Styles */
+.project-stats {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.budget-form, .budget-preview {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.budget-preview {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.projects-tabs {
-    display: flex;
-    border-bottom: 1px solid #ddd;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-.projects-tabs .tab-btn {
-    padding: 10px 20px;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-weight: 600;
-    color: #777;
-    transition: all 0.3s;
+.project-stats .stat-card {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.projects-tabs .tab-btn.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-.projects-tabs .tab-btn:hover:not(.active) {
-    color: var(--dark-color);
-}
-
-.progress-indicator {
-    display: flex;
-    align-items: center;
-}
-
-.progress-bar-container {
-    width: 200px;
-    height: 10px;
-    background-color: #eee;
-    border-radius: 5px;
-    margin: 0 10px;
-    overflow: hidden;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background-color: var(--primary-color);
-    width: 0%;
-    transition: width 0.3s;
-}
-
-.progress-text {
+.project-stats .stat-title {
     font-size: 0.9rem;
     color: #555;
+    margin-bottom: 5px;
+}
+
+.project-stats .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.project-progress-chart, .budget-breakdown {
+    height: 250px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.project-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .project-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .project-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .project-stats {
+        grid-template-columns: 1fr;
+    }
 }
     </style>
 </head>
@@ -1994,6 +1981,13 @@
                             <a href="#" id="implementProjectLink">
                                 <i class="fas fa-project-diagram"></i>
                                 <span>Choose your role</span>
+                            </a>
+                        </li>
+                        <!-- In the sidebar menu, add this new item -->
+                        <li>
+                            <a href="#" id="projectManagementLink">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Project Management</span>
                             </a>
                         </li>
                         <li><a href="#"><span>Project Report</span></a></li>
@@ -2781,18 +2775,12 @@
 
     <!-- Director Dashboard (initially hidden) -->
     <div class="director-dashboard" id="directorDashboard" style="display: none;">
-        
         <div class="section-header">
-    <h2 class="section-title">Director Dashboard</h2>
-    <div>
-        <button class="file-manager-btn" id="createProjectBtn">
-            <i class="fas fa-plus"></i> Create New Project
-        </button>
-        <button class="file-manager-btn" id="manageProjectsBtn" style="margin-left: 10px;">
-            <i class="fas fa-tasks"></i> Manage Projects
-        </button>
-    </div>
-</div>
+            <h2 class="section-title">Director Dashboard</h2>
+            <button class="file-manager-btn" id="createProjectBtn">
+                <i class="fas fa-plus"></i> Create New Project
+            </button>
+        </div>
 
         <div class="projects-list">
             <h3>Current Projects</h3>
@@ -2946,97 +2934,191 @@
         </div>
     </div>
 </div>
-            <!-- Manage Projects Modal -->
-<div class="project-modal" id="manageProjectsModal">
-    <div class="modal-content" style="max-width: 1000px;">
-        <div class="modal-header">
-            <h3>Manage Projects</h3>
-            <button class="close-btn" onclick="closeModal('manageProjectsModal')">&times;</button>
+            <!-- Add this after the implementProjectContent div -->
+<div id="projectManagementContent" style="display: none;">
+    <h1 class="page-title">
+        <i class="fas fa-project-diagram"></i>
+        Project Management Dashboard
+    </h1>
+
+    <div class="dashboard-grid">
+        <!-- Project Overview Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">Project Overview</h2>
+                <button class="file-manager-btn" id="createNewProjectBtn">
+                    <i class="fas fa-plus"></i> New Project
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsManagementTable">
+                        <!-- Projects will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="modal-body">
-            <div class="projects-tabs">
-                <button class="tab-btn active" data-tab="projectsTab">Projects</button>
-                <button class="tab-btn" data-tab="budgetTab">Budget Design</button>
-                <button class="tab-btn" data-tab="approvalTab">Activity Approvals</button>
-            </div>
-            
-            <div class="tab-content active" id="projectsTab">
-                <div class="table-responsive">
-                    <table class="projects-table">
-                        <thead>
-                            <tr>
-                                <th>Project Name</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Budget (UGX)</th>
-                                <th>Status</th>
-                                <th>Progress</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="manageProjectsTableBody">
-                            <!-- Projects will be loaded here -->
-                        </tbody>
-                    </table>
+
+        <!-- Project Details Section -->
+        <div class="dashboard-section" id="projectDetailsSection" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title" id="selectedProjectTitle">Project Details</h2>
+                <div class="project-actions">
+                    <button class="file-manager-btn secondary" id="editProjectBtn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="file-manager-btn" id="approveActivitiesBtn">
+                        <i class="fas fa-check-circle"></i> Approve Activities
+                    </button>
                 </div>
             </div>
             
-            <div class="tab-content" id="budgetTab">
-                <div class="budget-design-container">
-                    <div class="budget-form">
-                        <h4>Design Project Budget</h4>
-                        <div class="form-group">
-                            <label for="budgetProjectSelect">Select Project:</label>
-                            <select id="budgetProjectSelect" class="form-control">
-                                <!-- Projects will be loaded here -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="budgetAmount">Budget Amount (UGX):</label>
-                            <input type="number" id="budgetAmount" class="form-control" placeholder="Enter amount">
-                        </div>
-                        <div class="form-group">
-                            <label for="budgetBreakdown">Budget Breakdown:</label>
-                            <textarea id="budgetBreakdown" class="form-control" rows="5" 
-                                      placeholder="Enter budget breakdown details"></textarea>
-                        </div>
-                        <button class="file-manager-btn" id="saveBudgetBtn">
-                            <i class="fas fa-save"></i> Save Budget
-                        </button>
-                    </div>
-                    <div class="budget-preview">
-                        <h4>Budget Preview</h4>
-                        <div id="budgetPreviewContent">
-                            <!-- Budget preview will be shown here -->
-                            <p>Select a project to view or edit its budget</p>
-                        </div>
-                    </div>
+            <div class="project-stats">
+                <div class="stat-card">
+                    <div class="stat-title">Total Budget</div>
+                    <div class="stat-value" id="projectTotalBudget">UGX 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Funds Allocated</div>
+                    <div class="stat-value" id="projectFundsAllocated">UGX 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Funds Spent</div>
+                    <div class="stat-value" id="projectFundsSpent">UGX 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Completion</div>
+                    <div class="stat-value" id="projectCompletion">0%</div>
                 </div>
             </div>
             
-            <div class="tab-content" id="approvalTab">
+            <div class="project-progress-chart">
+                <canvas id="projectProgressChart" height="150"></canvas>
+            </div>
+            
+            <div class="section-header" style="margin-top: 20px;">
+                <h3 class="section-title">Project Activities</h3>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="activities-table">
+                    <thead>
+                        <tr>
+                            <th>Activity Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Approval</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectActivitiesTable">
+                        <!-- Activities will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section-header" style="margin-top: 20px;">
+                <h3 class="section-title">Budget Breakdown</h3>
+                <button class="file-manager-btn secondary" id="exportBudgetBtn">
+                    <i class="fas fa-download"></i> Export Budget
+                </button>
+            </div>
+            
+            <div class="budget-breakdown">
+                <canvas id="budgetChart" height="150"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Project Modal -->
+    <div class="project-modal" id="projectFormModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="projectModalTitle">Create New Project</h3>
+                <button class="close-btn" onclick="closeModal('projectFormModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectManagementForm">
+                    <input type="hidden" id="projectId">
+                    <div class="form-group">
+                        <label for="projectName">Project Name*</label>
+                        <input type="text" id="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Description</label>
+                        <textarea id="projectDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStartDate">Start Date*</label>
+                        <input type="date" id="projectStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEndDate">End Date*</label>
+                        <input type="date" id="projectEndDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectBudget">Total Budget (UGX)*</label>
+                        <input type="number" id="projectBudget" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectFundingSource">Funding Source*</label>
+                        <select id="projectFundingSource" required>
+                            <option value="General Funds">General Funds</option>
+                            <option value="Donation">Specific Donation</option>
+                            <option value="Grant">Grant Funding</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" onclick="closeModal('projectFormModal')">Cancel</button>
+                <button class="file-manager-btn" id="saveProjectBtn">Save Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve Activities Modal -->
+    <div class="project-modal" id="approveActivitiesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Approve Pending Activities</h3>
+                <button class="close-btn" onclick="closeModal('approveActivitiesModal')">&times;</button>
+            </div>
+            <div class="modal-body">
                 <div class="table-responsive">
                     <table class="activities-table">
                         <thead>
                             <tr>
                                 <th>Activity Name</th>
-                                <th>Project</th>
-                                <th>Requested Budget</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>Budget (UGX)</th>
+                                <th>Requested By</th>
+                                <th>Approve</th>
+                                <th>Reject</th>
                             </tr>
                         </thead>
-                        <tbody id="approvalActivitiesTableBody">
-                            <!-- Activities awaiting approval will be loaded here -->
+                        <tbody id="pendingActivitiesTable">
+                            <!-- Pending activities will be loaded here -->
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="file-manager-btn secondary" onclick="closeModal('manageProjectsModal')">
-                Close
-            </button>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" onclick="closeModal('approveActivitiesModal')">Close</button>
+                <button class="file-manager-btn" id="saveApprovalsBtn">Save Approvals</button>
+            </div>
         </div>
     </div>
 </div>
@@ -5493,312 +5575,586 @@ function updateTableInfo() {
 
 // Initialize table info
 updateTableInfo();
-// Add event listener for the Manage Projects button
-document.getElementById('manageProjectsBtn').addEventListener('click', function() {
-    openManageProjectsModal();
+// Add this to your existing JavaScript
+
+// Project Management Navigation
+document.getElementById('projectManagementLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    dashboardContent.style.display = 'none';
+    fileManagerContent.style.display = 'none';
+    donationsContent.style.display = 'none';
+    implementProjectContent.style.display = 'none';
+    projectManagementContent.style.display = 'block';
+    
+    setActiveNavItem(this);
+    loadProjectsForManagement();
 });
 
-function openManageProjectsModal() {
-    // Load projects data
-    loadProjectsForManagement();
-    
-    // Set up tab switching
-    setupManageProjectsTabs();
-    
-    // Open the modal
-    document.getElementById('manageProjectsModal').classList.add('show');
-}
-
-function setupManageProjectsTabs() {
-    const tabBtns = document.querySelectorAll('.projects-tabs .tab-btn');
-    const tabContents = document.querySelectorAll('#manageProjectsModal .tab-content');
-
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Remove active class from all buttons and contents
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked button and corresponding content
-            this.classList.add('active');
-            const tabId = this.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
-            
-            // Load specific content if needed
-            if (tabId === 'budgetTab') {
-                loadProjectsForBudgetDesign();
-            } else if (tabId === 'approvalTab') {
-                loadActivitiesForApproval();
-            }
-        });
-    });
-}
-
+// Load projects for management dashboard
 async function loadProjectsForManagement() {
     try {
         const response = await fetch('https://man-m681.onrender.com/projects/');
         if (!response.ok) throw new Error('Failed to fetch projects');
         
         const data = await response.json();
-        const tableBody = document.getElementById('manageProjectsTableBody');
+        const tableBody = document.getElementById('projectsManagementTable');
         tableBody.innerHTML = '';
         
-        data.projects.forEach(project => {
-            // Calculate progress percentage (example - you might want to calculate this based on actual progress)
-            const startDate = new Date(project.start_date);
-            const endDate = new Date(project.end_date);
-            const today = new Date();
-            const totalDuration = endDate - startDate;
-            const elapsedDuration = today - startDate;
-            let progress = Math.min(100, Math.max(0, Math.round((elapsedDuration / totalDuration) * 100)));
-            
-            // If project is completed, set progress to 100%
-            if (project.status === 'completed') {
-                progress = 100;
-            }
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${project.name}</td>
-                <td>${project.start_date}</td>
-                <td>${project.end_date}</td>
-                <td>UGX ${project.budget.toLocaleString()}</td>
-                <td><span class="status-badge ${project.status}">${project.status}</span></td>
-                <td class="progress-indicator">
-                    <span class="progress-text">${progress}%</span>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: ${progress}%"></div>
-                    </div>
-                </td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewProjectDetails(${project.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit-btn" onclick="editProjectDetails(${project.id})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error loading projects for management:', error);
-        alert('Failed to load projects for management');
-    }
-}
-
-async function loadProjectsForBudgetDesign() {
-    try {
-        const response = await fetch('https://man-m681.onrender.com/projects/');
-        if (!response.ok) throw new Error('Failed to fetch projects');
-        
-        const data = await response.json();
-        const select = document.getElementById('budgetProjectSelect');
-        select.innerHTML = '<option value="">Select a project</option>';
-        
-        data.projects.forEach(project => {
-            const option = document.createElement('option');
-            option.value = project.id;
-            option.textContent = project.name;
-            select.appendChild(option);
-        });
-        
-        // Add event listener for project selection
-        select.addEventListener('change', function() {
-            if (this.value) {
-                loadProjectBudget(this.value);
-            } else {
-                document.getElementById('budgetPreviewContent').innerHTML = 
-                    '<p>Select a project to view or edit its budget</p>';
-            }
-        });
-    } catch (error) {
-        console.error('Error loading projects for budget design:', error);
-        alert('Failed to load projects for budget design');
-    }
-}
-
-async function loadProjectBudget(projectId) {
-    try {
-        const response = await fetch(`https://man-m681.onrender.com/projects/${projectId}`);
-        if (!response.ok) throw new Error('Failed to fetch project details');
-        
-        const project = await response.json();
-        
-        // Populate form fields
-        document.getElementById('budgetAmount').value = project.budget;
-        
-        // For demo purposes, we'll use a simple budget breakdown
-        // In a real app, you might have a separate budget table in your database
-        const budgetBreakdown = `
-            Personnel: 40%\n
-            Equipment: 25%\n
-            Materials: 20%\n
-            Miscellaneous: 15%
-        `;
-        document.getElementById('budgetBreakdown').value = budgetBreakdown;
-        
-        // Display budget preview
-        const previewHTML = `
-            <h5>${project.name} Budget</h5>
-            <p><strong>Total Budget:</strong> UGX ${project.budget.toLocaleString()}</p>
-            <p><strong>Breakdown:</strong></p>
-            <pre>${budgetBreakdown}</pre>
-            <p><strong>Status:</strong> <span class="status-badge ${project.status}">${project.status}</span></p>
-        `;
-        document.getElementById('budgetPreviewContent').innerHTML = previewHTML;
-        
-        // Set up save button
-        document.getElementById('saveBudgetBtn').onclick = function() {
-            saveProjectBudget(projectId);
-        };
-    } catch (error) {
-        console.error('Error loading project budget:', error);
-        alert('Failed to load project budget details');
-    }
-}
-
-async function saveProjectBudget(projectId) {
-    const budgetAmount = document.getElementById('budgetAmount').value;
-    const budgetBreakdown = document.getElementById('budgetBreakdown').value;
-    
-    if (!budgetAmount || isNaN(budgetAmount)) {
-        alert('Please enter a valid budget amount');
-        return;
-    }
-    
-    try {
-        const response = await fetch(`https://man-m681.onrender.com/projects/${projectId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                budget: parseFloat(budgetAmount),
-                // In a real app, you would also save the breakdown to your database
-            })
-        });
-        
-        if (!response.ok) throw new Error('Failed to update project budget');
-        
-        alert('Budget updated successfully');
-        loadProjectBudget(projectId); // Refresh the view
-    } catch (error) {
-        console.error('Error saving project budget:', error);
-        alert('Failed to save project budget');
-    }
-}
-
-async function loadActivitiesForApproval() {
-    try {
-        const response = await fetch('https://man-m681.onrender.com/activities/');
-        if (!response.ok) throw new Error('Failed to fetch activities');
-        
-        const data = await response.json();
-        const tableBody = document.getElementById('approvalActivitiesTableBody');
-        tableBody.innerHTML = '';
-        
-        // Filter activities that need approval (status = 'pending')
-        const activitiesNeedingApproval = data.filter(activity => 
-            activity.status === 'pending' || activity.status === 'planned'
-        );
-        
-        if (activitiesNeedingApproval.length === 0) {
+        if (data.projects.length === 0) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" style="text-align: center;">
-                        No activities currently require approval
+                    <td colspan="6" style="text-align: center;">
+                        No projects found. <a href="#" onclick="document.getElementById('createNewProjectBtn').click()">Create a new project</a> to get started.
                     </td>
                 </tr>
             `;
             return;
         }
         
-        activitiesNeedingApproval.forEach(activity => {
+        data.projects.forEach(project => {
             const row = document.createElement('tr');
+            row.setAttribute('data-project-id', project.id);
             row.innerHTML = `
-                <td>${activity.name}</td>
-                <td>${activity.project_name || activity.project_id}</td>
-                <td>UGX ${activity.budget.toLocaleString()}</td>
-                <td><span class="status-badge ${activity.status}">${activity.status}</span></td>
+                <td>${project.name}</td>
+                <td>${project.start_date}</td>
+                <td>${project.end_date}</td>
+                <td>UGX ${project.budget.toLocaleString()}</td>
+                <td><span class="status-badge ${project.status}">${project.status}</span></td>
                 <td>
-                    <button class="file-manager-btn" onclick="approveActivity(${activity.id})">
-                        <i class="fas fa-check"></i> Approve
-                    </button>
-                    <button class="file-manager-btn secondary" onclick="rejectActivity(${activity.id})" style="margin-left: 5px;">
-                        <i class="fas fa-times"></i> Reject
+                    <button class="action-btn view-btn" onclick="viewProjectDetails(${project.id})">
+                        <i class="fas fa-eye"></i> View
                     </button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
     } catch (error) {
-        console.error('Error loading activities for approval:', error);
-        alert('Failed to load activities for approval');
+        console.error('Error loading projects:', error);
+        document.getElementById('projectsManagementTable').innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; color: red;">
+                    Failed to load projects: ${error.message}
+                </td>
+            </tr>
+        `;
     }
 }
 
-async function approveActivity(activityId) {
-    if (!confirm('Are you sure you want to approve this activity?')) {
+// View project details
+async function viewProjectDetails(projectId) {
+    try {
+        // Show loading state
+        document.getElementById('projectDetailsSection').style.display = 'block';
+        document.getElementById('selectedProjectTitle').textContent = 'Loading project...';
+        
+        // Fetch project details
+        const [projectResponse, activitiesResponse] = await Promise.all([
+            fetch(`https://man-m681.onrender.com/projects/${projectId}`),
+            fetch(`https://man-m681.onrender.com/projects/${projectId}/activities`)
+        ]);
+        
+        if (!projectResponse.ok || !activitiesResponse.ok) {
+            throw new Error('Failed to fetch project data');
+        }
+        
+        const project = await projectResponse.json();
+        const activities = await activitiesResponse.json();
+        
+        // Update project title
+        document.getElementById('selectedProjectTitle').textContent = project.name;
+        
+        // Update project stats
+        document.getElementById('projectTotalBudget').textContent = `UGX ${project.budget.toLocaleString()}`;
+        
+        // Calculate funds allocated (sum of all activity budgets)
+        const fundsAllocated = activities.reduce((sum, activity) => sum + activity.budget, 0);
+        document.getElementById('projectFundsAllocated').textContent = `UGX ${fundsAllocated.toLocaleString()}`;
+        
+        // Calculate funds spent (sum of completed activities)
+        const fundsSpent = activities
+            .filter(activity => activity.status === 'completed')
+            .reduce((sum, activity) => sum + activity.budget, 0);
+        document.getElementById('projectFundsSpent').textContent = `UGX ${fundsSpent.toLocaleString()}`;
+        
+        // Calculate completion percentage
+        const totalActivities = activities.length;
+        const completedActivities = activities.filter(a => a.status === 'completed').length;
+        const completionPercentage = totalActivities > 0 ? Math.round((completedActivities / totalActivities) * 100) : 0;
+        document.getElementById('projectCompletion').textContent = `${completionPercentage}%`;
+        
+        // Update activities table
+        const activitiesTable = document.getElementById('projectActivitiesTable');
+        activitiesTable.innerHTML = '';
+        
+        if (activities.length === 0) {
+            activitiesTable.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center;">
+                        No activities found for this project.
+                    </td>
+                </tr>
+            `;
+        } else {
+            activities.forEach(activity => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${activity.name}</td>
+                    <td>${activity.start_date}</td>
+                    <td>${activity.end_date}</td>
+                    <td>UGX ${activity.budget.toLocaleString()}</td>
+                    <td><span class="status-badge ${activity.status}">${activity.status}</span></td>
+                    <td>
+                        ${activity.status === 'pending_approval' ? 
+                            '<span class="status-badge pending">Pending Approval</span>' : 
+                            activity.status === 'approved' ? 
+                            '<span class="status-badge completed">Approved</span>' : 
+                            '<span class="status-badge">N/A</span>'}
+                    </td>
+                `;
+                activitiesTable.appendChild(row);
+            });
+        }
+        
+        // Initialize charts (you'll need to include Chart.js in your project)
+        initializeProjectCharts(project, activities);
+        
+    } catch (error) {
+        console.error('Error loading project details:', error);
+        document.getElementById('selectedProjectTitle').textContent = 'Error loading project';
+        document.getElementById('projectActivitiesTable').innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; color: red;">
+                    Failed to load project activities: ${error.message}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Initialize project charts
+function initializeProjectCharts(project, activities) {
+    // Progress chart
+    const progressCtx = document.getElementById('projectProgressChart').getContext('2d');
+    
+    // Calculate completed, in-progress, and planned activities
+    const statusCounts = activities.reduce((acc, activity) => {
+        acc[activity.status] = (acc[activity.status] || 0) + 1;
+        return acc;
+    }, {});
+    
+    new Chart(progressCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'In Progress', 'Planned', 'Pending Approval'],
+            datasets: [{
+                data: [
+                    statusCounts.completed || 0,
+                    statusCounts.in_progress || 0,
+                    statusCounts.planned || 0,
+                    statusCounts.pending_approval || 0
+                ],
+                backgroundColor: [
+                    '#2ecc71', // Green for completed
+                    '#3498db', // Blue for in progress
+                    '#f39c12', // Orange for planned
+                    '#e74c3c'  // Red for pending
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Activity Status'
+                }
+            }
+        }
+    });
+    
+    // Budget chart
+    const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+    
+    // Group activities by type (you might need to add a type field to activities)
+    const budgetData = {
+        'Implementation': 40,
+        'Materials': 30,
+        'Personnel': 20,
+        'Other': 10
+    };
+    
+    new Chart(budgetCtx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(budgetData),
+            datasets: [{
+                label: 'Budget Allocation (UGX)',
+                data: Object.values(budgetData),
+                backgroundColor: '#3498db'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Budget'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Budget Allocation'
+                }
+            }
+        }
+    });
+}
+
+// Create new project
+document.getElementById('createNewProjectBtn').addEventListener('click', function() {
+    document.getElementById('projectModalTitle').textContent = 'Create New Project';
+    document.getElementById('projectId').value = '';
+    document.getElementById('projectManagementForm').reset();
+    document.getElementById('projectFormModal').classList.add('show');
+});
+
+// Edit project
+document.getElementById('editProjectBtn').addEventListener('click', function() {
+    const projectId = document.getElementById('projectId').value;
+    if (!projectId) return;
+    
+    // Fetch project details and populate form
+    fetch(`https://man-m681.onrender.com/projects/${projectId}`)
+        .then(response => response.json())
+        .then(project => {
+            document.getElementById('projectModalTitle').textContent = 'Edit Project';
+            document.getElementById('projectId').value = project.id;
+            document.getElementById('projectName').value = project.name;
+            document.getElementById('projectDescription').value = project.description || '';
+            document.getElementById('projectStartDate').value = project.start_date;
+            document.getElementById('projectEndDate').value = project.end_date;
+            document.getElementById('projectBudget').value = project.budget;
+            document.getElementById('projectFundingSource').value = project.funding_source;
+            
+            document.getElementById('projectFormModal').classList.add('show');
+        })
+        .catch(error => {
+            console.error('Error fetching project:', error);
+            alert('Failed to load project for editing');
+        });
+});
+
+// Save project
+document.getElementById('saveProjectBtn').addEventListener('click', function() {
+    const projectId = document.getElementById('projectId').value;
+    const isEdit = !!projectId;
+    
+    const projectData = {
+        name: document.getElementById('projectName').value,
+        description: document.getElementById('projectDescription').value,
+        start_date: document.getElementById('projectStartDate').value,
+        end_date: document.getElementById('projectEndDate').value,
+        budget: parseFloat(document.getElementById('projectBudget').value),
+        funding_source: document.getElementById('projectFundingSource').value,
+        status: 'planned' // Default status
+    };
+    
+    // Validate required fields
+    if (!projectData.name || !projectData.start_date || !projectData.end_date || isNaN(projectData.budget)) {
+        alert('Please fill in all required fields');
         return;
     }
     
-    try {
-        const response = await fetch(`https://man-m681.onrender.com/activities/${activityId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                status: 'approved'
-            })
-        });
-        
-        if (!response.ok) throw new Error('Failed to approve activity');
-        
-        alert('Activity approved successfully');
-        loadActivitiesForApproval(); // Refresh the list
-    } catch (error) {
-        console.error('Error approving activity:', error);
-        alert('Failed to approve activity');
-    }
-}
-
-async function rejectActivity(activityId) {
-    const reason = prompt('Please enter the reason for rejection:');
-    if (reason === null) return; // User cancelled
+    const url = isEdit ? 
+        `https://man-m681.onrender.com/projects/${projectId}` : 
+        'https://man-m681.onrender.com/projects/';
+    const method = isEdit ? 'PUT' : 'POST';
     
-    try {
-        const response = await fetch(`https://man-m681.onrender.com/activities/${activityId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                status: 'rejected',
-                notes: reason
-            })
+    // Show loading state
+    const btn = document.getElementById('saveProjectBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    btn.disabled = true;
+    
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(projectData)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to save project');
+        return response.json();
+    })
+    .then(data => {
+        alert(`Project ${isEdit ? 'updated' : 'created'} successfully!`);
+        closeModal('projectFormModal');
+        loadProjectsForManagement();
+        
+        // If this was a new project, show its details
+        if (!isEdit) {
+            viewProjectDetails(data.id);
+        }
+    })
+    .catch(error => {
+        console.error('Error saving project:', error);
+        alert(`Failed to ${isEdit ? 'update' : 'create'} project: ${error.message}`);
+    })
+    .finally(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+});
+
+// Approve activities
+document.getElementById('approveActivitiesBtn').addEventListener('click', function() {
+    const projectId = document.getElementById('projectId').value;
+    if (!projectId) return;
+    
+    // Fetch pending activities
+    fetch(`https://man-m681.onrender.com/projects/${projectId}/activities?status=pending_approval`)
+        .then(response => response.json())
+        .then(activities => {
+            const tableBody = document.getElementById('pendingActivitiesTable');
+            tableBody.innerHTML = '';
+            
+            if (activities.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center;">
+                            No pending activities for approval.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            activities.forEach(activity => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-activity-id', activity.id);
+                row.innerHTML = `
+                    <td>${activity.name}</td>
+                    <td>UGX ${activity.budget.toLocaleString()}</td>
+                    <td>Program Officer</td>
+                    <td>
+                        <button class="action-btn" onclick="approveActivity(${activity.id}, this)">
+                            <i class="fas fa-check"></i> Approve
+                        </button>
+                    </td>
+                    <td>
+                        <button class="action-btn delete-btn" onclick="rejectActivity(${activity.id}, this)">
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('approveActivitiesModal').classList.add('show');
+        })
+        .catch(error => {
+            console.error('Error fetching pending activities:', error);
+            alert('Failed to load pending activities');
         });
-        
-        if (!response.ok) throw new Error('Failed to reject activity');
-        
-        alert('Activity rejected successfully');
-        loadActivitiesForApproval(); // Refresh the list
-    } catch (error) {
-        console.error('Error rejecting activity:', error);
-        alert('Failed to reject activity');
-    }
+});
+
+// Approve single activity
+function approveActivity(activityId, button) {
+    updateActivityStatus(activityId, 'approved', button);
 }
 
-function viewProjectDetails(projectId) {
-    // Implement detailed project view
-    alert(`Viewing details for project ${projectId}`);
+// Reject single activity
+function rejectActivity(activityId, button) {
+    updateActivityStatus(activityId, 'rejected', button);
 }
 
-function editProjectDetails(projectId) {
-    // Implement project editing
-    alert(`Editing details for project ${projectId}`);
+// Update activity status
+function updateActivityStatus(activityId, status, button) {
+    const btn = button;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    
+    fetch(`https://man-m681.onrender.com/activities/${activityId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            status: status
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to update activity');
+        return response.json();
+    })
+    .then(data => {
+        // Remove the row from the table
+        document.querySelector(`tr[data-activity-id="${activityId}"]`).remove();
+        
+        // Show success message
+        alert(`Activity ${status} successfully`);
+        
+        // Reload project details
+        const projectId = document.getElementById('projectId').value;
+        if (projectId) {
+            viewProjectDetails(projectId);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating activity:', error);
+        alert(`Failed to update activity: ${error.message}`);
+    })
+    .finally(() => {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+    });
 }
+
+// Export budget
+document.getElementById('exportBudgetBtn').addEventListener('click', function() {
+    const projectId = document.getElementById('projectId').value;
+    if (!projectId) return;
+    
+    // Fetch project details
+    fetch(`https://man-m681.onrender.com/projects/${projectId}`)
+        .then(response => response.json())
+        .then(project => {
+            // Create a budget report HTML
+            const reportHTML = `
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    h1 { color: #3498db; }
+                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                    .total-row { font-weight: bold; }
+                </style>
+                <h1>Budget Report: ${project.name}</h1>
+                <p><strong>Project Period:</strong> ${project.start_date} to ${project.end_date}</p>
+                <p><strong>Total Budget:</strong> UGX ${project.budget.toLocaleString()}</p>
+                
+                <h2>Budget Allocation</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Percentage</th>
+                            <th>Amount (UGX)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Implementation</td>
+                            <td>40%</td>
+                            <td>UGX ${(project.budget * 0.4).toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                            <td>Materials</td>
+                            <td>30%</td>
+                            <td>UGX ${(project.budget * 0.3).toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                            <td>Personnel</td>
+                            <td>20%</td>
+                            <td>UGX ${(project.budget * 0.2).toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                            <td>Other</td>
+                            <td>10%</td>
+                            <td>UGX ${(project.budget * 0.1).toLocaleString()}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total</td>
+                            <td>100%</td>
+                            <td>UGX ${project.budget.toLocaleString()}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2>Activity Budgets</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Activity</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activitiesTable">
+                        <!-- Activities will be inserted here -->
+                    </tbody>
+                </table>
+                
+                <p style="margin-top: 30px; text-align: right;">
+                    Generated on ${new Date().toLocaleDateString()}
+                </p>
+            `;
+            
+            // Create a temporary element to hold the report
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = reportHTML;
+            
+            // Fetch activities and add them to the report
+            fetch(`https://man-m681.onrender.com/projects/${projectId}/activities`)
+                .then(response => response.json())
+                .then(activities => {
+                    const activitiesTable = tempDiv.querySelector('#activitiesTable');
+                    
+                    activities.forEach(activity => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${activity.name}</td>
+                            <td>UGX ${activity.budget.toLocaleString()}</td>
+                            <td>${activity.status}</td>
+                        `;
+                        activitiesTable.appendChild(row);
+                    });
+                    
+                    // Add total row
+                    const totalRow = document.createElement('tr');
+                    totalRow.className = 'total-row';
+                    totalRow.innerHTML = `
+                        <td>Total</td>
+                        <td>UGX ${activities.reduce((sum, a) => sum + a.budget, 0).toLocaleString()}</td>
+                        <td></td>
+                    `;
+                    activitiesTable.appendChild(totalRow);
+                    
+                    // Generate PDF
+                    const opt = {
+                        margin: 10,
+                        filename: `${project.name.replace(/\s+/g, '_')}_Budget_Report.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    
+                    html2pdf().set(opt).from(tempDiv).save();
+                })
+                .catch(error => {
+                    console.error('Error fetching activities:', error);
+                    alert('Failed to load activities for report');
+                });
+        })
+        .catch(error => {
+            console.error('Error fetching project:', error);
+            alert('Failed to load project details');
+        });
+});
 
    
         
