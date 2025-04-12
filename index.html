@@ -1917,6 +1917,10 @@
         grid-template-columns: 1fr;
     }
 }
+        // Add this style to ensure the content is hidden by default
+#projectManagementContent {
+    display: none;
+}
     </style>
 </head>
 <body>
@@ -3156,6 +3160,16 @@
     document.getElementById('directorDashboard').style.display = 'none';
     
     setActiveNavItem(this);
+                document.getElementById('projectManagementLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        dashboardContent.style.display = 'none';
+        fileManagerContent.style.display = 'none';
+        donationsContent.style.display = 'none';
+        implementProjectContent.style.display = 'none';
+        projectManagementContent.style.display = 'block';
+        
+        setActiveNavItem(this);
+        loadProjectsForManagement();
 });
 
     
