@@ -3164,6 +3164,25 @@
     document.getElementById('directorDashboard').style.display = 'none';
     
     setActiveNavItem(this);
+                // Project Management Navigation
+document.getElementById('projectManagementLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Hide all other content sections
+    document.getElementById('dashboardContent').style.display = 'none';
+    document.getElementById('fileManagerContent').style.display = 'none';
+    document.getElementById('donationsContent').style.display = 'none';
+    document.getElementById('implementProjectContent').style.display = 'none';
+    
+    // Show the project management content
+    document.getElementById('projectManagementContent').style.display = 'block';
+    
+    // Set this nav item as active
+    setActiveNavItem(this);
+    
+    // Load projects for management
+    loadProjectsForManagement();
+});
                 
 });
 
@@ -6164,25 +6183,7 @@ document.getElementById('exportBudgetBtn').addEventListener('click', function() 
             alert('Failed to load project details');
         });
 });
-        document.getElementById('projectManagementLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    // Hide all other content sections
-    document.getElementById('dashboardContent').style.display = 'none';
-    document.getElementById('fileManagerContent').style.display = 'none';
-    document.getElementById('donationsContent').style.display = 'none';
-    document.getElementById('implementProjectContent').style.display = 'none';
-    
-    // Show the project management content
-    document.getElementById('projectManagementContent').style.display = 'block';
-    
-    // Set this nav item as active
-    setActiveNavItem(this);
-    
-    // Load projects for management
-    loadProjectsForManagement();
-});
-
- 
+       
 
    
         
