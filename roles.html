@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management - RCDNET</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reuse existing styles from your main CSS */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dashboard-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .file-manager-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-manager-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .file-manager-btn.secondary {
+            background-color: #f0f0f0;
+            color: var(--dark-color);
+        }
+
+        .file-manager-btn.secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .projects-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .projects-table th, 
+        .projects-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .projects-table th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+
+        .projects-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background-color: #e6f7ee;
+            color: var(--success-color);
+        }
+
+        .status-badge.planned {
+            background-color: #fff5e6;
+            color: var(--warning-color);
+        }
+
+        .status-badge.completed {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 3px;
+            color: #777;
+            transition: color 0.2s;
+        }
+
+        .action-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .action-btn.delete-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .project-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .project-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-name {
+            font-weight: 600;
+        }
+
+        .progress-percent {
+            color: var(--primary-color);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .project-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .project-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .project-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #777;
+        }
+
+        .project-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .project-content {
+            display: none;
+        }
+
+        .project-content.active {
+            display: block;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-info h4 {
+            margin: 0 0 5px 0;
+        }
+
+        .activity-meta {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .budget-category {
+            font-weight: 600;
+        }
+
+        .budget-amount {
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .project-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        
+        /* Role Selection Styles */
+.role-selection {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.role-selection h2 {
+    color: var(--dark-color);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.role-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.role-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.role-icon {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.role-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--dark-color);
+}
+
+.role-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <main class="main-content">
+            <h1 class="page-title">
+                <i class="fas fa-project-diagram"></i>
+                Project Management
+            </h1>
+
+            <div class="project-stats">
+                <div class="stat-card">
+                    <div class="stat-title">Active Projects</div>
+                    <div class="stat-value" id="activeProjectsCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Total Budget</div>
+                    <div class="stat-value" id="totalBudget">UGX 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Completed Projects</div>
+                    <div class="stat-value" id="completedProjectsCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Pending Approvals</div>
+                    <div class="stat-value" id="pendingApprovalsCount">0</div>
+                </div>
+            </div>
+
+           <div class="role-selection" id="roleSelection">
+        <h2>Our Thematic Areas</h2>
+<div class="role-cards">
+
+    <div class="role-card" onclick="selectRole('women_empowerment')">
+        <div class="role-icon">
+            <i class="fas fa-fist-raised"></i>
+        </div>
+        <h3>Women Empowerment</h3>
+        <p>Support women's rights, leadership, and economic opportunities.</p>
+    </div>
+
+    <div class="role-card" onclick="selectRole('vocational_education')">
+        <div class="role-icon">
+            <i class="fas fa-tools"></i>
+        </div>
+        <h3>Vocational Education</h3>
+        <p>Provide skill-based training and employment opportunities.</p>
+    </div>
+
+    <div class="role-card" onclick="selectRole('climate_mitigation')">
+        <div class="role-icon">
+            <i class="fas fa-leaf"></i>
+        </div>
+        <h3>Climate Change Mitigation</h3>
+        <p>Promote sustainable practices and environmental awareness.</p>
+    </div>
+
+    <div class="role-card" onclick="selectRole('reproductive_health')">
+        <div class="role-icon">
+            <i class="fas fa-heartbeat"></i>
+        </div>
+        <h3>Reproductive Health</h3>
+        <p>Ensure access to quality reproductive health services and education.</p>
+    </div>
+
+</div>
+
+    </div>
+
+            
+        </main>
+    </div>
+
+    
+    <!-- Activity Modal -->
+    <div class="project-modal" id="activityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="activityModalTitle">New Activity</h3>
+                <button class="close-btn" id="closeActivityModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="activityForm">
+                    <div class="form-group">
+                        <label for="activityName">Activity Name*</label>
+                        <input type="text" id="activityName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityDescription">Description</label>
+                        <textarea id="activityDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityStartDate">Start Date*</label>
+                        <input type="date" id="activityStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityEndDate">End Date*</label>
+                        <input type="date" id="activityEndDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityBudget">Budget (UGX)*</label>
+                        <input type="number" id="activityBudget" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityStatus">Status</label>
+                        <select id="activityStatus">
+                            <option value="planned">Planned</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" id="cancelActivityBtn">Cancel</button>
+                <button class="file-manager-btn" id="saveActivityBtn">Save Activity</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget Item Modal -->
+    <div class="project-modal" id="budgetItemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="budgetItemModalTitle">New Budget Item</h3>
+                <button class="close-btn" id="closeBudgetItemModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="budgetItemForm">
+                    <div class="form-group">
+                        <label for="budgetItemCategory">Category*</label>
+                        <input type="text" id="budgetItemCategory" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="budgetItemDescription">Description</label>
+                        <textarea id="budgetItemDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="budgetItemAmount">Amount (UGX)*</label>
+                        <input type="number" id="budgetItemAmount" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" id="cancelBudgetItemBtn">Cancel</button>
+                <button class="file-manager-btn" id="saveBudgetItemBtn">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentProjectId = null;
+        let projects = [];
+        let activities = [];
+        let budgetItems = [];
+        let pendingApprovals = [];
+
+        // DOM elements
+        const projectTabs = document.querySelectorAll('.project-tab');
+        const projectContents = document.querySelectorAll('.project-content');
+        const projectsTable = document.getElementById('projectsTable');
+        const projectForm = document.getElementById('projectForm');
+        const activityForm = document.getElementById('activityForm');
+        const budgetItemForm = document.getElementById('budgetItemForm');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProjects();
+            setupEventListeners();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Tab switching
+            projectTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    projectTabs.forEach(t => t.classList.remove('active'));
+                    projectContents.forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}Content`).classList.add('active');
+                });
+            });
+
+            // Project modal buttons
+            document.getElementById('newProjectBtn').addEventListener('click', openProjectModal);
+            document.getElementById('closeProjectModal').addEventListener('click', closeProjectModal);
+            document.getElementById('cancelProjectBtn').addEventListener('click', closeProjectModal);
+            document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
+
+            // Activity modal buttons
+            document.getElementById('addActivityBtn').addEventListener('click', openActivityModal);
+            document.getElementById('closeActivityModal').addEventListener('click', closeActivityModal);
+            document.getElementById('cancelActivityBtn').addEventListener('click', closeActivityModal);
+            document.getElementById('saveActivityBtn').addEventListener('click', saveActivity);
+
+            // Budget modal buttons
+            document.getElementById('editBudgetBtn').addEventListener('click', openBudgetItemModal);
+            document.getElementById('closeBudgetItemModal').addEventListener('click', closeBudgetItemModal);
+            document.getElementById('cancelBudgetItemBtn').addEventListener('click', closeBudgetItemModal);
+            document.getElementById('saveBudgetItemBtn').addEventListener('click', saveBudgetItem);
+        }
+
+            
+          
+    </script>
+</body>
+</html>
