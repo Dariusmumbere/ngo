@@ -3091,9 +3091,29 @@
     document.getElementById('roleSelection').style.display = 'block';
     document.getElementById('directorDashboard').style.display = 'none';
     
-    setActiveNavItem(this);
-    openModal('createProjectModal');
-});
+    const sidebarLinks = document.querySelectorAll('.sidebar-menu li a');
+    
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Hide all content sections first
+            document.querySelectorAll('.main-content > div').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show the corresponding content section
+            const targetId = this.id.replace('Link', 'Content');
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            
+            // Set the clicked item as active
+            setActiveNavItem(this);
+        });
+    });
 });
 
     
