@@ -1859,6 +1859,36 @@
 .table-responsive::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
+/* Director Dashboard - Thematic Areas */
+.director-dashboard .role-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.director-dashboard .role-card {
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .director-dashboard .role-cards {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .director-dashboard .role-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .director-dashboard .role-card {
+        max-width: 100%;
+    }
+}
     </style>
 </head>
 <body>
@@ -2702,7 +2732,7 @@
     <h2 class="section-title">Director Dashboard</h2>
     <div>
         <div class="role-selection" id="roleSelection">
-        <h2>Select Your Role</h2>
+        <h2>Our thematic areas</h2>
         <div class="role-cards">
             <div class="role-card" onclick="selectRole('director')">
                 <div class="role-icon">
