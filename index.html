@@ -1859,7 +1859,36 @@
 .table-responsive::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
+/* Director Dashboard - Thematic Areas */
+.director-dashboard .role-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
 
+.director-dashboard .role-card {
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .director-dashboard .role-cards {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .director-dashboard .role-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .director-dashboard .role-card {
+        max-width: 100%;
+    }
+}
     </style>
 </head>
 <body>
@@ -2705,51 +2734,50 @@
     <div>
         <div class="role-selection" id="roleSelection">
         <h2>Select program area</h2>
-<div class="role-cards">
-    <div class="role-card" onclick="selectThematicArea('women_empowerment')">
-        <div class="role-icon">
-            <i class="fas fa-fist-raised"></i>
+        <div class="role-cards">
+            <div class="role-card" onclick="selectRole('director')">
+                <div class="role-icon">
+                    <i class="fas fa-fist-raised"></i>
+                </div>
+                <h3>Women Empowerment</h3>
+                <p>Support women's rights, leadership, and economic opportunities.</p>
+                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
+                    <i class="fas fa-plus"></i> Add Project
+                </button>
+            </div>
+            
+            <div class="role-card" onclick="selectRole('vocational_education')">
+                <div class="role-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3>Vocational Education</h3>
+                <p>Provide skill-based training and employment opportunities.</p>
+                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
+                    <i class="fas fa-plus"></i> Add Project
+                </button>
+            </div>
+            <div class="role-card" onclick="selectRole('climate_mitigation')">
+                <div class="role-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Climate Change Mitigation</h3>
+                <p>Promote sustainable practices and environmental awareness.</p>
+                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
+                    <i class="fas fa-plus"></i> Add Project
+                </button>
+            </div>
+
+            <div class="role-card" onclick="selectRole('reproductive_health')">
+                <div class="role-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h3>Reproductive Health</h3>
+                <p>Ensure access to quality reproductive health services and education.</p>
+                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
+                    <i class="fas fa-plus"></i> Add Project
+                </button>
+            </div>
         </div>
-        <h3>Women Empowerment</h3>
-        <p>Support women's rights, leadership, and economic opportunities.</p>
-        <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
-            <i class="fas fa-plus"></i> Add Project
-        </button>
-    </div>
-    
-    <div class="role-card" onclick="selectThematicArea('vocational_education')">
-        <div class="role-icon">
-            <i class="fas fa-tools"></i>
-        </div>
-        <h3>Vocational Education</h3>
-        <p>Provide skill-based training and employment opportunities.</p>
-        <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('vocational_education')">
-            <i class="fas fa-plus"></i> Add Project
-        </button>
-    </div>
-    
-    <div class="role-card" onclick="selectThematicArea('climate_mitigation')">
-        <div class="role-icon">
-            <i class="fas fa-leaf"></i>
-        </div>
-        <h3>Climate Change Mitigation</h3>
-        <p>Promote sustainable practices and environmental awareness.</p>
-        <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('climate_mitigation')">
-            <i class="fas fa-plus"></i> Add Project
-        </button>
-    </div>
-    
-    <div class="role-card" onclick="selectThematicArea('reproductive_health')">
-        <div class="role-icon">
-            <i class="fas fa-heartbeat"></i>
-        </div>
-        <h3>Reproductive Health</h3>
-        <p>Ensure access to quality reproductive health services and education.</p>
-        <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('reproductive_health')">
-            <i class="fas fa-plus"></i> Add Project
-        </button>
-    </div>
-</div>
     </div>
         <button class="file-manager-btn" id="manageProjectsBtn">
             <i class="fas fa-project-diagram"></i> <a href="https://dariusmumbere.github.io/projects/">Manage Projects</a>
@@ -2854,7 +2882,6 @@
 
     <!-- Create Project Modal -->
     <div class="project-modal" id="createProjectModal">
-        <input type="hidden" id="thematicArea" name="thematicArea">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Create New Project</h3>
@@ -4544,67 +4571,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('donorProfiles').classList.contains('active')) {
         loadDonorProfiles();
     }
-    let currentThematicArea = null;
-    
-    // Handle thematic area selection
-    document.querySelectorAll('.thematic-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            // Don't trigger if clicking on the add project button
-            if (e.target.closest('.btn-add-project')) return;
-            
-            const area = this.getAttribute('data-area');
-            selectThematicArea(area);
-        });
-    });
-    
-    // Handle add project buttons
-    document.querySelectorAll('.btn-add-project').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent card click from triggering
-            const area = this.getAttribute('data-area');
-            prepareProjectForm(area);
-        });
-    });
-    
-    // Thematic area selection function
-    window.selectThematicArea = function(area) {
-        currentThematicArea = area;
-        
-        // Visual feedback - highlight selected card
-        document.querySelectorAll('.thematic-card').forEach(card => {
-            card.classList.remove('selected');
-        });
-        document.querySelector(`.thematic-card[data-area="${area}"]`).classList.add('selected');
-        
-        // Load projects for this area
-        loadProjects(area);
-        
-        console.log(`Selected thematic area: ${area}`);
-        // You can add more logic here as needed
-    };
-    
-    // Prepare project form
-    window.prepareProjectForm = function(thematicArea) {
-        currentThematicArea = thematicArea;
-        document.getElementById('projectForm').reset();
-        
-        // Set the thematic area in a hidden field
-        document.getElementById('thematicArea').value = thematicArea;
-        
-        // Update modal title
-        const areaNames = {
-            'women_empowerment': 'Women Empowerment',
-            'vocational_education': 'Vocational Education',
-            'climate_mitigation': 'Climate Change Mitigation',
-            'reproductive_health': 'Reproductive Health'
-        };
-        
-        document.querySelector('#createProjectModal .modal-header h3').textContent = 
-            `Add New Project to ${areaNames[thematicArea]}`;
-        
-        // Show modal
-        document.getElementById('createProjectModal').classList.add('show');
-    };
 });
         
 
@@ -5465,156 +5431,6 @@ function updateTableInfo() {
 
 // Initialize table info
 updateTableInfo();
-let currentThematicArea = null;
-
-function selectThematicArea(area) {
-    currentThematicArea = area;
-    // You can add any additional logic here for when a thematic area is selected
-    console.log(`Selected thematic area: ${area}`);
-}
-
-function prepareProjectForm(thematicArea) {
-    currentThematicArea = thematicArea;
-    document.getElementById('projectForm').reset();
-    
-    // Set the thematic area in a hidden field
-    document.getElementById('thematicArea').value = thematicArea;
-    
-    // Update the modal title to show which area we're adding a project to
-    const areaNames = {
-        'women_empowerment': 'Women Empowerment',
-        'vocational_education': 'Vocational Education',
-        'climate_mitigation': 'Climate Change Mitigation',
-        'reproductive_health': 'Reproductive Health'
-    };
-    
-    document.querySelector('#createProjectModal .modal-header h3').textContent = 
-        `Add New Project to ${areaNames[thematicArea]}`;
-    
-    document.getElementById('createProjectModal').classList.add('show');
-}
-
-function createProject() {
-    const projectData = {
-        name: document.getElementById('projectName').value,
-        description: document.getElementById('projectDescription').value,
-        start_date: document.getElementById('projectStartDate').value,
-        end_date: document.getElementById('projectEndDate').value,
-        budget: parseFloat(document.getElementById('projectBudget').value),
-        funding_source: document.getElementById('projectFunds').value,
-        thematic_area: document.getElementById('thematicArea').value,
-        status: 'planned'
-    };
-    
-    // Validate required fields
-    if (!projectData.name || !projectData.start_date || !projectData.end_date || !projectData.budget) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    // Show loading state
-    const submitBtn = document.querySelector('#createProjectModal .modal-footer .file-manager-btn');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-    submitBtn.disabled = true;
-    
-    fetch('https://man-m681.onrender.com/projects/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(projectData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to create project');
-        }
-        return response.json();
-    })
-    .then(data => {
-        alert('Project created successfully');
-        closeModal('createProjectModal');
-        
-        // Reload projects for the current thematic area
-        if (currentThematicArea) {
-            loadProjects(currentThematicArea);
-        } else {
-            loadProjects();
-        }
-    })
-    .catch(error => {
-        console.error('Error creating project:', error);
-        alert('Failed to create project: ' + error.message);
-    })
-    .finally(() => {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    });
-}
-
-function loadProjects(thematicArea = null) {
-    let url = 'https://man-m681.onrender.com/projects/';
-    if (thematicArea) {
-        url += `?thematic_area=${thematicArea}`;
-    }
-    
-    fetch(url)
-    .then(response => response.json())
-    .then(data => {
-        const tableBody = document.getElementById('projectsTableBody');
-        tableBody.innerHTML = '';
-        
-        // Filter projects by thematic area if specified
-        const projects = thematicArea 
-            ? data.projects.filter(p => p.thematic_area === thematicArea)
-            : data.projects;
-            
-        if (projects.length === 0) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="6" style="text-align: center;">
-                        No projects found. Click "Add Project" to create one.
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-        
-        projects.forEach(project => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${project.name}</td>
-                <td>${project.start_date}</td>
-                <td>${project.end_date}</td>
-                <td>UGX ${project.budget.toLocaleString()}</td>
-                <td><span class="status-badge ${project.status}">${project.status}</span></td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewProject(${project.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit-btn" onclick="editProject(${project.id})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteProject(${project.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    })
-    .catch(error => {
-        console.error('Error loading projects:', error);
-        const tableBody = document.getElementById('projectsTableBody');
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" style="text-align: center; color: red;">
-                    Failed to load projects: ${error.message}
-                </td>
-            </tr>
-        `;
-    });
-}
 
    
         
