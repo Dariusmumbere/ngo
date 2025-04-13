@@ -3084,12 +3084,16 @@
     fileManagerContent.style.display = 'none';
     donationsContent.style.display = 'none';
     document.getElementById('implementProjectContent').style.display = 'block';
+    document.getElementById('createProjectBtn').addEventListener('click', function() {
+    document.getElementById('projectForm').reset();
     
     // Show role selection by default
     document.getElementById('roleSelection').style.display = 'block';
     document.getElementById('directorDashboard').style.display = 'none';
     
     setActiveNavItem(this);
+    openModal('createProjectModal');
+});
 });
 
     
@@ -5615,12 +5619,7 @@ function openModal(modalId) {
 function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('show');
 }
-
-// Event listeners
-document.getElementById('createProjectBtn').addEventListener('click', function() {
-    document.getElementById('projectForm').reset();
-    openModal('createProjectModal');
-});
+    
 function updateTableInfo() {
     const totalRows = document.querySelectorAll('#activitiesTableBody tr').length;
     const visibleRows = document.querySelectorAll('#activitiesTableBody tr:not([style*="display: none"])').length;
