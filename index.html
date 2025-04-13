@@ -1913,24 +1913,12 @@
     </a>
 </li>
                 <li>
-                    <a href="#" class="has-submenu" id="reportsMenu">
+                    <a href="#" id="implementProjectLink">
                         <i class="fas fa-chart-pie"></i>
                         <span>Plan and manage</span>
                         <i class="fas fa-chevron-down ml-auto" id="reportsArrow"></i>
                     </a>
-                    <ul class="submenu" id="reportsSubmenu">
-                        <li>
-                            <a href="#" id="implementProjectLink">
-                                <i class="fas fa-project-diagram"></i>
-                                <span>Choose your role</span>
-                            </a>
-                        </li>
-                        <li><a href="#"><span>Project Report</span></a></li>
-                        <li><a href="#"><span>Staff</span></a></li>
-                        <li><a href="#"><span>Budget</span></a></li>
-                        <li><a href="#"><span>Payments</span></a></li>
-                        <li><a href="#"><span>Accountability</span></a></li>
-                    </ul>
+                    
                 </li>
                 <li>
                     <a href="#">
@@ -2667,7 +2655,7 @@
             <div id="implementProjectContent" style="display: none;">
     <h1 class="page-title">
         <i class="fas fa-project-diagram"></i>
-        Implement Project
+        Choose your Role
     </h1>
 
     <!-- Role Selection Section -->
@@ -2711,14 +2699,16 @@
     <!-- Director Dashboard (initially hidden) -->
     <div class="director-dashboard" id="directorDashboard" style="display: none;">
         <div class="section-header">
-            <h2 class="section-title">Director Dashboard</h2>
-            <button class="file-manager-btn" id="createProjectBtn">
-                <i class="fas fa-plus"></i> Create New Project
-            </button>
-            <button class="file-manager-btn" id="createProjectBtn">
-                <i class="fas fa-plus"></i> <a href="https://dariusmumbere.github.io/projects/">Manage project</a>
-            </button>
-        </div>
+    <h2 class="section-title">Director Dashboard</h2>
+    <div>
+        <button class="file-manager-btn" id="manageProjectsBtn" onclick="window.location.href='project.html'">
+            <i class="fas fa-project-diagram"></i> Manage Projects
+        </button>
+        <button class="file-manager-btn" id="createProjectBtn">
+            <i class="fas fa-plus"></i> Create New Project
+        </button>
+    </div>
+</div>
 
         <div class="projects-list">
             <h3>Current Projects</h3>
