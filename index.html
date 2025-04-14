@@ -1889,6 +1889,43 @@
         max-width: 100%;
     }
 }
+/* Thematic Areas Styles */
+.thematic-areas {
+    margin-bottom: 30px;
+}
+
+.thematic-areas h3 {
+    margin-bottom: 20px;
+    color: var(--dark-color);
+    font-size: 1.2rem;
+}
+
+#thematicAreaTitle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#thematicAreaTitle:hover {
+    color: var(--primary-color);
+}
+
+#thematicAreaTitle::before {
+    content: "←";
+    font-size: 1.2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .thematic-areas .role-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    #thematicAreaTitle {
+        font-size: 1.1rem;
+    }
+}
     </style>
 </head>
 <body>
