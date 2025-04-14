@@ -5602,35 +5602,6 @@ async function loadThematicProjects(thematicArea) {
     }
 }
 
-
-// Add back button functionality
-document.getElementById('thematicAreaTitle').addEventListener('click', goBackToThematicAreas);
-window.selectThematicArea = function(area) {
-    currentThematicArea = area;
-    
-    // Update UI
-    document.getElementById('thematicAreaContent').style.display = 'block';
-    document.querySelector('.thematic-areas').style.display = 'none';
-    
-    // Set the title based on the selected area
-    const areaTitles = {
-        'women_empowerment': 'Women Empowerment Projects',
-        'vocational_education': 'Vocational Education Projects',
-        'climate_mitigation': 'Climate Change Mitigation Projects',
-        'reproductive_health': 'Reproductive Health Projects'
-    };
-    document.getElementById('thematicAreaTitle').textContent = areaTitles[area];
-    
-    // Load projects for this thematic area
-    loadThematicProjects(area);
-}
-window.goBackToThematicAreas = function() {
-    document.getElementById('thematicAreaContent').style.display = 'none';
-    document.querySelector('.thematic-areas').style.display = 'block';
-    currentThematicArea = null;
-}
-
-   
         
     </script>
 </body>
