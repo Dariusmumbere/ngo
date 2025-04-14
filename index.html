@@ -3025,6 +3025,7 @@
         </div>
     </div>
 </div>
+            <h3 id="thematicAreaTitle" style="cursor: pointer;"></h3>
         </main>
     </div>
 
@@ -3047,46 +3048,6 @@
     const uploadProgress = document.getElementById('uploadProgress');
     const progressBarFill = document.getElementById('progressBarFill');
     const donationsContent = document.getElementById('donationsContent');
-    let currentThematicArea = null;
-
-            // Function to handle thematic area selection
-            function selectThematicArea(area) {
-                currentThematicArea = area;
-                
-                // Update UI
-                document.getElementById('thematicAreaContent').style.display = 'block';
-                document.querySelector('.thematic-areas').style.display = 'none';
-                
-                // Set the title based on the selected area
-                const areaTitles = {
-                    'women_empowerment': 'Women Empowerment Projects',
-                    'vocational_education': 'Vocational Education Projects',
-                    'climate_mitigation': 'Climate Change Mitigation Projects',
-                    'reproductive_health': 'Reproductive Health Projects'
-                };
-                document.getElementById('thematicAreaTitle').textContent = areaTitles[area];
-                
-                // Load projects for this thematic area
-                loadThematicProjects(area);
-            }
-
-            // Function to go back to thematic areas list
-            function goBackToThematicAreas() {
-                document.getElementById('thematicAreaContent').style.display = 'none';
-                document.querySelector('.thematic-areas').style.display = 'block';
-                currentThematicArea = null;
-            }
-
-            // Add click event listeners to thematic area cards
-            document.querySelectorAll('.role-card[data-area]').forEach(card => {
-                card.addEventListener('click', function() {
-                    const area = this.getAttribute('data-area');
-                    selectThematicArea(area);
-                });
-            });
-
-            // Add click event to back button
-            document.getElementById('thematicAreaTitle').addEventListener('click', goBackToThematicAreas);
             document.getElementById('implementProjectLink').addEventListener('click', function(e) {
     e.preventDefault();
     dashboardContent.style.display = 'none';
@@ -5553,7 +5514,7 @@ let currentThematicArea = null;
 function selectThematicArea(area) {
     currentThematicArea = area;
     
-    // Update UI
+    // Update UI - hide area selection and show project list
     document.getElementById('thematicAreaContent').style.display = 'block';
     document.querySelector('.thematic-areas').style.display = 'none';
     
@@ -5565,6 +5526,7 @@ function selectThematicArea(area) {
         'reproductive_health': 'Reproductive Health Projects'
     };
     document.getElementById('thematicAreaTitle').textContent = areaTitles[area];
+    document.getElementById('thematicAreaTitle').setAttribute('onclick', 'goBackToThematicAreas()');
     
     // Load projects for this thematic area
     loadThematicProjects(area);
@@ -5641,7 +5603,9 @@ async function loadThematicProjects(thematicArea) {
     }
 }
 
-        
+
+// Add back button functionality
+document.getElementById('thematicAreaTitle').addEventListener('click', goBackToThematicAreas);        
     </script>
 </body>
 </html>
