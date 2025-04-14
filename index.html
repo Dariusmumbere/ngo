@@ -5480,9 +5480,9 @@ function updateTableInfo() {
 
 // Initialize table info
 updateTableInfo();
-let currentThematicArea = null;
+        let currentThematicArea = null;
 
-function selectThematicArea(area) {
+        function selectThematicArea(area) {
     currentThematicArea = area;
     
     // Hide thematic areas selection and show content area
@@ -5504,7 +5504,17 @@ function selectThematicArea(area) {
     // Load projects for this thematic area
     loadThematicProjects(area);
 }
-async function loadThematicProjects(thematicArea) {
+
+
+
+        function goBackToThematicAreas() {
+    document.getElementById('thematicAreaContent').style.display = 'none';
+    document.querySelector('.thematic-areas').style.display = 'block';
+    currentThematicArea = null;
+}
+
+
+        async function loadThematicProjects(thematicArea) {
     try {
         const tableBody = document.getElementById('thematicProjectsTableBody');
         tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading projects...</td></tr>';
@@ -5569,14 +5579,6 @@ async function loadThematicProjects(thematicArea) {
     }
 }
 
-function goBackToThematicAreas() {
-    document.getElementById('thematicAreaContent').style.display = 'none';
-    document.querySelector('.thematic-areas').style.display = 'block';
-    currentThematicArea = null;
-}
-
-// Add back button functionality
-document.getElementById('thematicAreaTitle').addEventListener('click', goBackToThematicAreas);        
     </script>
 </body>
 </html>
