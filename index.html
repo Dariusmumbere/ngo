@@ -1889,45 +1889,6 @@
         max-width: 100%;
     }
 }
-/* Add to your existing CSS */
-#thematicAreaContent {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-}
-
-.thematic-area-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-}
-
-.thematic-area-title {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    margin: 0;
-}
-
-.back-to-dashboard {
-    background-color: var(--light-color);
-    color: var(--dark-color);
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.back-to-dashboard:hover {
-    background-color: #e0e0e0;
-}
     </style>
 </head>
 <body>
@@ -2767,81 +2728,51 @@
 
     <!-- Director Dashboard (initially hidden) -->
     <div class="director-dashboard" id="directorDashboard" style="display: none;">
-    <h2 class="section-title">Director Dashboard</h2>
-    <div class="section-header">
-        <div>
-            <div class="role-selection" id="roleSelection">
-                <h2>Select program area</h2>
-                <div class="role-cards">
-                    <div class="role-card" onclick="openThematicArea('women_empowerment')">
-                        <div class="role-icon">
-                            <i class="fas fa-fist-raised"></i>
-                        </div>
-                        <h3>Women Empowerment</h3>
-                        <p>Support women's rights, leadership, and economic opportunities.</p>
-                    </div>
+         <h2 class="section-title">Director Dashboard</h2>
+        <div class="section-header">
 
-                    <div class="role-card" onclick="openThematicArea('vocational_education')">
-                        <div class="role-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <h3>Vocational Education</h3>
-                        <p>Provide skill-based training and employment opportunities.</p>
-                    </div>
-
-                    <div class="role-card" onclick="openThematicArea('climate_mitigation')">
-                        <div class="role-icon">
-                            <i class="fas fa-leaf"></i>
-                        </div>
-                        <h3>Climate Change Mitigation</h3>
-                        <p>Promote sustainable practices and environmental awareness.</p>
-                    </div>
-
-                    <div class="role-card" onclick="openThematicArea('reproductive_health')">
-                        <div class="role-icon">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <h3>Reproductive Health</h3>
-                        <p>Ensure access to quality reproductive health services and education.</p>
-                    </div>
+    <div>
+        <div class="role-selection" id="roleSelection">
+        <h2>Select program area</h2>
+        <div class="role-cards">
+            <div class="role-card" onclick="selectRole('director')">
+                <div class="role-icon">
+                    <i class="fas fa-fist-raised"></i>
                 </div>
+                <h3>Women Empowerment</h3>
+                <p>Support women's rights, leadership, and economic opportunities.</p>
+            </div>
+            
+            <div class="role-card" onclick="selectRole('vocational_education')">
+                <div class="role-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3>Vocational Education</h3>
+                <p>Provide skill-based training and employment opportunities.</p>
+            </div>
+            <div class="role-card" onclick="selectRole('climate_mitigation')">
+                <div class="role-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Climate Change Mitigation</h3>
+                <p>Promote sustainable practices and environmental awareness.</p>
+            </div>
+
+            <div class="role-card" onclick="selectRole('reproductive_health')">
+                <div class="role-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h3>Reproductive Health</h3>
+                <p>Ensure access to quality reproductive health services and education.</p>
             </div>
         </div>
     </div>
-</div>
-<div id="thematicAreaContent" style="display: none;">
-    <div class="section-header">
-        <button class="file-manager-btn secondary" onclick="backToDirectorDashboard()">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </button>
-        <h2 class="section-title" id="thematicAreaTitle"></h2>
-        <button class="file-manager-btn" id="createProjectBtn">
-            <i class="fas fa-plus"></i> Create New Project
+        <button class="file-manager-btn" id="manageProjectsBtn">
+            <i class="fas fa-project-diagram"></i> <a href="https://dariusmumbere.github.io/projects/">Manage Projects</a>
         </button>
     </div>
-    
-    <div class="projects-list">
-        <h3>Projects in this Thematic Area</h3>
-        <div class="table-responsive">
-            <table class="projects-table">
-                <thead>
-                    <tr>
-                        <th>Project Name</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Budget (UGX)</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="thematicProjectsTableBody">
-                    <!-- Projects will be loaded here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
-                
+
         <div class="projects-list">
             <h3>Current Projects</h3>
             <div class="table-responsive">
@@ -5166,68 +5097,35 @@ async function loadProjectsForActivities() {
     }
 }
 // Project Management Functions
-async function loadThematicProjects(area) {
-    try {
-        const tableBody = document.getElementById('thematicProjectsTableBody');
-        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading projects...</td></tr>';
-        
-        // In a real implementation, you would fetch from your API:
-        // const response = await fetch(`/api/thematic-areas/${area}/projects`);
-        // For now, we'll simulate with sample data
-        const sampleProjects = {
-            'women_empowerment': [
-                { id: 1, name: "Women Leadership Training", start_date: "2023-01-15", end_date: "2023-12-31", budget: 5000000, status: "active" },
-                { id: 2, name: "Economic Empowerment Program", start_date: "2023-03-01", end_date: "2023-11-30", budget: 7500000, status: "active" }
-            ],
-            'vocational_education': [
-                { id: 3, name: "Vocational Skills Training", start_date: "2023-02-10", end_date: "2023-10-15", budget: 6000000, status: "active" }
-            ],
-            'climate_mitigation': [
-                { id: 4, name: "Tree Planting Initiative", start_date: "2023-04-01", end_date: "2023-09-30", budget: 3000000, status: "planned" }
-            ],
-            'reproductive_health': [
-                { id: 5, name: "Health Education Workshops", start_date: "2023-05-15", end_date: "2023-12-15", budget: 4000000, status: "active" }
-            ]
-        };
-        
-        const projects = sampleProjects[area] || [];
-        
-        tableBody.innerHTML = '';
-        
-        if (projects.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No projects found in this thematic area</td></tr>';
-            return;
-        }
-        
-        projects.forEach(project => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${project.name}</td>
-                <td>${project.start_date}</td>
-                <td>${project.end_date}</td>
-                <td>UGX ${project.budget.toLocaleString()}</td>
-                <td><span class="status-badge ${project.status}">${project.status}</span></td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewProject(${project.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit-btn" onclick="editProject(${project.id})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteProject(${project.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
+function loadProjects() {
+    fetch('https://man-m681.onrender.com/projects/')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('projectsTableBody');
+            tableBody.innerHTML = '';
+            
+            data.projects.forEach(project => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${project.name}</td>
+                    <td>${project.start_date}</td>
+                    <td>${project.end_date}</td>
+                    <td>UGX ${project.budget.toLocaleString()}</td>
+                    <td><span class="status-badge ${project.status}">${project.status}</span></td>
+                    <td>
+                        <button class="action-btn view-btn" onclick="viewProject(${project.id})"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn edit-btn" onclick="editProject(${project.id})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteProject(${project.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading projects:', error);
+            alert('Failed to load projects');
         });
-    } catch (error) {
-        console.error('Error loading thematic projects:', error);
-        document.getElementById('thematicProjectsTableBody').innerHTML = 
-            '<tr><td colspan="6" style="text-align: center; color: red;">Failed to load projects</td></tr>';
-    }
 }
-        
 async function loadActivities() {
     try {
         const tableBody = document.getElementById('activitiesTableBody');
@@ -5421,7 +5319,7 @@ async function deleteActivity(activityId) {
     }
 }
 
-async function createProject() {
+function createProject() {
     const projectData = {
         name: document.getElementById('projectName').value,
         description: document.getElementById('projectDescription').value,
@@ -5429,8 +5327,7 @@ async function createProject() {
         end_date: document.getElementById('projectEndDate').value,
         budget: parseFloat(document.getElementById('projectBudget').value),
         funding_source: document.getElementById('projectFunds').value,
-        status: 'planned',
-        thematic_area: currentThematicArea  // Add thematic area to project data
+        status: 'planned'
     };
     
     // Validate required fields
@@ -5439,31 +5336,23 @@ async function createProject() {
         return;
     }
     
-    try {
-        const response = await fetch('/api/projects/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(projectData)
-        });
-        
-        if (!response.ok) throw new Error('Failed to create project');
-        
-        const data = await response.json();
+    fetch('https://man-m681.onrender.com/projects/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(projectData)
+    })
+    .then(response => response.json())
+    .then(data => {
         alert('Project created successfully');
         closeModal('createProjectModal');
-        
-        // Reload projects for the current thematic area
-        if (currentThematicArea) {
-            loadThematicProjects(currentThematicArea);
-        } else {
-            loadProjects();
-        }
-    } catch (error) {
+        loadProjects();
+    })
+    .catch(error => {
         console.error('Error creating project:', error);
         alert('Failed to create project');
-    }
+    });
 }
 
 function viewProject(projectId) {
@@ -5527,35 +5416,9 @@ function updateTableInfo() {
 
 // Initialize table info
 updateTableInfo();
-let currentThematicArea = null;
 
-function openThematicArea(area) {
-    currentThematicArea = area;
-    
-    // Hide director dashboard and show thematic area content
-    document.getElementById('directorDashboard').style.display = 'none';
-    document.getElementById('thematicAreaContent').style.display = 'block';
-    
-    // Set the title based on the selected area
-    const areaTitles = {
-        'women_empowerment': 'Women Empowerment',
-        'vocational_education': 'Vocational Education & Entrepreneurship',
-        'climate_mitigation': 'Climate Change Mitigation',
-        'reproductive_health': 'Reproductive Health'
-    };
-    
-    document.getElementById('thematicAreaTitle').textContent = areaTitles[area];
-    
-    // Load projects for this thematic area
-    loadThematicProjects(area);
-}
-
-function backToDirectorDashboard() {
-    document.getElementById('thematicAreaContent').style.display = 'none';
-    document.getElementById('directorDashboard').style.display = 'block';
-    currentThematicArea = null;
-}
-
+   
+        
     </script>
 </body>
 </html>
