@@ -3048,6 +3048,7 @@
     const uploadProgress = document.getElementById('uploadProgress');
     const progressBarFill = document.getElementById('progressBarFill');
     const donationsContent = document.getElementById('donationsContent');
+    document.getElementById('thematicAreaTitle').addEventListener('click', goBackToThematicAreas);
             document.getElementById('implementProjectLink').addEventListener('click', function(e) {
     e.preventDefault();
     dashboardContent.style.display = 'none';
@@ -5503,13 +5504,6 @@ function selectThematicArea(area) {
     // Load projects for this thematic area
     loadThematicProjects(area);
 }
-
-function goBackToThematicAreas() {
-    document.getElementById('thematicAreaContent').style.display = 'none';
-    document.querySelector('.thematic-areas').style.display = 'block';
-    currentThematicArea = null;
-}
-
 async function loadThematicProjects(thematicArea) {
     try {
         const tableBody = document.getElementById('thematicProjectsTableBody');
@@ -5575,6 +5569,11 @@ async function loadThematicProjects(thematicArea) {
     }
 }
 
+function goBackToThematicAreas() {
+    document.getElementById('thematicAreaContent').style.display = 'none';
+    document.querySelector('.thematic-areas').style.display = 'block';
+    currentThematicArea = null;
+}
 
 // Add back button functionality
 document.getElementById('thematicAreaTitle').addEventListener('click', goBackToThematicAreas);        
