@@ -2774,36 +2774,36 @@
                 <h2>Select program area</h2>
                 <div class="role-cards">
                     <div class="role-card" onclick="openThematicArea('women_empowerment')">
-                        <div class="role-icon">
-                            <i class="fas fa-fist-raised"></i>
-                        </div>
-                        <h3>Women Empowerment</h3>
-                        <p>Support women's rights, leadership, and economic opportunities.</p>
-                    </div>
-                    
-                    <div class="role-card" onclick="openThematicArea('vocational_education')">
-                        <div class="role-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <h3>Vocational Education</h3>
-                        <p>Provide skill-based training and employment opportunities.</p>
-                    </div>
-                    
-                    <div class="role-card" onclick="openThematicArea('climate_mitigation')">
-                        <div class="role-icon">
-                            <i class="fas fa-leaf"></i>
-                        </div>
-                        <h3>Climate Change Mitigation</h3>
-                        <p>Promote sustainable practices and environmental awareness.</p>
-                    </div>
+    <div class="role-icon">
+        <i class="fas fa-fist-raised"></i>
+    </div>
+    <h3>Women Empowerment</h3>
+    <p>Support women's rights, leadership, and economic opportunities.</p>
+</div>
 
-                    <div class="role-card" onclick="openThematicArea('reproductive_health')">
-                        <div class="role-icon">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <h3>Reproductive Health</h3>
-                        <p>Ensure access to quality reproductive health services and education.</p>
-                    </div>
+<div class="role-card" onclick="openThematicArea('vocational_education')">
+    <div class="role-icon">
+        <i class="fas fa-tools"></i>
+    </div>
+    <h3>Vocational Education</h3>
+    <p>Provide skill-based training and employment opportunities.</p>
+</div>
+
+<div class="role-card" onclick="openThematicArea('climate_mitigation')">
+    <div class="role-icon">
+        <i class="fas fa-leaf"></i>
+    </div>
+    <h3>Climate Change Mitigation</h3>
+    <p>Promote sustainable practices and environmental awareness.</p>
+</div>
+
+<div class="role-card" onclick="openThematicArea('reproductive_health')">
+    <div class="role-icon">
+        <i class="fas fa-heartbeat"></i>
+    </div>
+    <h3>Reproductive Health</h3>
+    <p>Ensure access to quality reproductive health services and education.</p>
+</div>
                 </div>
             </div>
         </div>
@@ -5170,18 +5170,35 @@ async function loadThematicProjects(area) {
         const tableBody = document.getElementById('thematicProjectsTableBody');
         tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading projects...</td></tr>';
         
-        const response = await fetch(`/api/thematic-areas/${area}/projects`);
-        if (!response.ok) throw new Error('Failed to fetch projects');
+        // In a real implementation, you would fetch from your API:
+        // const response = await fetch(`/api/thematic-areas/${area}/projects`);
+        // For now, we'll simulate with sample data
+        const sampleProjects = {
+            'women_empowerment': [
+                { id: 1, name: "Women Leadership Training", start_date: "2023-01-15", end_date: "2023-12-31", budget: 5000000, status: "active" },
+                { id: 2, name: "Economic Empowerment Program", start_date: "2023-03-01", end_date: "2023-11-30", budget: 7500000, status: "active" }
+            ],
+            'vocational_education': [
+                { id: 3, name: "Vocational Skills Training", start_date: "2023-02-10", end_date: "2023-10-15", budget: 6000000, status: "active" }
+            ],
+            'climate_mitigation': [
+                { id: 4, name: "Tree Planting Initiative", start_date: "2023-04-01", end_date: "2023-09-30", budget: 3000000, status: "planned" }
+            ],
+            'reproductive_health': [
+                { id: 5, name: "Health Education Workshops", start_date: "2023-05-15", end_date: "2023-12-15", budget: 4000000, status: "active" }
+            ]
+        };
         
-        const data = await response.json();
+        const projects = sampleProjects[area] || [];
+        
         tableBody.innerHTML = '';
         
-        if (data.projects.length === 0) {
+        if (projects.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No projects found in this thematic area</td></tr>';
             return;
         }
         
-        data.projects.forEach(project => {
+        projects.forEach(project => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${project.name}</td>
@@ -5208,7 +5225,7 @@ async function loadThematicProjects(area) {
         document.getElementById('thematicProjectsTableBody').innerHTML = 
             '<tr><td colspan="6" style="text-align: center; color: red;">Failed to load projects</td></tr>';
     }
-}   
+}
         
 async function loadActivities() {
     try {
@@ -5521,7 +5538,7 @@ function openThematicArea(area) {
     // Set the title based on the selected area
     const areaTitles = {
         'women_empowerment': 'Women Empowerment',
-        'vocational_education': 'Vocational Education',
+        'vocational_education': 'Vocational Education & Entrepreneurship',
         'climate_mitigation': 'Climate Change Mitigation',
         'reproductive_health': 'Reproductive Health'
     };
