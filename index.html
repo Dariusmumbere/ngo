@@ -2728,66 +2728,76 @@
 
     <!-- Director Dashboard (initially hidden) -->
     <div class="director-dashboard" id="directorDashboard" style="display: none;">
-         <h2 class="section-title">Director Dashboard</h2>
-        <div class="section-header">
-
-    <div>
-        <div class="role-selection" id="roleSelection">
-        <h2>Select program area</h2>
+    <h2 class="section-title">Director Dashboard</h2>
+    
+    <!-- Thematic Areas Section -->
+    <div class="thematic-areas">
+        <h3>Select Thematic Area</h3>
         <div class="role-cards">
-            <div class="role-card" onclick="selectRole('director')">
+            <div class="role-card" onclick="selectThematicArea('women_empowerment')">
                 <div class="role-icon">
                     <i class="fas fa-fist-raised"></i>
                 </div>
                 <h3>Women Empowerment</h3>
                 <p>Support women's rights, leadership, and economic opportunities.</p>
-                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
-                    <i class="fas fa-plus"></i> Add Project
-                </button>
             </div>
             
-            <div class="role-card" onclick="selectRole('vocational_education')">
+            <div class="role-card" onclick="selectThematicArea('vocational_education')">
                 <div class="role-icon">
                     <i class="fas fa-tools"></i>
                 </div>
                 <h3>Vocational Education</h3>
                 <p>Provide skill-based training and employment opportunities.</p>
-                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
-                    <i class="fas fa-plus"></i> Add Project
-                </button>
             </div>
-            <div class="role-card" onclick="selectRole('climate_mitigation')">
+            
+            <div class="role-card" onclick="selectThematicArea('climate_mitigation')">
                 <div class="role-icon">
                     <i class="fas fa-leaf"></i>
                 </div>
                 <h3>Climate Change Mitigation</h3>
                 <p>Promote sustainable practices and environmental awareness.</p>
-                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
-                    <i class="fas fa-plus"></i> Add Project
-                </button>
             </div>
-
-            <div class="role-card" onclick="selectRole('reproductive_health')">
+            
+            <div class="role-card" onclick="selectThematicArea('reproductive_health')">
                 <div class="role-icon">
                     <i class="fas fa-heartbeat"></i>
                 </div>
                 <h3>Reproductive Health</h3>
                 <p>Ensure access to quality reproductive health services and education.</p>
-                <button class="file-manager-btn" onclick="event.stopPropagation(); prepareProjectForm('women_empowerment')">
-                    <i class="fas fa-plus"></i> Add Project
-                </button>
             </div>
         </div>
     </div>
-        <button class="file-manager-btn" id="manageProjectsBtn">
-            <i class="fas fa-project-diagram"></i> <a href="https://dariusmumbere.github.io/projects/">Manage Projects</a>
-        </button>
-        <button class="file-manager-btn" id="createProjectBtn">
-            <i class="fas fa-plus"></i> Create New Project
-        </button>
+    
+    <!-- Thematic Area Content (hidden by default) -->
+    <div id="thematicAreaContent" style="display: none;">
+        <div class="section-header">
+            <h3 id="thematicAreaTitle"></h3>
+            <button class="file-manager-btn" id="createProjectBtn">
+                <i class="fas fa-plus"></i> Create New Project
+            </button>
+        </div>
+        
+        <div class="projects-list">
+            <div class="table-responsive">
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="thematicProjectsTableBody">
+                        <!-- Projects will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-
         <div class="projects-list">
             <h3>Current Projects</h3>
             <div class="table-responsive">
@@ -5334,7 +5344,17 @@ async function deleteActivity(activityId) {
     }
 }
 
-function createProject() {
+async function createProject() {
+    if (!currentThematicArea) {
+        alert('Please select a thematic area first');
+        return;
+    }
+    
+    // Open the modal
+    document.getElementById('projectForm').reset();
+    document.getElementById('createProjectModal').classList.add('show');
+}
+async function submitProject() {
     const projectData = {
         name: document.getElementById('projectName').value,
         description: document.getElementById('projectDescription').value,
@@ -5342,32 +5362,52 @@ function createProject() {
         end_date: document.getElementById('projectEndDate').value,
         budget: parseFloat(document.getElementById('projectBudget').value),
         funding_source: document.getElementById('projectFunds').value,
-        status: 'planned'
+        status: 'planned',
+        thematic_area: currentThematicArea
     };
     
     // Validate required fields
-    if (!projectData.name || !projectData.start_date || !projectData.end_date || !projectData.budget) {
-        alert('Please fill in all required fields');
+    if (!projectData.name || !projectData.start_date || !projectData.end_date || isNaN(projectData.budget)) {
+        alert('Please fill in all required fields with valid values');
         return;
     }
     
-    fetch('https://man-m681.onrender.com/projects/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(projectData)
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        const submitBtn = document.querySelector('#createProjectModal .modal-footer .file-manager-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        submitBtn.disabled = true;
+        
+        const response = await fetch('https://man-m681.onrender.com/projects/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(projectData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to create project');
+        }
+        
+        const data = await response.json();
         alert('Project created successfully');
         closeModal('createProjectModal');
-        loadProjects();
-    })
-    .catch(error => {
+        
+        // Reload projects for the current thematic area
+        await loadThematicProjects(currentThematicArea);
+        
+    } catch (error) {
         console.error('Error creating project:', error);
-        alert('Failed to create project');
-    });
+        alert(`Failed to create project: ${error.message}`);
+    } finally {
+        const submitBtn = document.querySelector('#createProjectModal .modal-footer .file-manager-btn');
+        if (submitBtn) {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
 }
 
 function viewProject(projectId) {
@@ -5431,6 +5471,102 @@ function updateTableInfo() {
 
 // Initialize table info
 updateTableInfo();
+let currentThematicArea = null;
+
+function selectThematicArea(area) {
+    currentThematicArea = area;
+    
+    // Update UI
+    document.getElementById('thematicAreaContent').style.display = 'block';
+    document.querySelector('.thematic-areas').style.display = 'none';
+    
+    // Set the title based on the selected area
+    const areaTitles = {
+        'women_empowerment': 'Women Empowerment Projects',
+        'vocational_education': 'Vocational Education Projects',
+        'climate_mitigation': 'Climate Change Mitigation Projects',
+        'reproductive_health': 'Reproductive Health Projects'
+    };
+    document.getElementById('thematicAreaTitle').textContent = areaTitles[area];
+    
+    // Load projects for this thematic area
+    loadThematicProjects(area);
+}
+
+function goBackToThematicAreas() {
+    document.getElementById('thematicAreaContent').style.display = 'none';
+    document.querySelector('.thematic-areas').style.display = 'block';
+    currentThematicArea = null;
+}
+
+async function loadThematicProjects(thematicArea) {
+    try {
+        const tableBody = document.getElementById('thematicProjectsTableBody');
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading projects...</td></tr>';
+        
+        const response = await fetch(`https://man-m681.onrender.com/projects?thematic_area=${thematicArea}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        tableBody.innerHTML = '';
+        
+        if (data.projects.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center;">
+                        No projects found for this thematic area.
+                        <button class="file-manager-btn" onclick="createProject()" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i> Create First Project
+                        </button>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        data.projects.forEach(project => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${project.name}</td>
+                <td>${project.start_date}</td>
+                <td>${project.end_date}</td>
+                <td>UGX ${project.budget.toLocaleString()}</td>
+                <td><span class="status-badge ${project.status}">${project.status}</span></td>
+                <td>
+                    <button class="action-btn view-btn" onclick="viewProject(${project.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn edit-btn" onclick="editProject(${project.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteProject(${project.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+    } catch (error) {
+        console.error('Error loading thematic projects:', error);
+        const tableBody = document.getElementById('thematicProjectsTableBody');
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; color: red;">
+                    Failed to load projects: ${error.message}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+
+// Add back button functionality
+document.getElementById('thematicAreaTitle').addEventListener('click', goBackToThematicAreas);
 
    
         
