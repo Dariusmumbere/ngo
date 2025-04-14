@@ -5514,9 +5514,12 @@ let currentThematicArea = null;
 function selectThematicArea(area) {
     currentThematicArea = area;
     
-    // Update UI - hide area selection and show project list
+    // Hide all other sections and show the thematic area content
+    document.querySelectorAll('.thematic-areas, #thematicAreaContent').forEach(el => {
+        el.style.display = 'none';
+    });
+    
     document.getElementById('thematicAreaContent').style.display = 'block';
-    document.querySelector('.thematic-areas').style.display = 'none';
     
     // Set the title based on the selected area
     const areaTitles = {
@@ -5525,8 +5528,12 @@ function selectThematicArea(area) {
         'climate_mitigation': 'Climate Change Mitigation Projects',
         'reproductive_health': 'Reproductive Health Projects'
     };
-    document.getElementById('thematicAreaTitle').textContent = areaTitles[area];
-    document.getElementById('thematicAreaTitle').setAttribute('onclick', 'goBackToThematicAreas()');
+    
+    const titleElement = document.getElementById('thematicAreaTitle');
+    titleElement.textContent = areaTitles[area];
+    titleElement.style.display = 'block';
+    titleElement.style.cursor = 'pointer';
+    titleElement.onclick = goBackToThematicAreas;
     
     // Load projects for this thematic area
     loadThematicProjects(area);
