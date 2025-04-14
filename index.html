@@ -3025,7 +3025,10 @@
         </div>
     </div>
 </div>
-            <h3 id="thematicAreaTitle" style="cursor: pointer;"></h3>
+            <h3 id="thematicAreaTitle" style="cursor: pointer; display: flex; align-items: center; gap: 10px;" onclick="goBackToThematicAreas()">
+    <i class="fas fa-arrow-left"></i>
+    <span id="thematicAreaTitleText"></span>
+</h3>
         </main>
     </div>
 
@@ -5496,9 +5499,9 @@ updateTableInfo();
         'reproductive_health': 'Reproductive Health Projects'
     };
     
-    const titleElement = document.getElementById('thematicAreaTitle');
+    const titleElement = document.getElementById('thematicAreaTitleText');
     titleElement.textContent = areaTitles[area];
-    titleElement.style.display = 'block';
+    document.getElementById('thematicAreaTitle').style.display = 'flex';
     
     // Load projects for this thematic area
     loadThematicProjects(area);
@@ -5510,8 +5513,8 @@ updateTableInfo();
     document.getElementById('thematicAreaContent').style.display = 'none';
     document.querySelector('.thematic-areas').style.display = 'block';
     currentThematicArea = null;
+    document.getElementById('thematicAreaTitle').style.display = 'none';
 }
-
 
         async function loadThematicProjects(thematicArea) {
     try {
