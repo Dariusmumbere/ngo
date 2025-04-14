@@ -5159,36 +5159,7 @@ async function loadProjectsForActivities() {
         alert('Failed to load projects for activities dropdown');
     }
 }
-// Project Management Functions
-function loadProjects() {
-    fetch('https://man-m681.onrender.com/projects/')
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('projectsTableBody');
-            tableBody.innerHTML = '';
-            
-            data.projects.forEach(project => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${project.name}</td>
-                    <td>${project.start_date}</td>
-                    <td>${project.end_date}</td>
-                    <td>UGX ${project.budget.toLocaleString()}</td>
-                    <td><span class="status-badge ${project.status}">${project.status}</span></td>
-                    <td>
-                        <button class="action-btn view-btn" onclick="viewProject(${project.id})"><i class="fas fa-eye"></i></button>
-                        <button class="action-btn edit-btn" onclick="editProject(${project.id})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn delete-btn" onclick="deleteProject(${project.id})"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        })
-        .catch(error => {
-            console.error('Error loading projects:', error);
-            alert('Failed to load projects');
-        });
-}
+
 async function loadActivities() {
     try {
         const tableBody = document.getElementById('activitiesTableBody');
