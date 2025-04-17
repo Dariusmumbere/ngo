@@ -3,59 +3,1136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Women Empowerment Projects</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>HR Management System | RCDNET</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 80px;
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background-color: var(--dark-color);
+            color: white;
+            transition: width var(--transition-speed);
+            overflow: hidden;
+            z-index: 99;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            position: relative;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--light-color);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .sidebar-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu li a.active {
+            background-color: var(--primary-color);
+        }
+
+        .sidebar-menu li a i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            transition: margin-left var(--transition-speed);
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* HR Dashboard Styles */
+        .hr-dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .section-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            color: #555;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 2px solid #eee;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .status-badge.active {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            border: 1px solid rgba(46, 204, 113, 0.2);
+        }
+
+        .status-badge.inactive {
+            background-color: rgba(149, 165, 166, 0.1);
+            color: #7f8c8d;
+            border: 1px solid rgba(149, 165, 166, 0.2);
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            margin: 0 2px;
+            color: #95a5a6;
+            transition: all 0.2s;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary-color);
+        }
+
+        .action-btn.delete-btn:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-color);
+        }
+
+        /* Form Styles */
+        .form-container {
+            padding: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .validation-error {
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+
+        /* Employee Card Styles */
+        .employee-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .employee-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .employee-header {
+            background-color: #f9f9f9;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .employee-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .employee-info {
+            flex: 1;
+        }
+
+        .employee-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .employee-position {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .employee-body {
+            padding: 15px;
+        }
+
+        .employee-detail {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 120px;
+        }
+
+        .employee-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Assignment Styles */
+        .assignment-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .assignment-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .assignment-project {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .assignment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            font-size: 0.9rem;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #777;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .employee-cards {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .section-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .data-table {
+                font-size: 0.9rem;
+            }
+            
+            .data-table th, 
+            .data-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Women Empowerment Projects</h1>
-        
-        <div class="project-form">
-            <h2>Add New Project</h2>
-            <form id="projectForm">
-                <div class="form-group">
-                    <label for="projectName">Project Name*</label>
-                    <input type="text" id="projectName" required>
-                </div>
-                <div class="form-group">
-                    <label for="projectDescription">Description</label>
-                    <textarea id="projectDescription" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="projectStartDate">Start Date*</label>
-                    <input type="date" id="projectStartDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="projectEndDate">End Date*</label>
-                    <input type="date" id="projectEndDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="projectBudget">Budget (UGX)*</label>
-                    <input type="number" id="projectBudget" required>
-                </div>
-                <button type="submit" class="submit-btn">Create Project</button>
-            </form>
+    <header>
+        <div class="logo">
+            <img src="logo.jpg" alt="RCDNET Logo">
+            <h1>HR Management</h1>
         </div>
-        
-        <div class="projects-list">
-            <h2>Current Projects</h2>
-            <table id="projectsTable">
-                <thead>
-                    <tr>
-                        <th>Project Name</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Budget (UGX)</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="projectsTableBody">
-                    <!-- Projects will be loaded here -->
-                </tbody>
-            </table>
+        <div class="user-profile">
+            <div class="user-info">
+                <span class="user-name">HR Manager</span>
+                <span class="user-role">Human Resources</span>
+            </div>
+            <img src="profile.jpg" alt="User Profile">
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#" class="active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-users"></i>
+                        Employees
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-tasks"></i>
+                        Assignments
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-file-alt"></i>
+                        Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="page-title">
+                <i class="fas fa-users-cog"></i>
+                Human Resource Management
+            </h1>
+
+            <div class="hr-dashboard">
+                <!-- Employees Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Employee Management</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="addEmployeeBtn">
+                                <i class="fas fa-plus"></i> Add Employee
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee ID</th>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>NIN</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>EMP-1001</td>
+                                    <td>Mugisha Ndyakurungi</td>
+                                    <td>Program Officer</td>
+                                    <td>CM1234567890</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>
+                                        <button class="action-btn" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="action-btn" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>EMP-1002</td>
+                                    <td>Mumbere Darius</td>
+                                    <td>Field Coordinator</td>
+                                    <td>CM9876543210</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>
+                                        <button class="action-btn" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="action-btn" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>EMP-1003</td>
+                                    <td>Kule Geoffrey</td>
+                                    <td>Agriculture Expert</td>
+                                    <td>CM4567890123</td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td>
+                                        <button class="action-btn" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="action-btn" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Assignments Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Employee Assignments</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="createAssignmentBtn">
+                                <i class="fas fa-plus"></i> Create Assignment
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="employee-cards">
+                        <!-- Employee Assignment Card 1 -->
+                        <div class="employee-card">
+                            <div class="employee-header">
+                                <div class="employee-avatar">MN</div>
+                                <div class="employee-info">
+                                    <div class="employee-name">Mugisha Ndyakurungi</div>
+                                    <div class="employee-position">Program Officer</div>
+                                </div>
+                            </div>
+                            <div class="employee-body">
+                                <div class="assignment-card">
+                                    <div class="assignment-header">
+                                        <div class="assignment-title">Vocational Training</div>
+                                        <div class="assignment-project">Vocational Education Project</div>
+                                    </div>
+                                    <div class="assignment-details">
+                                        <div class="detail-item">
+                                            <strong>Start Date</strong>
+                                            2023-06-15
+                                        </div>
+                                        <div class="detail-item">
+                                            <strong>End Date</strong>
+                                            2023-12-31
+                                        </div>
+                                        <div class="detail-item">
+                                            <strong>Status</strong>
+                                            <span class="status-badge active">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="assignment-card">
+                                    <div class="assignment-header">
+                                        <div class="assignment-title">Women's Workshop</div>
+                                        <div class="assignment-project">Women Empowerment</div>
+                                    </div>
+                                    <div class="assignment-details">
+                                        <div class="detail-item">
+                                            <strong>Start Date</strong>
+                                            2023-09-01
+                                        </div>
+                                        <div class="detail-item">
+                                            <strong>End Date</strong>
+                                            2023-09-30
+                                        </div>
+                                        <div class="detail-item">
+                                            <strong>Status</strong>
+                                            <span class="status-badge active">Completed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="employee-footer">
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-edit"></i> Edit Assignments
+                                </button>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Add Assignment
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Employee Assignment Card 2 -->
+                        <div class="employee-card">
+                            <div class="employee-header">
+                                <div class="employee-avatar">MD</div>
+                                <div class="employee-info">
+                                    <div class="employee-name">Mumbere Darius</div>
+                                    <div class="employee-position">Field Coordinator</div>
+                                </div>
+                            </div>
+                            <div class="employee-body">
+                                <div class="assignment-card">
+                                    <div class="assignment-header">
+                                        <div class="assignment-title">Farm Training</div>
+                                        <div class="assignment-project">Agriculture Extension</div>
+                                    </div>
+                                    <div class="assignment-details">
+                                        <div class="detail-item">
+                                            <strong>Start Date</strong>
+                                            2023-07-01
+                                        </div>
+                                        <div class="detail-item">
+                                            <strong>End Date</strong>
+                                            2023-12-31
+                                        </div>
+                                        <div class="detail-item">
+                                            <strong>Status</strong>
+                                            <span class="status-badge active">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="employee-footer">
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-edit"></i> Edit Assignments
+                                </button>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Add Assignment
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div class="modal" id="employeeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Employee</h3>
+                <button class="close-btn" onclick="closeModal('employeeModal')">&times;</button>
+            </div>
+            <div class="form-container">
+                <form id="employeeForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstName">First Name*</label>
+                            <input type="text" id="firstName" class="form-control" required>
+                            <div class="validation-error" id="firstNameError">Please enter first name</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name*</label>
+                            <input type="text" id="lastName" class="form-control" required>
+                            <div class="validation-error" id="lastNameError">Please enter last name</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nin">National ID (NIN)*</label>
+                            <input type="text" id="nin" class="form-control" required>
+                            <div class="validation-error" id="ninError">Please enter valid NIN</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date of Birth*</label>
+                            <input type="date" id="dob" class="form-control" required>
+                            <div class="validation-error" id="dobError">Please select date of birth</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="position">Position*</label>
+                            <select id="position" class="form-control" required>
+                                <option value="">Select Position</option>
+                                <option value="program_officer">Program Officer</option>
+                                <option value="field_coordinator">Field Coordinator</option>
+                                <option value="agriculture_expert">Agriculture Expert</option>
+                                <option value="trainer">Trainer</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                            <div class="validation-error" id="positionError">Please select position</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="qualification">Highest Qualification*</label>
+                            <select id="qualification" class="form-control" required>
+                                <option value="">Select Qualification</option>
+                                <option value="phd">PhD</option>
+                                <option value="masters">Master's Degree</option>
+                                <option value="bachelors">Bachelor's Degree</option>
+                                <option value="diploma">Diploma</option>
+                                <option value="certificate">Certificate</option>
+                            </select>
+                            <div class="validation-error" id="qualificationError">Please select qualification</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email*</label>
+                            <input type="email" id="email" class="form-control" required>
+                            <div class="validation-error" id="emailError">Please enter valid email</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone*</label>
+                            <input type="tel" id="phone" class="form-control" required>
+                            <div class="validation-error" id="phoneError">Please enter valid phone number</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea id="address" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="joinDate">Join Date*</label>
+                            <input type="date" id="joinDate" class="form-control" required>
+                            <div class="validation-error" id="joinDateError">Please select join date</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('employeeModal')">Cancel</button>
+                <button class="btn btn-primary" id="saveEmployeeBtn">Save Employee</button>
+            </div>
         </div>
     </div>
 
-    <script src="womenempowerment.js"></script>
+    <!-- Create Assignment Modal -->
+    <div class="modal" id="assignmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Assignment</h3>
+                <button class="close-btn" onclick="closeModal('assignmentModal')">&times;</button>
+            </div>
+            <div class="form-container">
+                <form id="assignmentForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="assignEmployee">Employee*</label>
+                            <select id="assignEmployee" class="form-control" required>
+                                <option value="">Select Employee</option>
+                                <option value="EMP-1001">Mugisha Ndyakurungi</option>
+                                <option value="EMP-1002">Mumbere Darius</option>
+                                <option value="EMP-1003">Kule Geoffrey</option>
+                            </select>
+                            <div class="validation-error" id="employeeError">Please select employee</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignmentProject">Project*</label>
+                            <select id="assignmentProject" class="form-control" required>
+                                <option value="">Select Project</option>
+                                <option value="vocational_education">Vocational Education</option>
+                                <option value="agriculture">Agriculture Extension</option>
+                                <option value="women_empowerment">Women Empowerment</option>
+                                <option value="economic_empowerment">Economic Empowerment</option>
+                            </select>
+                            <div class="validation-error" id="projectError">Please select project</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignmentActivity">Activity*</label>
+                            <select id="assignmentActivity" class="form-control" required>
+                                <option value="">Select Activity</option>
+                                <option value="training">Vocational Training</option>
+                                <option value="workshop">Women's Workshop</option>
+                                <option value="farm_training">Farm Training</option>
+                                <option value="mentorship">Mentorship Program</option>
+                            </select>
+                            <div class="validation-error" id="activityError">Please select activity</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Start Date*</label>
+                            <input type="date" id="startDate" class="form-control" required>
+                            <div class="validation-error" id="startDateError">Please select start date</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date*</label>
+                            <input type="date" id="endDate" class="form-control" required>
+                            <div class="validation-error" id="endDateError">Please select end date</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignmentStatus">Status*</label>
+                            <select id="assignmentStatus" class="form-control" required>
+                                <option value="planned">Planned</option>
+                                <option value="active" selected>Active</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignmentDescription">Description</label>
+                            <textarea id="assignmentDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('assignmentModal')">Cancel</button>
+                <button class="btn btn-primary" id="saveAssignmentBtn">Create Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize modals
+            const employeeModal = document.getElementById('employeeModal');
+            const assignmentModal = document.getElementById('assignmentModal');
+            
+            // Open Employee Modal
+            document.getElementById('addEmployeeBtn').addEventListener('click', function() {
+                employeeModal.classList.add('show');
+            });
+            
+            // Open Assignment Modal
+            document.getElementById('createAssignmentBtn').addEventListener('click', function() {
+                assignmentModal.classList.add('show');
+            });
+            
+            // Form validation for employee
+            document.getElementById('employeeForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (validateEmployeeForm()) {
+                    alert('Employee added successfully!');
+                    closeModal('employeeModal');
+                    // Here you would normally send the data to your backend
+                }
+            });
+            
+            // Form validation for assignment
+            document.getElementById('assignmentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (validateAssignmentForm()) {
+                    alert('Assignment created successfully!');
+                    closeModal('assignmentModal');
+                    // Here you would normally send the data to your backend
+                }
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === employeeModal) {
+                    closeModal('employeeModal');
+                }
+                if (e.target === assignmentModal) {
+                    closeModal('assignmentModal');
+                }
+            });
+        });
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+        
+        function validateEmployeeForm() {
+            let isValid = true;
+            const requiredFields = [
+                'firstName', 'lastName', 'nin', 'dob', 
+                'position', 'qualification', 'email', 'phone', 'joinDate'
+            ];
+            
+            // Reset all errors
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Validate required fields
+            requiredFields.forEach(field => {
+                const value = document.getElementById(field).value.trim();
+                if (!value) {
+                    document.getElementById(`${field}Error`).style.display = 'block';
+                    isValid = false;
+                }
+            });
+            
+            // Additional validation for email
+            const email = document.getElementById('email').value.trim();
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email';
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Additional validation for phone
+            const phone = document.getElementById('phone').value.trim();
+            if (phone && !/^[\d\s+-]+$/.test(phone)) {
+                document.getElementById('phoneError').textContent = 'Please enter a valid phone number';
+                document.getElementById('phoneError').style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function validateAssignmentForm() {
+            let isValid = true;
+            const requiredFields = [
+                'assignEmployee', 'assignmentProject', 'assignmentActivity',
+                'startDate', 'endDate'
+            ];
+            
+            // Reset all errors
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Validate required fields
+            requiredFields.forEach(field => {
+                const value = document.getElementById(field).value.trim();
+                if (!value) {
+                    document.getElementById(`${field}Error`).style.display = 'block';
+                    isValid = false;
+                }
+            });
+            
+            // Validate date range
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            
+            if (startDate && endDate && startDate > endDate) {
+                document.getElementById('endDateError').textContent = 'End date must be after start date';
+                document.getElementById('endDateError').style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Expose functions to global scope for inline event handlers
+        window.closeModal = closeModal;
+    </script>
 </body>
 </html>
