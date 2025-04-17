@@ -860,54 +860,53 @@
             }
 
             function loadProjects() {
-                projectsTableBody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner"></i> Loading projects...</td></tr>';
-                
-                fetch('https://man-m681.onrender.com/projects/')
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to fetch projects');
-                        return response.json();
-                    })
-                    .then(data => {
-                        projectsTableBody.innerHTML = '';
-                        
-                        if (data.projects && data.projects.length === 0) {
-                            projectsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No projects found</td></tr>';
-                            return;
-                        }
-                        
-                        data.projects.forEach(project => {
-                            // Extract program area from project name
-                            const programArea = project.name.split(' - ')[0] || 'General';
-                            
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${programArea}</td>
-                                <td>${project.name.split(' - ')[1] || project.name}</td>
-                                <td>${project.start_date}</td>
-                                <td>${project.end_date}</td>
-                                <td>${project.budget.toLocaleString()}</td>
-                                <td><span class="status-badge ${project.status}">${project.status.replace('_', ' ')}</span></td>
-                                <td>
-                                    <button class="action-btn view-btn" onclick="viewProject(${project.id})">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="action-btn edit-btn" onclick="openEditProjectModal(${project.id})">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn delete-btn" onclick="deleteProject(${project.id})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            `;
-                            projectsTableBody.appendChild(row);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading projects:', error);
-                        projectsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--accent-color);">Failed to load projects</td></tr>';
-                    });
+    projectsTableBody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner"></i> Loading projects...</td></tr>';
+    
+    fetch('https://man-m681.onrender.com/projects/')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch projects');
+            return response.json();
+        })
+        .then(data => {
+            projectsTableBody.innerHTML = '';
+            
+            if (data.projects && data.projects.length === 0) {
+                projectsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No projects found</td></tr>';
+                return;
             }
-
+            
+            data.projects.forEach(project => {
+                // Extract program area from project name
+                const programArea = project.name.split(' - ')[0] || 'General';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${programArea}</td>
+                    <td>${project.name.split(' - ')[1] || project.name}</td>
+                    <td>${project.start_date}</td>
+                    <td>${project.end_date}</td>
+                    <td>${project.budget.toLocaleString()}</td>
+                    <td><span class="status-badge ${project.status}">${project.status.replace('_', ' ')}</span></td>
+                    <td>
+                        <button class="action-btn view-btn" onclick="viewProject(${project.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn edit-btn" onclick="openEditProjectModal(${project.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteProject(${project.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                projectsTableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading projects:', error);
+            projectsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--accent-color);">Failed to load projects</td></tr>';
+        });
+}
             function viewProject(projectId) {
                 showBudgetSection(projectId);
                 
@@ -978,7 +977,6 @@
             if (items.length === 0) {
                 budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No budget items found</td></tr>';
                 budgetTotal.textContent = 'Total Budget: UGX 0';
-                updateProjectBudgetInTable(projectId, 0); // Update with 0 if no items
                 return;
             }
             
@@ -1008,13 +1006,13 @@
             });
             
             budgetTotal.textContent = `Total Budget: UGX ${totalBudget.toLocaleString()}`;
-            updateProjectBudgetInTable(projectId, totalBudget); // Update the project table
         })
         .catch(error => {
             console.error('Error loading budget items:', error);
             budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--accent-color);">Failed to load budget items</td></tr>';
         });
 }
+            
 function updateProjectBudgetInTable(projectId, newBudget) {
     const rows = document.querySelectorAll('#projectsTableBody tr');
     rows.forEach(row => {
@@ -1027,57 +1025,87 @@ function updateProjectBudgetInTable(projectId, newBudget) {
 }
 
             function saveBudgetItem() {
-                const itemData = {
-                    project_id: parseInt(document.getElementById('budgetProjectId').value),
-                    item_name: document.getElementById('itemName').value,
-                    category: document.getElementById('itemCategory').value,
-                    quantity: parseFloat(document.getElementById('itemQuantity').value),
-                    unit_price: parseFloat(document.getElementById('itemUnitPrice').value),
-                    description: document.getElementById('itemDescription').value
-                };
+    const itemData = {
+        project_id: parseInt(document.getElementById('budgetProjectId').value),
+        item_name: document.getElementById('itemName').value,
+        category: document.getElementById('itemCategory').value,
+        quantity: parseFloat(document.getElementById('itemQuantity').value),
+        unit_price: parseFloat(document.getElementById('itemUnitPrice').value),
+        description: document.getElementById('itemDescription').value
+    };
 
-                // Simple validation
-                if (!itemData.item_name || !itemData.category || isNaN(itemData.quantity) || isNaN(itemData.unit_price)) {
-                    alert('Please fill all required fields with valid values');
-                    return;
-                }
+    // Simple validation
+    if (!itemData.item_name || !itemData.category || isNaN(itemData.quantity) || isNaN(itemData.unit_price)) {
+        alert('Please fill all required fields with valid values');
+        return;
+    }
 
-                const itemId = document.getElementById('budgetItemId').value;
-                const url = itemId 
-                    ? `https://man-m681.onrender.com/budget-items/${itemId}`
-                    : 'https://man-m681.onrender.com/budget-items/';
-                
-                const method = itemId ? 'PUT' : 'POST';
+    const itemId = document.getElementById('budgetItemId').value;
+    const url = itemId 
+        ? `https://man-m681.onrender.com/budget-items/${itemId}`
+        : 'https://man-m681.onrender.com/budget-items/';
+    
+    const method = itemId ? 'PUT' : 'POST';
 
-                // Show loading state
-                const originalText = saveBudgetItemBtn.innerHTML;
-                saveBudgetItemBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                saveBudgetItemBtn.disabled = true;
+    // Show loading state
+    const originalText = saveBudgetItemBtn.innerHTML;
+    saveBudgetItemBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBudgetItemBtn.disabled = true;
 
-                fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(itemData)
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(itemData)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to save budget item');
+        return response.json();
+    })
+    .then(() => {
+        // After saving the item, update the project's budget
+        return updateProjectBudget(currentBudgetProjectId);
+    })
+    .then(() => {
+        hideBudgetItemForm();
+        loadBudgetItems(currentBudgetProjectId);
+        loadProjects(); // Refresh the projects table to show updated budget
+    })
+    .catch(error => {
+        console.error('Error saving budget item:', error);
+        alert('Failed to save budget item: ' + error.message);
+    })
+    .finally(() => {
+        saveBudgetItemBtn.innerHTML = originalText;
+        saveBudgetItemBtn.disabled = false;
+    });
+}
+function updateProjectBudget(projectId) {
+    return fetch(`https://man-m681.onrender.com/budget-items/${projectId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch budget items');
+            return response.json();
+        })
+        .then(items => {
+            let totalBudget = 0;
+            items.forEach(item => {
+                totalBudget += item.total;
+            });
+
+            // Update the project's budget in the database
+            return fetch(`https://man-m681.onrender.com/projects/${projectId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    budget: totalBudget
+                    // Include other required fields if needed by your API
                 })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to save budget item');
-                    return response.json();
-                })
-                .then(() => {
-                    hideBudgetItemForm();
-                    loadBudgetItems(currentBudgetProjectId);
-                })
-                .catch(error => {
-                    console.error('Error saving budget item:', error);
-                    alert('Failed to save budget item: ' + error.message);
-                })
-                .finally(() => {
-                    saveBudgetItemBtn.innerHTML = originalText;
-                    saveBudgetItemBtn.disabled = false;
-                });
-            }
+            });
+        });
+}
 
             function editBudgetItem(id, name, category, quantity, unitPrice, description) {
                 document.getElementById('budgetItemId').value = id;
@@ -1092,26 +1120,30 @@ function updateProjectBudgetInTable(projectId, newBudget) {
             }
 
             function deleteBudgetItem(id) {
-                if (!confirm('Are you sure you want to delete this budget item?')) {
-                    return;
-                }
-                
-                fetch(`https://man-m681.onrender.com/budget-items/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to delete budget item');
-                    return response.json();
-                })
-                .then(() => {
-                    loadBudgetItems(currentBudgetProjectId);
-                })
-                .catch(error => {
-                    console.error('Error deleting budget item:', error);
-                    alert('Failed to delete budget item');
-                });
-            }
-
+    if (!confirm('Are you sure you want to delete this budget item?')) {
+        return;
+    }
+    
+    fetch(`https://man-m681.onrender.com/budget-items/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to delete budget item');
+        return response.json();
+    })
+    .then(() => {
+        // After deleting the item, update the project's budget
+        return updateProjectBudget(currentBudgetProjectId);
+    })
+    .then(() => {
+        loadBudgetItems(currentBudgetProjectId);
+        loadProjects(); // Refresh the projects table to show updated budget
+    })
+    .catch(error => {
+        console.error('Error deleting budget item:', error);
+        alert('Failed to delete budget item');
+    });
+}
             // Make functions available globally
             window.editBudgetItem = editBudgetItem;
             window.deleteBudgetItem = deleteBudgetItem;
