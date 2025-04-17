@@ -1156,6 +1156,56 @@
             }
         }
 
-</script>
+        // Delete employee function
+        async function deleteEmployee(employeeId) {
+            if (!confirm('Are you sure you want to delete this employee?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`https://man-m681.onrender.com/employees/${employeeId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete employee');
+                }
+                
+                alert('Employee deleted successfully');
+                document.querySelector(`#employeesTable tbody tr[data-id="${employeeId}"]`)?.remove();
+            } catch (error) {
+                console.error('Error deleting employee:', error);
+                alert('Failed to delete employee');
+            }
+        }
+
+        // Edit deployment function
+        async function editDeployment(deploymentId) {
+            alert(`Edit deployment ${deploymentId} functionality will be implemented`);
+        }
+
+        // Delete deployment function
+        async function deleteDeployment(deploymentId) {
+            if (!confirm('Are you sure you want to remove this deployment?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`https://man-m681.onrender.com/deployments/${deploymentId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete deployment');
+                }
+                
+                alert('Deployment removed successfully');
+                document.querySelector(`.deployment-item[data-id="${deploymentId}"]`)?.remove();
+            } catch (error) {
+                console.error('Error deleting deployment:', error);
+                alert('Failed to delete deployment');
+            }
+        }
+    </script>
 </body>
 </html>
