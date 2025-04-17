@@ -1889,6 +1889,128 @@
         max-width: 100%;
     }
 }
+/* Program Area Cards */
+.program-areas-container {
+    margin-bottom: 30px;
+}
+
+.program-area-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.program-area-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.program-area-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.program-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.program-area-card h4 {
+    margin: 0 0 10px 0;
+    color: var(--dark-color);
+}
+
+.program-area-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Program Dropdown */
+.program-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    margin-top: 15px;
+}
+
+.program-dropdown.show {
+    max-height: 500px;
+}
+
+.dropdown-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dropdown-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.projects-list {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.project-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-item:last-child {
+    border-bottom: none;
+}
+
+.project-name {
+    font-weight: 500;
+}
+
+.project-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.project-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.project-action-btn:hover {
+    color: var(--primary-color);
+}
+
+.project-action-btn.delete:hover {
+    color: var(--accent-color);
+}
     </style>
 </head>
 <body>
@@ -2728,72 +2850,105 @@
 
     <!-- Director Dashboard (initially hidden) -->
     <div class="director-dashboard" id="directorDashboard" style="display: none;">
-         <h2 class="section-title">Director Dashboard</h2>
-        <div class="section-header">
-
-    <div>
-        <div class="role-selection" id="roleSelection">
-        <h2>Select program area</h2>
-        <div class="role-cards">
-            <div class="role-card" onclick="selectRole('director')">
-                <div class="role-icon">
+    <h2 class="section-title">Director Dashboard</h2>
+    
+    <!-- Program Area Selection -->
+    <div class="program-areas-container">
+        <h3>Select Program Area</h3>
+        <div class="program-area-cards">
+            <!-- Women Empowerment -->
+            <div class="program-area-card" onclick="toggleProgramDropdown('women_empowerment')">
+                <div class="program-icon">
                     <i class="fas fa-fist-raised"></i>
                 </div>
-                <h3>Women Empowerment</h3>
+                <h4>Women Empowerment</h4>
                 <p>Support women's rights, leadership, and economic opportunities.</p>
+                <div class="program-dropdown" id="women_empowerment_dropdown">
+                    <button class="dropdown-btn" onclick="createNewProject('women_empowerment')">
+                        <i class="fas fa-plus"></i> Create New Project
+                    </button>
+                    <div class="projects-list" id="women_empowerment_projects">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                </div>
             </div>
             
-            <div class="role-card" onclick="selectRole('vocational_education')">
-                <div class="role-icon">
+            <!-- Vocational Education -->
+            <div class="program-area-card" onclick="toggleProgramDropdown('vocational_education')">
+                <div class="program-icon">
                     <i class="fas fa-tools"></i>
                 </div>
-                <h3>Vocational Education</h3>
+                <h4>Vocational Education</h4>
                 <p>Provide skill-based training and employment opportunities.</p>
+                <div class="program-dropdown" id="vocational_education_dropdown">
+                    <button class="dropdown-btn" onclick="createNewProject('vocational_education')">
+                        <i class="fas fa-plus"></i> Create New Project
+                    </button>
+                    <div class="projects-list" id="vocational_education_projects">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                </div>
             </div>
-            <div class="role-card" onclick="selectRole('climate_mitigation')">
-                <div class="role-icon">
+            
+            <!-- Climate Change Mitigation -->
+            <div class="program-area-card" onclick="toggleProgramDropdown('climate_mitigation')">
+                <div class="program-icon">
                     <i class="fas fa-leaf"></i>
                 </div>
-                <h3>Climate Change Mitigation</h3>
+                <h4>Climate Change Mitigation</h4>
                 <p>Promote sustainable practices and environmental awareness.</p>
+                <div class="program-dropdown" id="climate_mitigation_dropdown">
+                    <button class="dropdown-btn" onclick="createNewProject('climate_mitigation')">
+                        <i class="fas fa-plus"></i> Create New Project
+                    </button>
+                    <div class="projects-list" id="climate_mitigation_projects">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                </div>
             </div>
-
-            <div class="role-card" onclick="selectRole('reproductive_health')">
-                <div class="role-icon">
+            
+            <!-- Reproductive Health -->
+            <div class="program-area-card" onclick="toggleProgramDropdown('reproductive_health')">
+                <div class="program-icon">
                     <i class="fas fa-heartbeat"></i>
                 </div>
-                <h3>Reproductive Health</h3>
+                <h4>Reproductive Health</h4>
                 <p>Ensure access to quality reproductive health services and education.</p>
+                <div class="program-dropdown" id="reproductive_health_dropdown">
+                    <button class="dropdown-btn" onclick="createNewProject('reproductive_health')">
+                        <i class="fas fa-plus"></i> Create New Project
+                    </button>
+                    <div class="projects-list" id="reproductive_health_projects">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-        <button class="file-manager-btn" id="manageProjectsBtn">
-            <i class="fas fa-project-diagram"></i> <a href="https://dariusmumbere.github.io/projects/">Manage Projects</a>
-        </button>
+    
+    <!-- All Projects Table -->
+    <div class="projects-list">
+        <h3>All Projects</h3>
+        <div class="table-responsive">
+            <table class="projects-table">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Program Area</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Budget (UGX)</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="projectsTableBody">
+                    <!-- Projects will be loaded here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-
-        <div class="projects-list">
-            <h3>Current Projects</h3>
-            <div class="table-responsive">
-                <table class="projects-table">
-                    <thead>
-                        <tr>
-                            <th>Project Name</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Budget (UGX)</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="projectsTableBody">
-                        <!-- Projects will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 
     <!-- Program Officer Dashboard (initially hidden) -->
     <div class="program-officer-dashboard" id="programOfficerDashboard" style="display: none;">
@@ -5053,23 +5208,10 @@ function selectRole(role) {
     if (role === 'director') {
         document.getElementById('directorDashboard').style.display = 'block';
         loadProjects();
-        
-        // Add event listener for create project button
-        document.getElementById('createProjectBtn').addEventListener('click', function() {
-            document.getElementById('projectForm').reset();
-            document.getElementById('createProjectModal').classList.add('show');
-        });
     } 
     else if (role === 'program_officer') {
         document.getElementById('programOfficerDashboard').style.display = 'block';
         loadActivities();
-        
-        // Add event listener for create activity button
-        document.getElementById('createActivityBtn').addEventListener('click', function() {
-            document.getElementById('activityForm').reset();
-            loadProjectsForActivities();
-            document.getElementById('createActivityModal').classList.add('show');
-        });
     } 
     else {
         alert(`${role.replace('_', ' ').toUpperCase()} functionality will be implemented later`);
@@ -5108,6 +5250,7 @@ function loadProjects() {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${project.name}</td>
+                    <td>${project.program_area ? project.program_area.replace('_', ' ') : 'General'}</td>
                     <td>${project.start_date}</td>
                     <td>${project.end_date}</td>
                     <td>UGX ${project.budget.toLocaleString()}</td>
@@ -5120,12 +5263,18 @@ function loadProjects() {
                 `;
                 tableBody.appendChild(row);
             });
+            
+            // Load projects for each program area
+            ['women_empowerment', 'vocational_education', 'climate_mitigation', 'reproductive_health'].forEach(area => {
+                loadProgramAreaProjects(area);
+            });
         })
         .catch(error => {
             console.error('Error loading projects:', error);
             alert('Failed to load projects');
         });
 }
+        
 async function loadActivities() {
     try {
         const tableBody = document.getElementById('activitiesTableBody');
@@ -5318,8 +5467,29 @@ async function deleteActivity(activityId) {
         alert('Failed to delete activity');
     }
 }
+function toggleProgramDropdown(programArea) {
+    const dropdown = document.getElementById(`${programArea}_dropdown`);
+    dropdown.classList.toggle('show');
+}
+
+// Create new project for a specific program area
+function createNewProject(programArea) {
+    // Store the selected program area
+    document.getElementById('projectForm').dataset.programArea = programArea;
+    
+    // Reset form and open modal
+    document.getElementById('projectForm').reset();
+    document.getElementById('createProjectModal').classList.add('show');
+    
+    // Set program area in a hidden field if needed
+    if (document.getElementById('projectProgramArea')) {
+        document.getElementById('projectProgramArea').value = programArea;
+    }
+}
 
 function createProject() {
+    const programArea = document.getElementById('projectForm').dataset.programArea;
+    
     const projectData = {
         name: document.getElementById('projectName').value,
         description: document.getElementById('projectDescription').value,
@@ -5327,6 +5497,7 @@ function createProject() {
         end_date: document.getElementById('projectEndDate').value,
         budget: parseFloat(document.getElementById('projectBudget').value),
         funding_source: document.getElementById('projectFunds').value,
+        program_area: programArea,
         status: 'planned'
     };
     
@@ -5348,12 +5519,53 @@ function createProject() {
         alert('Project created successfully');
         closeModal('createProjectModal');
         loadProjects();
+        // Refresh the specific program area's project list
+        loadProgramAreaProjects(programArea);
     })
     .catch(error => {
         console.error('Error creating project:', error);
         alert('Failed to create project');
     });
 }
+function loadProgramAreaProjects(programArea) {
+    fetch(`https://man-m681.onrender.com/projects/?program_area=${programArea}`)
+        .then(response => response.json())
+        .then(data => {
+            const projectsList = document.getElementById(`${programArea}_projects`);
+            projectsList.innerHTML = '';
+            
+            if (data.projects.length === 0) {
+                projectsList.innerHTML = '<p>No projects yet</p>';
+                return;
+            }
+            
+            data.projects.forEach(project => {
+                const projectItem = document.createElement('div');
+                projectItem.className = 'project-item';
+                projectItem.innerHTML = `
+                    <span class="project-name">${project.name}</span>
+                    <div class="project-actions">
+                        <button class="project-action-btn" onclick="viewProject(${project.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="project-action-btn" onclick="editProject(${project.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="project-action-btn delete" onclick="deleteProject(${project.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                projectsList.appendChild(projectItem);
+            });
+        })
+        .catch(error => {
+            console.error(`Error loading ${programArea} projects:`, error);
+            document.getElementById(`${programArea}_projects`).innerHTML = 
+                '<p>Failed to load projects</p>';
+        });
+}
+
 
 function viewProject(projectId) {
     fetch(`https://man-m681.onrender.com/projects/${projectId}`)
