@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Management | RCDNET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
+    <style>
         :root {
             --primary-color: #3498db;
             --secondary-color: #2980b9;
@@ -495,282 +495,371 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Budget Section (visible when viewing a project) -->
-            <div class="budget-section" id="budgetSection" style="display: none;">
-                <div class="budget-section-header">
-                    <h2 class="section-title">Project Budget</h2>
-                    <button class="btn" id="addBudgetItemBtn">
-                        <i class="fas fa-plus"></i> Add Item
-                    </button>
-                </div>
-
-                <!-- Budget Item Form (hidden by default) -->
-                <form id="budgetItemForm" class="budget-form" style="display: none;">
-                    <input type="hidden" id="budgetItemId">
-                    <input type="hidden" id="budgetProjectId">
-                    
-                    <div class="form-group">
-                        <label for="itemName">Item Name*</label>
-                        <input type="text" id="itemName" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="itemCategory">Category*</label>
-                        <select id="itemCategory" required>
-                            <option value="">Select Category</option>
-                            <option value="Personnel">Personnel</option>
-                            <option value="Equipment">Equipment</option>
-                            <option value="Materials">Materials</option>
-                            <option value="Travel">Travel</option>
-                            <option value="Training">Training</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="itemQuantity">Quantity*</label>
-                        <input type="number" id="itemQuantity" min="0" step="1" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="itemUnitPrice">Unit Price (UGX)*</label>
-                        <input type="number" id="itemUnitPrice" min="0" step="1000" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="itemDescription">Description</label>
-                        <input type="text" id="itemDescription">
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelBudgetItemBtn">Cancel</button>
-                        <button type="button" class="btn" id="saveBudgetItemBtn">Save Item</button>
-                    </div>
-                </form>
-
-                <!-- Budget Items Table -->
-                <div class="table-responsive">
-                    <table class="budget-table" id="budgetTable">
-                        <thead>
-                            <tr>
-                                <th>Item Name</th>
-                                <th>Category</th>
-                                <th>Quantity</th>
-                                <th>Unit Price (UGX)</th>
-                                <th>Total (UGX)</th>
-                                <th>Description</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="budgetTableBody">
-                            <!-- Budget items will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="budget-total" id="budgetTotal">
-                    Total Budget: UGX 0
-                </div>
-            </div>
         </main>
     </div>
 
-    <!-- Previous modals remain the same -->
+    <!-- Create/Edit Project Modal -->
+    <div class="project-modal" id="projectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Create New Project</h3>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <input type="hidden" id="projectId">
+                    
+                    <div class="form-group">
+                        <label for="programArea">Program Area*</label>
+                        <select id="programArea" required>
+                            <option value="">Select Program Area</option>
+                            <option value="Women Empowerment">Women Empowerment</option>
+                            <option value="Vocational Education">Vocational Education</option>
+                            <option value="Climate Change Mitigation">Climate Change Mitigation</option>
+                            <option value="Reproductive Health">Reproductive Health</option>
+                        </select>
+                        <div class="validation-error" id="programAreaError">Please select a program area</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectName">Project Name*</label>
+                        <input type="text" id="projectName" required>
+                        <div class="validation-error" id="projectNameError">Please enter a project name</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Start Date*</label>
+                            <input type="date" id="startDate" required>
+                            <div class="validation-error" id="startDateError">Please select a start date</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date*</label>
+                            <input type="date" id="endDate" required>
+                            <div class="validation-error" id="endDateError">Please select an end date</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scopeStatement">Scope Statement*</label>
+                        <textarea id="scopeStatement" required></textarea>
+                        <div class="validation-error" id="scopeStatementError">Please provide a scope statement</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="budget">Budget (UGX)*</label>
+                            <input type="number" id="budget" min="0" step="1000" required>
+                            <div class="validation-error" id="budgetError">Please enter a valid budget</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="fundingSource">Funding Source</label>
+                            <select id="fundingSource">
+                                <option value="General Funds">General Funds</option>
+                                <option value="Donation">Donation</option>
+                                <option value="Grant">Grant</option>
+                                <option value="Government">Government</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectStatus">Status</label>
+                        <select id="projectStatus">
+                            <option value="planned">Planned</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                <button class="btn" id="saveProjectBtn">Save Project</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Previous DOM elements and variables
-            const budgetSection = document.getElementById('budgetSection');
-            const addBudgetItemBtn = document.getElementById('addBudgetItemBtn');
-            const budgetItemForm = document.getElementById('budgetItemForm');
-            const budgetTableBody = document.getElementById('budgetTableBody');
-            const saveBudgetItemBtn = document.getElementById('saveBudgetItemBtn');
-            const cancelBudgetItemBtn = document.getElementById('cancelBudgetItemBtn');
-            const budgetTotal = document.getElementById('budgetTotal');
+            // DOM Elements
+            const createProjectBtn = document.getElementById('createProjectBtn');
+            const projectModal = document.getElementById('projectModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const saveProjectBtn = document.getElementById('saveProjectBtn');
+            const projectForm = document.getElementById('projectForm');
+            const projectsTableBody = document.getElementById('projectsTableBody');
+            const modalTitle = document.getElementById('modalTitle');
             
-            // New variables
-            let currentBudgetProjectId = null;
-            let isEditBudgetMode = false;
+            // Variables
+            let currentProjectId = null;
+            let isEditMode = false;
 
-            // New event listeners
-            addBudgetItemBtn.addEventListener('click', showBudgetItemForm);
-            cancelBudgetItemBtn.addEventListener('click', hideBudgetItemForm);
-            saveBudgetItemBtn.addEventListener('click', saveBudgetItem);
+            // Event Listeners
+            createProjectBtn.addEventListener('click', openCreateProjectModal);
+            closeModalBtn.addEventListener('click', closeProjectModal);
+            cancelBtn.addEventListener('click', closeProjectModal);
+            saveProjectBtn.addEventListener('click', saveProject);
             
-            // New functions for budget management
-            function showBudgetSection(projectId) {
-                currentBudgetProjectId = projectId;
-                budgetSection.style.display = 'block';
-                document.getElementById('budgetProjectId').value = projectId;
-                loadBudgetItems(projectId);
+            // Form validation
+            projectForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveProject();
+            });
+
+            // Initialize the page
+            loadProjects();
+
+            // Functions
+            function openCreateProjectModal() {
+                currentProjectId = null;
+                isEditMode = false;
+                modalTitle.textContent = 'Create New Project';
+                projectForm.reset();
+                document.getElementById('projectStatus').value = 'planned';
+                openProjectModal();
             }
 
-            function hideBudgetSection() {
-                budgetSection.style.display = 'none';
-                currentBudgetProjectId = null;
-                budgetTableBody.innerHTML = '';
-            }
-
-            function showBudgetItemForm() {
-                budgetItemForm.style.display = 'flex';
-                budgetItemForm.reset();
-                document.getElementById('budgetItemId').value = '';
-                isEditBudgetMode = false;
-            }
-
-            function hideBudgetItemForm() {
-                budgetItemForm.style.display = 'none';
-            }
-
-            function loadBudgetItems(projectId) {
-                budgetTableBody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner"></i> Loading budget items...</td></tr>';
+            function openEditProjectModal(projectId) {
+                currentProjectId = projectId;
+                isEditMode = true;
+                modalTitle.textContent = 'Edit Project';
                 
-                fetch(`https://man-m681.onrender.com/budget-items/${projectId}`)
+                // Fetch project data and populate form
+                fetch(`https://man-m681.onrender.com/projects/${projectId}`)
                     .then(response => {
-                        if (!response.ok) throw new Error('Failed to fetch budget items');
+                        if (!response.ok) throw new Error('Failed to fetch project');
                         return response.json();
                     })
-                    .then(items => {
-                        budgetTableBody.innerHTML = '';
-                        
-                        if (items.length === 0) {
-                            budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No budget items found</td></tr>';
-                            budgetTotal.textContent = 'Total Budget: UGX 0';
-                            return;
-                        }
-                        
-                        let totalBudget = 0;
-                        
-                        items.forEach(item => {
-                            totalBudget += item.total;
-                            
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${item.item_name}</td>
-                                <td>${item.category}</td>
-                                <td>${item.quantity}</td>
-                                <td>${item.unit_price.toLocaleString()}</td>
-                                <td>${item.total.toLocaleString()}</td>
-                                <td>${item.description || '-'}</td>
-                                <td>
-                                    <button class="action-btn edit-btn" onclick="editBudgetItem(${item.id}, '${item.item_name}', '${item.category}', ${item.quantity}, ${item.unit_price}, '${item.description || ''}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn delete-btn" onclick="deleteBudgetItem(${item.id})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            `;
-                            budgetTableBody.appendChild(row);
-                        });
-                        
-                        budgetTotal.textContent = `Total Budget: UGX ${totalBudget.toLocaleString()}`;
+                    .then(project => {
+                        document.getElementById('programArea').value = project.name.includes('Women') ? 'Women Empowerment' : 
+                                                                     project.name.includes('Vocational') ? 'Vocational Education' :
+                                                                     project.name.includes('Climate') ? 'Climate Change Mitigation' :
+                                                                     project.name.includes('Reproductive') ? 'Reproductive Health' :
+                                                                     project.name.includes('Agriculture') ? 'Agriculture Extension' :
+                                                                     project.name.includes('Economic') ? 'Economic Empowerment' : '';
+                        document.getElementById('projectName').value = project.name;
+                        document.getElementById('startDate').value = project.start_date;
+                        document.getElementById('endDate').value = project.end_date;
+                        document.getElementById('scopeStatement').value = project.description || '';
+                        document.getElementById('budget').value = project.budget;
+                        document.getElementById('fundingSource').value = project.funding_source;
+                        document.getElementById('projectStatus').value = project.status;
                     })
                     .catch(error => {
-                        console.error('Error loading budget items:', error);
-                        budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--accent-color);">Failed to load budget items</td></tr>';
+                        console.error('Error loading project:', error);
+                        alert('Failed to load project data');
                     });
+                
+                openProjectModal();
             }
 
-            function saveBudgetItem() {
-                const itemData = {
-                    project_id: parseInt(document.getElementById('budgetProjectId').value),
-                    item_name: document.getElementById('itemName').value,
-                    category: document.getElementById('itemCategory').value,
-                    quantity: parseFloat(document.getElementById('itemQuantity').value),
-                    unit_price: parseFloat(document.getElementById('itemUnitPrice').value),
-                    description: document.getElementById('itemDescription').value
-                };
+            function openProjectModal() {
+                projectModal.classList.add('show');
+            }
 
-                // Simple validation
-                if (!itemData.item_name || !itemData.category || isNaN(itemData.quantity) || isNaN(itemData.unit_price)) {
-                    alert('Please fill all required fields with valid values');
-                    return;
+            function closeProjectModal() {
+                projectModal.classList.remove('show');
+                resetValidationErrors();
+            }
+
+            function resetValidationErrors() {
+                document.querySelectorAll('.validation-error').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+
+            function validateForm() {
+                let isValid = true;
+                resetValidationErrors();
+
+                const requiredFields = [
+                    { id: 'programArea', errorId: 'programAreaError' },
+                    { id: 'projectName', errorId: 'projectNameError' },
+                    { id: 'startDate', errorId: 'startDateError' },
+                    { id: 'endDate', errorId: 'endDateError' },
+                    { id: 'scopeStatement', errorId: 'scopeStatementError' },
+                    { id: 'budget', errorId: 'budgetError' }
+                ];
+
+                requiredFields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    if (!element.value.trim()) {
+                        document.getElementById(field.errorId).style.display = 'block';
+                        element.style.borderColor = 'var(--accent-color)';
+                        isValid = false;
+                        
+                        // Focus on first invalid field
+                        if (isValid === false) {
+                            element.focus();
+                            isValid = null; // Prevent changing back to true
+                        }
+                    } else {
+                        element.style.borderColor = '';
+                    }
+                });
+
+                // Validate dates
+                const startDate = new Date(document.getElementById('startDate').value);
+                const endDate = new Date(document.getElementById('endDate').value);
+                
+                if (startDate && endDate && startDate > endDate) {
+                    document.getElementById('endDateError').textContent = 'End date must be after start date';
+                    document.getElementById('endDateError').style.display = 'block';
+                    document.getElementById('endDate').style.borderColor = 'var(--accent-color)';
+                    isValid = false;
                 }
 
-                const itemId = document.getElementById('budgetItemId').value;
-                const url = itemId 
-                    ? `https://man-m681.onrender.com/budget-items/${itemId}`
-                    : 'https://man-m681.onrender.com/budget-items/';
+                return isValid;
+            }
+
+            function saveProject() {
+                if (validateForm() !== true) return;
                 
-                const method = itemId ? 'PUT' : 'POST';
+                const projectData = {
+                    name: `${document.getElementById('programArea').value} - ${document.getElementById('projectName').value}`,
+                    description: document.getElementById('scopeStatement').value,
+                    start_date: document.getElementById('startDate').value,
+                    end_date: document.getElementById('endDate').value,
+                    budget: parseFloat(document.getElementById('budget').value),
+                    funding_source: document.getElementById('fundingSource').value,
+                    status: document.getElementById('projectStatus').value
+                };
+
+                const url = isEditMode 
+                    ? `https://man-m681.onrender.com/projects/${currentProjectId}`
+                    : 'https://man-m681.onrender.com/projects/';
+                
+                const method = isEditMode ? 'PUT' : 'POST';
 
                 // Show loading state
-                const originalText = saveBudgetItemBtn.innerHTML;
-                saveBudgetItemBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                saveBudgetItemBtn.disabled = true;
+                const originalText = saveProjectBtn.innerHTML;
+                saveProjectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                saveProjectBtn.disabled = true;
 
                 fetch(url, {
                     method: method,
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(itemData)
+                    body: JSON.stringify(projectData)
                 })
                 .then(response => {
-                    if (!response.ok) throw new Error('Failed to save budget item');
+                    if (!response.ok) throw new Error('Failed to save project');
                     return response.json();
                 })
                 .then(() => {
-                    hideBudgetItemForm();
-                    loadBudgetItems(currentBudgetProjectId);
+                    closeProjectModal();
+                    loadProjects();
                 })
                 .catch(error => {
-                    console.error('Error saving budget item:', error);
-                    alert('Failed to save budget item: ' + error.message);
+                    console.error('Error saving project:', error);
+                    alert('Failed to save project: ' + error.message);
                 })
                 .finally(() => {
-                    saveBudgetItemBtn.innerHTML = originalText;
-                    saveBudgetItemBtn.disabled = false;
+                    saveProjectBtn.innerHTML = originalText;
+                    saveProjectBtn.disabled = false;
                 });
             }
 
-            function editBudgetItem(id, name, category, quantity, unitPrice, description) {
-                document.getElementById('budgetItemId').value = id;
-                document.getElementById('itemName').value = name;
-                document.getElementById('itemCategory').value = category;
-                document.getElementById('itemQuantity').value = quantity;
-                document.getElementById('itemUnitPrice').value = unitPrice;
-                document.getElementById('itemDescription').value = description;
+            function loadProjects() {
+                projectsTableBody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner"></i> Loading projects...</td></tr>';
                 
-                isEditBudgetMode = true;
-                budgetItemForm.style.display = 'flex';
+                fetch('https://man-m681.onrender.com/projects/')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to fetch projects');
+                        return response.json();
+                    })
+                    .then(data => {
+                        projectsTableBody.innerHTML = '';
+                        
+                        if (data.projects && data.projects.length === 0) {
+                            projectsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No projects found</td></tr>';
+                            return;
+                        }
+                        
+                        data.projects.forEach(project => {
+                            // Extract program area from project name
+                            const programArea = project.name.split(' - ')[0] || 'General';
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${programArea}</td>
+                                <td>${project.name.split(' - ')[1] || project.name}</td>
+                                <td>${project.start_date}</td>
+                                <td>${project.end_date}</td>
+                                <td>${project.budget.toLocaleString()}</td>
+                                <td><span class="status-badge ${project.status}">${project.status.replace('_', ' ')}</span></td>
+                                <td>
+                                    <button class="action-btn view-btn" onclick="viewProject(${project.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn edit-btn" onclick="openEditProjectModal(${project.id})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete-btn" onclick="deleteProject(${project.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            `;
+                            projectsTableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading projects:', error);
+                        projectsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--accent-color);">Failed to load projects</td></tr>';
+                    });
             }
 
-            function deleteBudgetItem(id) {
-                if (!confirm('Are you sure you want to delete this budget item?')) {
+            function viewProject(projectId) {
+                fetch(`https://man-m681.onrender.com/projects/${projectId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to fetch project');
+                        return response.json();
+                    })
+                    .then(project => {
+                        // Extract program area from project name
+                        const programArea = project.name.split(' - ')[0] || 'General';
+                        const projectName = project.name.split(' - ')[1] || project.name;
+                        
+                        alert(`Project Details:\n\n` +
+                              `Program Area: ${programArea}\n` +
+                              `Project Name: ${projectName}\n` +
+                              `Start Date: ${project.start_date}\n` +
+                              `End Date: ${project.end_date}\n` +
+                              `Budget: UGX ${project.budget.toLocaleString()}\n` +
+                              `Status: ${project.status}\n` +
+                              `Scope: ${project.description || 'Not specified'}`);
+                    })
+                    .catch(error => {
+                        console.error('Error viewing project:', error);
+                        alert('Failed to view project details');
+                    });
+            }
+
+            function deleteProject(projectId) {
+                if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
                     return;
                 }
                 
-                fetch(`https://man-m681.onrender.com/budget-items/${id}`, {
+                fetch(`https://man-m681.onrender.com/projects/${projectId}`, {
                     method: 'DELETE'
                 })
                 .then(response => {
-                    if (!response.ok) throw new Error('Failed to delete budget item');
+                    if (!response.ok) throw new Error('Failed to delete project');
                     return response.json();
                 })
                 .then(() => {
-                    loadBudgetItems(currentBudgetProjectId);
+                    loadProjects();
                 })
                 .catch(error => {
-                    console.error('Error deleting budget item:', error);
-                    alert('Failed to delete budget item');
+                    console.error('Error deleting project:', error);
+                    alert('Failed to delete project');
                 });
             }
-
-            // Update viewProject function to show budget section
-            function viewProject(projectId) {
-                showBudgetSection(projectId);
-                
-                // Scroll to budget section
-                budgetSection.scrollIntoView({ behavior: 'smooth' });
-            }
-
-            // Make functions available globally
-            window.editBudgetItem = editBudgetItem;
-            window.deleteBudgetItem = deleteBudgetItem;
-            window.viewProject = viewProject;
         });
     </script>
 </body>
