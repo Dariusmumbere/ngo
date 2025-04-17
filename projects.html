@@ -965,54 +965,66 @@
             }
 
             function loadBudgetItems(projectId) {
-                budgetTableBody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner"></i> Loading budget items...</td></tr>';
-                
-                fetch(`https://man-m681.onrender.com/budget-items/${projectId}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to fetch budget items');
-                        return response.json();
-                    })
-                    .then(items => {
-                        budgetTableBody.innerHTML = '';
-                        
-                        if (items.length === 0) {
-                            budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No budget items found</td></tr>';
-                            budgetTotal.textContent = 'Total Budget: UGX 0';
-                            return;
-                        }
-                        
-                        let totalBudget = 0;
-                        
-                        items.forEach(item => {
-                            totalBudget += item.total;
-                            
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${item.item_name}</td>
-                                <td>${item.category}</td>
-                                <td>${item.quantity}</td>
-                                <td>${item.unit_price.toLocaleString()}</td>
-                                <td>${item.total.toLocaleString()}</td>
-                                <td>${item.description || '-'}</td>
-                                <td>
-                                    <button class="action-btn edit-btn" onclick="editBudgetItem(${item.id}, '${item.item_name}', '${item.category}', ${item.quantity}, ${item.unit_price}, '${item.description || ''}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn delete-btn" onclick="deleteBudgetItem(${item.id})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            `;
-                            budgetTableBody.appendChild(row);
-                        });
-                        
-                        budgetTotal.textContent = `Total Budget: UGX ${totalBudget.toLocaleString()}`;
-                    })
-                    .catch(error => {
-                        console.error('Error loading budget items:', error);
-                        budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--accent-color);">Failed to load budget items</td></tr>';
-                    });
+    budgetTableBody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner"></i> Loading budget items...</td></tr>';
+    
+    fetch(`https://man-m681.onrender.com/budget-items/${projectId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch budget items');
+            return response.json();
+        })
+        .then(items => {
+            budgetTableBody.innerHTML = '';
+            
+            if (items.length === 0) {
+                budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No budget items found</td></tr>';
+                budgetTotal.textContent = 'Total Budget: UGX 0';
+                updateProjectBudgetInTable(projectId, 0); // Update with 0 if no items
+                return;
             }
+            
+            let totalBudget = 0;
+            
+            items.forEach(item => {
+                totalBudget += item.total;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.item_name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.unit_price.toLocaleString()}</td>
+                    <td>${item.total.toLocaleString()}</td>
+                    <td>${item.description || '-'}</td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="editBudgetItem(${item.id}, '${item.item_name}', '${item.category}', ${item.quantity}, ${item.unit_price}, '${item.description || ''}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteBudgetItem(${item.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                budgetTableBody.appendChild(row);
+            });
+            
+            budgetTotal.textContent = `Total Budget: UGX ${totalBudget.toLocaleString()}`;
+            updateProjectBudgetInTable(projectId, totalBudget); // Update the project table
+        })
+        .catch(error => {
+            console.error('Error loading budget items:', error);
+            budgetTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--accent-color);">Failed to load budget items</td></tr>';
+        });
+}
+function updateProjectBudgetInTable(projectId, newBudget) {
+    const rows = document.querySelectorAll('#projectsTableBody tr');
+    rows.forEach(row => {
+        const rowProjectId = parseInt(row.querySelector('button.edit-btn').getAttribute('onclick').match(/\((\d+)/)[1]);
+        if (rowProjectId === projectId) {
+            const budgetCell = row.cells[4]; // Budget is the 5th column (0-based index 4)
+            budgetCell.textContent = newBudget.toLocaleString();
+        }
+    });
+}
 
             function saveBudgetItem() {
                 const itemData = {
