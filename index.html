@@ -1889,156 +1889,6 @@
         max-width: 100%;
     }
 }
-    /* Bank Cards Styles */
-    .bank-cards-container {
-        display: flex;
-        gap: 20px;
-        overflow-x: auto;
-        padding: 20px 0;
-        margin-bottom: 30px;
-    }
-
-    .bank-card {
-        min-width: 280px;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-        cursor: pointer;
-        flex-shrink: 0;
-    }
-
-    .bank-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .main-card {
-        background: linear-gradient(135deg, #3498db, #2980b9);
-        color: white;
-    }
-
-    .program-card {
-        background: white;
-        border: 1px solid #eee;
-    }
-
-    .program-card:nth-child(2) {
-        border-top: 4px solid #e74c3c; /* Women Empowerment */
-    }
-
-    .program-card:nth-child(3) {
-        border-top: 4px solid #f39c12; /* Vocational Education */
-    }
-
-    .program-card:nth-child(4) {
-        border-top: 4px solid #2ecc71; /* Climate Change */
-    }
-
-    .program-card:nth-child(5) {
-        border-top: 4px solid #9b59b6; /* Reproductive Health */
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .card-header h3 {
-        margin: 0;
-        font-size: 1.1rem;
-    }
-
-    .card-header i {
-        font-size: 1.5rem;
-        opacity: 0.8;
-    }
-
-    .card-balance {
-        margin-bottom: 25px;
-    }
-
-    .balance-label {
-        display: block;
-        font-size: 0.8rem;
-        opacity: 0.8;
-        margin-bottom: 5px;
-    }
-
-    .balance-amount {
-        font-size: 1.5rem;
-        font-weight: 700;
-    }
-
-    .main-card .balance-amount {
-        font-size: 1.8rem;
-    }
-
-    .card-details {
-        margin-bottom: 20px;
-    }
-
-    .detail-item {
-        margin-bottom: 10px;
-    }
-
-    .detail-label {
-        display: block;
-        font-size: 0.75rem;
-        opacity: 0.7;
-    }
-
-    .detail-value {
-        font-weight: 500;
-    }
-
-    .main-card .detail-label,
-    .main-card .detail-value {
-        color: white;
-    }
-
-    .card-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-    }
-
-    .card-action-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .card-action-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 1200px) {
-        .bank-cards-container {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @media (max-width: 900px) {
-        .bank-cards-container {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 600px) {
-        .bank-cards-container {
-            grid-template-columns: 1fr;
-        }
-    }
     </style>
 </head>
 <body>
@@ -2876,139 +2726,74 @@
         </div>
     </div>
 
-    <!-- Update the director dashboard section in your HTML -->
-<div class="director-dashboard" id="directorDashboard" style="display: none;">
-    <div class="section-header">
-        <h2 class="section-title">Director Dashboard</h2>
+    <!-- Director Dashboard (initially hidden) -->
+    <div class="director-dashboard" id="directorDashboard" style="display: none;">
+         <h2 class="section-title">Director Dashboard</h2>
+        <div class="section-header">
+
+    <div>
+        <div class="role-selection" id="roleSelection">
+        <h2>Our program areas</h2>
+        <div class="role-cards">
+            <div class="role-card" onclick="selectRole('director')">
+                <div class="role-icon">
+                    <i class="fas fa-fist-raised"></i>
+                </div>
+                <h3>Women Empowerment</h3>
+                <p>Support women's rights, leadership, and economic opportunities.</p>
+            </div>
+            
+            <div class="role-card" onclick="selectRole('vocational_education')">
+                <div class="role-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3>Vocational Education</h3>
+                <p>Provide skill-based training and employment opportunities.</p>
+            </div>
+            <div class="role-card" onclick="selectRole('climate_mitigation')">
+                <div class="role-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Climate Change Mitigation</h3>
+                <p>Promote sustainable practices and environmental awareness.</p>
+            </div>
+
+            <div class="role-card" onclick="selectRole('reproductive_health')">
+                <div class="role-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h3>Reproductive Health</h3>
+                <p>Ensure access to quality reproductive health services and education.</p>
+            </div>
+        </div>
+    </div>
         <button class="file-manager-btn" id="manageProjectsBtn">
-            <i class="fas fa-project-diagram"></i> Manage Projects
+            <i class="fas fa-project-diagram"></i> <a href="https://dariusmumbere.github.io/ngo/projects.html">Manage Projects</a>
         </button>
     </div>
-
-    <!-- Bank Cards Section -->
-    <div class="bank-cards-container">
-        <!-- Main Organization Card -->
-        <div class="bank-card main-card">
-            <div class="card-header">
-                <h3>RCDNET Main Account</h3>
-                <i class="fas fa-university"></i>
-            </div>
-            <div class="card-balance">
-                <span class="balance-label">Available Balance</span>
-                <span class="balance-amount">UGX 48,750,000</span>
-            </div>
-            <div class="card-details">
-                <div class="detail-item">
-                    <span class="detail-label">Account Number</span>
-                    <span class="detail-value">1234567890</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Bank</span>
-                    <span class="detail-value">Centenary Bank</span>
-                </div>
-            </div>
-            <div class="card-actions">
-                <button class="card-action-btn"><i class="fas fa-exchange-alt"></i> Transfer</button>
-                <button class="card-action-btn"><i class="fas fa-history"></i> History</button>
-            </div>
-        </div>
-
-        <!-- Program Area Cards -->
-        <div class="bank-card program-card" onclick="navigateToProgramArea(1, 'Women Empowerment')">
-            <div class="card-header">
-                <h3>Women Empowerment</h3>
-                <i class="fas fa-fist-raised"></i>
-            </div>
-            <div class="card-balance">
-                <span class="balance-label">Available Balance</span>
-                <span class="balance-amount">UGX 12,500,000</span>
-            </div>
-            <div class="card-details">
-                <div class="detail-item">
-                    <span class="detail-label">Account Number</span>
-                    <span class="detail-value">2345678901</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Bank</span>
-                    <span class="detail-value">Stanbic Bank</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bank-card program-card" onclick="navigateToProgramArea(2, 'Vocational Education')">
-            <div class="card-header">
-                <h3>Vocational Education</h3>
-                <i class="fas fa-tools"></i>
-            </div>
-            <div class="card-balance">
-                <span class="balance-label">Available Balance</span>
-                <span class="balance-amount">UGX 8,250,000</span>
-            </div>
-            <div class="card-details">
-                <div class="detail-item">
-                    <span class="detail-label">Account Number</span>
-                    <span class="detail-value">3456789012</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Bank</span>
-                    <span class="detail-value">Equity Bank</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bank-card program-card" onclick="navigateToProgramArea(3, 'Climate Change')">
-            <div class="card-header">
-                <h3>Climate Change</h3>
-                <i class="fas fa-leaf"></i>
-            </div>
-            <div class="card-balance">
-                <span class="balance-label">Available Balance</span>
-                <span class="balance-amount">UGX 5,750,000</span>
-            </div>
-            <div class="card-details">
-                <div class="detail-item">
-                    <span class="detail-label">Account Number</span>
-                    <span class="detail-value">4567890123</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Bank</span>
-                    <span class="detail-value">Absa Bank</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bank-card program-card" onclick="navigateToProgramArea(4, 'Reproductive Health')">
-            <div class="card-header">
-                <h3>Reproductive Health</h3>
-                <i class="fas fa-heartbeat"></i>
-            </div>
-            <div class="card-balance">
-                <span class="balance-label">Available Balance</span>
-                <span class="balance-amount">UGX 7,300,000</span>
-            </div>
-            <div class="card-details">
-                <div class="detail-item">
-                    <span class="detail-label">Account Number</span>
-                    <span class="detail-value">5678901234</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Bank</span>
-                    <span class="detail-value">Bank of Africa</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Projects Table Section -->
-    <div class="projects-list">
-        <h3>Current Projects</h3>
-        <div class="table-responsive">
-            <table class="projects-table">
-                <!-- ... existing projects table content ... -->
-            </table>
-        </div>
-    </div>
 </div>
+
+        <div class="projects-list">
+            <h3>Current Projects</h3>
+            <div class="table-responsive">
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTableBody">
+                        <!-- Projects will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <!-- Program Officer Dashboard (initially hidden) -->
     <div class="program-officer-dashboard" id="programOfficerDashboard" style="display: none;">
