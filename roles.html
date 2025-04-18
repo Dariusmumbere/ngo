@@ -475,6 +475,52 @@
             margin-top: 5px;
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 1200px) {
             .hr-dashboard {
@@ -679,30 +725,10 @@
                             Work Opportunities
                         </h2>
                         
-                        <div class="opportunity-card">
-                            <div class="opportunity-header">
-                                <h3 class="opportunity-title">Field Officer - Agriculture Project</h3>
-                                <div class="opportunity-meta">
-                                    <span><i class="fas fa-calendar-alt"></i> 15 Oct - 15 Dec 2023</span>
-                                    <span><i class="fas fa-map-marker-alt"></i> Kasese District</span>
-                                </div>
-                            </div>
-                            
-                            <div class="opportunity-description">
-                                Coordinate field activities for the agriculture extension project, train farmers, and monitor project implementation.
-                            </div>
-                            
-                            <div class="opportunity-footer">
-                                <div class="assigned-employees">
-                                    <span>Assigned:</span>
-                                    <div class="employee-avatar">JM</div>
-                                    <div class="employee-avatar">AM</div>
-                                    <div class="employee-avatar">+2</div>
-                                </div>
-                                
-                                <button class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus"></i> Assign Employee
-                                </button>
+                        <div id="opportunitiesList">
+                            <!-- Opportunities will be loaded here -->
+                            <div class="loading">
+                                <div class="spinner"></div>
                             </div>
                         </div>
                         
@@ -751,32 +777,104 @@
                         
                         <div class="deployment-list" id="deploymentList">
                             <h3>Current Deployments</h3>
-                            
-                            <div class="deployment-item">
-                                <div class="deployment-info">
-                                    <div class="deployment-employee">John Mumbere</div>
-                                    <div class="deployment-activity">
-                                        <span><i class="fas fa-tasks"></i> Farmer Training Workshops</span>
-                                    </div>
-                                    <div class="deployment-project">
-                                        <span><i class="fas fa-project-diagram"></i> Agriculture Extension Project</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="deployment-actions">
-                                    <button class="action-btn edit-btn">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn delete-btn">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
+                            <div class="loading">
+                                <div class="spinner"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Create Opportunity Modal -->
+    <div class="modal" id="opportunityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Work Opportunity</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="opportunityForm">
+                <div class="form-group">
+                    <label for="opportunityTitle">Title*</label>
+                    <input type="text" id="opportunityTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="opportunityDescription">Description*</label>
+                    <textarea id="opportunityDescription" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="opportunityStartDate">Start Date*</label>
+                    <input type="date" id="opportunityStartDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="opportunityEndDate">End Date*</label>
+                    <input type="date" id="opportunityEndDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="opportunityLocation">Location*</label>
+                    <input type="text" id="opportunityLocation" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="opportunityProject">Project*</label>
+                    <input type="text" id="opportunityProject" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelOpportunityBtn">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Opportunity
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Employee Modal -->
+    <div class="modal" id="assignEmployeeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Assign Employee to Opportunity</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="assignEmployeeForm">
+                <input type="hidden" id="currentOpportunityId">
+                
+                <div class="form-group">
+                    <label for="employeeToAssign">Employee*</label>
+                    <select id="employeeToAssign" required>
+                        <option value="">Select employee</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="assignmentRole">Role*</label>
+                    <select id="assignmentRole" required>
+                        <option value="team_leader">Team Leader</option>
+                        <option value="field_officer">Field Officer</option>
+                        <option value="trainer">Trainer</option>
+                        <option value="monitor">Monitor</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAssignmentBtn">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Assign Employee
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -853,52 +951,129 @@
             // Load initial data
             loadEmployees();
             loadActivitiesForDeployment();
+            loadOpportunities();
+            loadDeployments();
+            
+            // Modal functionality
+            const opportunityModal = document.getElementById('opportunityModal');
+            const assignEmployeeModal = document.getElementById('assignEmployeeModal');
+            
+            // Open opportunity modal
+            document.getElementById('addOpportunityBtn').addEventListener('click', function() {
+                opportunityModal.style.display = 'flex';
+            });
+            
+            // Close modals
+            document.querySelectorAll('.close-modal, #cancelOpportunityBtn, #cancelAssignmentBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    opportunityModal.style.display = 'none';
+                    assignEmployeeModal.style.display = 'none';
+                });
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === opportunityModal) {
+                    opportunityModal.style.display = 'none';
+                }
+                if (e.target === assignEmployeeModal) {
+                    assignEmployeeModal.style.display = 'none';
+                }
+            });
+            
+            // Save new opportunity
+            document.getElementById('opportunityForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const opportunityData = {
+                    title: document.getElementById('opportunityTitle').value.trim(),
+                    description: document.getElementById('opportunityDescription').value.trim(),
+                    start_date: document.getElementById('opportunityStartDate').value,
+                    end_date: document.getElementById('opportunityEndDate').value,
+                    location: document.getElementById('opportunityLocation').value.trim(),
+                    project: document.getElementById('opportunityProject').value.trim()
+                };
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                try {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    submitBtn.disabled = true;
+                    
+                    const response = await fetch('https://man-m681.onrender.com/opportunities/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(opportunityData)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to save opportunity');
+                    }
+                    
+                    const data = await response.json();
+                    alert('Opportunity created successfully!');
+                    opportunityModal.style.display = 'none';
+                    this.reset();
+                    loadOpportunities();
+                } catch (error) {
+                    console.error('Error saving opportunity:', error);
+                    alert(`Error: ${error.message}`);
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
             
             // Function to save employee
             async function saveEmployee() {
-    const employeeData = {
-        name: document.getElementById('employeeName').value.trim(),
-        nin: document.getElementById('employeeNIN').value.trim(),
-        dob: document.getElementById('employeeDOB').value,
-        qualification: document.getElementById('employeeQualification').value,
-        email: document.getElementById('employeeEmail').value.trim(),
-        phone: document.getElementById('employeePhone').value.trim(),
-        address: document.getElementById('employeeAddress').value.trim(),
-        status: 'active'
-    };
-    
-    const submitBtn = employeeForm.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    
-    try {
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        submitBtn.disabled = true;
-        
-        const response = await fetch('https://man-m681.onrender.com/employees/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(employeeData)
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || 'Failed to save employee');
-        }
-        
-        const data = await response.json();
-        alert('Employee saved successfully!');
-        employeeForm.reset();
-        loadEmployees();
-    } catch (error) {
-        console.error('Error saving employee:', error);
-        alert(`Error: ${error.message}`);
-    } finally {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }
-}
+                const employeeData = {
+                    name: document.getElementById('employeeName').value.trim(),
+                    nin: document.getElementById('employeeNIN').value.trim(),
+                    dob: document.getElementById('employeeDOB').value,
+                    qualification: document.getElementById('employeeQualification').value,
+                    email: document.getElementById('employeeEmail').value.trim(),
+                    phone: document.getElementById('employeePhone').value.trim(),
+                    address: document.getElementById('employeeAddress').value.trim(),
+                    status: 'active'
+                };
+                
+                const submitBtn = employeeForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                try {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    submitBtn.disabled = true;
+                    
+                    const response = await fetch('https://man-m681.onrender.com/employees/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(employeeData)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to save employee');
+                    }
+                    
+                    const data = await response.json();
+                    alert('Employee saved successfully!');
+                    employeeForm.reset();
+                    loadEmployees();
+                } catch (error) {
+                    console.error('Error saving employee:', error);
+                    alert(`Error: ${error.message}`);
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+            
             // Function to load employees
             async function loadEmployees() {
                 try {
@@ -947,6 +1122,81 @@
                 }
             }
 
+            // Function to load opportunities
+            async function loadOpportunities() {
+                try {
+                    const opportunitiesList = document.getElementById('opportunitiesList');
+                    opportunitiesList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+                    
+                    const response = await fetch('https://man-m681.onrender.com/opportunities/');
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch opportunities');
+                    }
+                    
+                    const data = await response.json();
+                    opportunitiesList.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        opportunitiesList.innerHTML = '<p>No work opportunities found</p>';
+                        return;
+                    }
+                    
+                    data.forEach(opportunity => {
+                        const opportunityCard = document.createElement('div');
+                        opportunityCard.className = 'opportunity-card';
+                        opportunityCard.innerHTML = `
+                            <div class="opportunity-header">
+                                <h3 class="opportunity-title">${opportunity.title}</h3>
+                                <div class="opportunity-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> ${formatDate(opportunity.start_date)} - ${formatDate(opportunity.end_date)}</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> ${opportunity.location}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="opportunity-description">
+                                ${opportunity.description}
+                            </div>
+                            
+                            <div class="opportunity-footer">
+                                <div class="assigned-employees">
+                                    <span>Assigned:</span>
+                                    ${opportunity.assigned_employees && opportunity.assigned_employees.length > 0 ? 
+                                        opportunity.assigned_employees.slice(0, 3).map(emp => 
+                                            `<div class="employee-avatar" title="${emp.name}">${getInitials(emp.name)}</div>`
+                                        ).join('') + 
+                                        (opportunity.assigned_employees.length > 3 ? 
+                                            `<div class="employee-avatar">+${opportunity.assigned_employees.length - 3}</div>` : '')
+                                        : '<span>None</span>'}
+                                </div>
+                                
+                                <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(${opportunity.id})">
+                                    <i class="fas fa-plus"></i> Assign Employee
+                                </button>
+                            </div>
+                        `;
+                        opportunitiesList.appendChild(opportunityCard);
+                    });
+                } catch (error) {
+                    console.error('Error loading opportunities:', error);
+                    document.getElementById('opportunitiesList').innerHTML = 
+                        '<p style="color: red;">Failed to load work opportunities</p>';
+                }
+            }
+
+            // Helper function to format date
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                return date.toLocaleDateString();
+            }
+
+            // Helper function to get initials
+            function getInitials(name) {
+                if (!name) return '';
+                return name.split(' ').map(part => part[0]).join('').toUpperCase();
+            }
+
             // Helper function to format qualification
             function formatQualification(qualification) {
                 const qualifications = {
@@ -964,13 +1214,17 @@
             // Function to populate employee dropdown
             function populateEmployeeDropdown(employees) {
                 const dropdown = document.getElementById('deployEmployee');
+                const assignDropdown = document.getElementById('employeeToAssign');
+                
                 dropdown.innerHTML = '<option value="">Select employee</option>';
+                assignDropdown.innerHTML = '<option value="">Select employee</option>';
                 
                 employees.forEach(employee => {
                     const option = document.createElement('option');
                     option.value = employee.id;
                     option.textContent = employee.name;
-                    dropdown.appendChild(option);
+                    dropdown.appendChild(option.cloneNode(true));
+                    assignDropdown.appendChild(option);
                 });
             }
 
@@ -1111,6 +1365,62 @@
                 };
                 return roles[role] || role;
             }
+
+            // Function to open assign employee modal
+            window.openAssignEmployeeModal = function(opportunityId) {
+                document.getElementById('currentOpportunityId').value = opportunityId;
+                assignEmployeeModal.style.display = 'flex';
+            };
+
+            // Assign employee to opportunity
+            document.getElementById('assignEmployeeForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const opportunityId = document.getElementById('currentOpportunityId').value;
+                const employeeId = document.getElementById('employeeToAssign').value;
+                const role = document.getElementById('assignmentRole').value;
+                
+                if (!employeeId) {
+                    alert('Please select an employee');
+                    return;
+                }
+                
+                try {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
+                    submitBtn.disabled = true;
+                    
+                    const response = await fetch(`https://man-m681.onrender.com/opportunities/${opportunityId}/assign`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            employee_id: employeeId,
+                            role: role
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to assign employee');
+                    }
+                    
+                    const data = await response.json();
+                    alert('Employee assigned successfully!');
+                    assignEmployeeModal.style.display = 'none';
+                    this.reset();
+                    loadOpportunities();
+                } catch (error) {
+                    console.error('Error assigning employee:', error);
+                    alert(`Error: ${error.message}`);
+                } finally {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
 
             // Initialize with loading deployments
             loadDeployments();
