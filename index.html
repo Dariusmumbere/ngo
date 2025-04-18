@@ -1152,6 +1152,133 @@
             justify-content: flex-end;
             gap: 10px;
         }
+        /* Director Dashboard Bank Cards */
+    .bank-cards-container {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .bank-card {
+        flex: 1;
+        min-width: 200px;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border-radius: 12px;
+        padding: 20px;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .main-bank-card {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        min-width: 280px;
+    }
+    
+    .bank-card::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .bank-card::after {
+        content: '';
+        position: absolute;
+        bottom: -30px;
+        right: -30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .bank-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .bank-card-title {
+        font-size: 1rem;
+        font-weight: 500;
+        opacity: 0.8;
+    }
+    
+    .bank-card-logo {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .bank-card-balance {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .bank-card-number {
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        opacity: 0.8;
+    }
+    
+    .bank-card-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+    }
+    
+    .bank-card-footer-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .bank-card-footer-label {
+        opacity: 0.7;
+        margin-bottom: 3px;
+    }
+    
+    .bank-card-footer-value {
+        font-weight: 600;
+    }
+    
+    /* Program area cards */
+    .program-card-1 {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+    
+    .program-card-2 {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+    
+    .program-card-3 {
+        background: linear-gradient(135deg, #f39c12, #d35400);
+    }
+    
+    .program-card-4 {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    }
+    
+    .director-dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
         /* Add to your existing CSS */
 .donor-modal {
     position: fixed;
@@ -2726,74 +2853,147 @@
         </div>
     </div>
 
-    <!-- Director Dashboard (initially hidden) -->
-    <div class="director-dashboard" id="directorDashboard" style="display: none;">
-         <h2 class="section-title">Director Dashboard</h2>
-        <div class="section-header">
-
-    <div>
-        <div class="role-selection" id="roleSelection">
-        <h2>Our program areas</h2>
-        <div class="role-cards">
-            <div class="role-card" onclick="selectRole('director')">
-                <div class="role-icon">
-                    <i class="fas fa-fist-raised"></i>
-                </div>
-                <h3>Women Empowerment</h3>
-                <p>Support women's rights, leadership, and economic opportunities.</p>
-            </div>
-            
-            <div class="role-card" onclick="selectRole('vocational_education')">
-                <div class="role-icon">
-                    <i class="fas fa-tools"></i>
-                </div>
-                <h3>Vocational Education</h3>
-                <p>Provide skill-based training and employment opportunities.</p>
-            </div>
-            <div class="role-card" onclick="selectRole('climate_mitigation')">
-                <div class="role-icon">
-                    <i class="fas fa-leaf"></i>
-                </div>
-                <h3>Climate Change Mitigation</h3>
-                <p>Promote sustainable practices and environmental awareness.</p>
-            </div>
-
-            <div class="role-card" onclick="selectRole('reproductive_health')">
-                <div class="role-icon">
-                    <i class="fas fa-heartbeat"></i>
-                </div>
-                <h3>Reproductive Health</h3>
-                <p>Ensure access to quality reproductive health services and education.</p>
-            </div>
-        </div>
-    </div>
+    <!-- Update the Director Dashboard section in your HTML -->
+<div class="director-dashboard" id="directorDashboard" style="display: none;">
+    <div class="director-dashboard-header">
+        <h2 class="section-title">Director Dashboard</h2>
         <button class="file-manager-btn" id="manageProjectsBtn">
-            <i class="fas fa-project-diagram"></i> <a href="https://dariusmumbere.github.io/ngo/projects.html">Manage Projects</a>
+            <i class="fas fa-project-diagram"></i> Manage Projects
         </button>
     </div>
-</div>
 
-        <div class="projects-list">
-            <h3>Current Projects</h3>
-            <div class="table-responsive">
-                <table class="projects-table">
-                    <thead>
-                        <tr>
-                            <th>Project Name</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Budget (UGX)</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="projectsTableBody">
-                        <!-- Projects will be loaded here -->
-                    </tbody>
-                </table>
+    <!-- Bank Cards Section -->
+    <div class="bank-cards-container">
+        <!-- Main Bank Card -->
+        <div class="bank-card main-bank-card">
+            <div class="bank-card-header">
+                <div class="bank-card-title">Main Account</div>
+                <div class="bank-card-logo">
+                    <i class="fas fa-university"></i>
+                </div>
+            </div>
+            <div class="bank-card-balance">UGX 48,250,000</div>
+            <div class="bank-card-number">**** **** **** 5580</div>
+            <div class="bank-card-footer">
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Available</span>
+                    <span class="bank-card-footer-value">UGX 42,100,000</span>
+                </div>
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Expires</span>
+                    <span class="bank-card-footer-value">12/25</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Program Area Cards -->
+        <div class="bank-card program-card-1">
+            <div class="bank-card-header">
+                <div class="bank-card-title">Women Empowerment</div>
+                <div class="bank-card-logo">
+                    <i class="fas fa-fist-raised"></i>
+                </div>
+            </div>
+            <div class="bank-card-balance">UGX 12,500,000</div>
+            <div class="bank-card-number">**** **** **** 2241</div>
+            <div class="bank-card-footer">
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Last Tx</span>
+                    <span class="bank-card-footer-value">UGX 2,000,000</span>
+                </div>
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Expires</span>
+                    <span class="bank-card-footer-value">06/24</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bank-card program-card-2">
+            <div class="bank-card-header">
+                <div class="bank-card-title">Vocational Education</div>
+                <div class="bank-card-logo">
+                    <i class="fas fa-tools"></i>
+                </div>
+            </div>
+            <div class="bank-card-balance">UGX 8,750,000</div>
+            <div class="bank-card-number">**** **** **** 3092</div>
+            <div class="bank-card-footer">
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Last Tx</span>
+                    <span class="bank-card-footer-value">UGX 1,250,000</span>
+                </div>
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Expires</span>
+                    <span class="bank-card-footer-value">09/24</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bank-card program-card-3">
+            <div class="bank-card-header">
+                <div class="bank-card-title">Climate Change</div>
+                <div class="bank-card-logo">
+                    <i class="fas fa-leaf"></i>
+                </div>
+            </div>
+            <div class="bank-card-balance">UGX 5,200,000</div>
+            <div class="bank-card-number">**** **** **** 7810</div>
+            <div class="bank-card-footer">
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Last Tx</span>
+                    <span class="bank-card-footer-value">UGX 750,000</span>
+                </div>
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Expires</span>
+                    <span class="bank-card-footer-value">03/24</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bank-card program-card-4">
+            <div class="bank-card-header">
+                <div class="bank-card-title">Reproductive Health</div>
+                <div class="bank-card-logo">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+            </div>
+            <div class="bank-card-balance">UGX 6,800,000</div>
+            <div class="bank-card-number">**** **** **** 2973</div>
+            <div class="bank-card-footer">
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Last Tx</span>
+                    <span class="bank-card-footer-value">UGX 1,500,000</span>
+                </div>
+                <div class="bank-card-footer-item">
+                    <span class="bank-card-footer-label">Expires</span>
+                    <span class="bank-card-footer-value">12/24</span>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Projects Table Section -->
+    <div class="projects-list">
+        <h3>Current Projects</h3>
+        <div class="table-responsive">
+            <table class="projects-table">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Budget (UGX)</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="projectsTableBody">
+                    <!-- Projects will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
     <!-- Program Officer Dashboard (initially hidden) -->
     <div class="program-officer-dashboard" id="programOfficerDashboard" style="display: none;">
