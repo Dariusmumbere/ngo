@@ -541,6 +541,33 @@
         .form-group textarea:invalid {
             border-color: var(--accent-color);
         }
+        .toggleable-section {
+        transition: all 0.3s ease;
+    }
+    
+    .collapsed {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+    }
+    
+    .section-title {
+        cursor: pointer;
+        user-select: none;
+    }
+    
+    .section-title::after {
+        content: "−";
+        margin-left: 10px;
+        display: inline-block;
+        transition: transform 0.3s;
+    }
+    
+    .section-title.collapsed::after {
+        content: "+";
+    }
     </style>
 </head>
 <body>
@@ -1582,6 +1609,30 @@ async function loadWorkOpportunities() {
 function getInitials(name) {
     return name.split(' ').map(part => part[0]).join('').toUpperCase().substring(0, 2);
 }
+document.addEventListener('DOMContentLoaded', function() {
+        // Toggle sections when clicking on their headings
+        const sectionTitles = document.querySelectorAll('.section-title');
+        
+        sectionTitles.forEach(title => {
+            // Only make certain sections toggleable
+            if (title.textContent.includes('Work Opportunities') || 
+                title.textContent.includes('Activity Deployment')) {
+                
+                // Find the next element sibling (the container to toggle)
+                let container = title.parentElement.nextElementSibling;
+                if (!container) container = title.parentElement.parentElement.nextElementSibling;
+                
+                if (container) {
+                    container.classList.add('toggleable-section');
+                    
+                    title.addEventListener('click', () => {
+                        title.classList.toggle('collapsed');
+                        container.classList.toggle('collapsed');
+                    });
+                }
+            }
+        });
+    });
     </script>
     
 </body>
