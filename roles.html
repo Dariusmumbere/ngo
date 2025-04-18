@@ -856,51 +856,49 @@
             
             // Function to save employee
             async function saveEmployee() {
-                const employeeData = {
-                    name: document.getElementById('employeeName').value.trim(),
-                    nin: document.getElementById('employeeNIN').value.trim(),
-                    dob: document.getElementById('employeeDOB').value,
-                    qualification: document.getElementById('employeeQualification').value,
-                    email: document.getElementById('employeeEmail').value.trim(),
-                    phone: document.getElementById('employeePhone').value.trim(),
-                    address: document.getElementById('employeeAddress').value.trim(),
-                    status: 'active'
-                };
-                
-                try {
-                    const submitBtn = employeeForm.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                    submitBtn.disabled = true;
-                    
-                    const response = await fetch('https://man-m681.onrender.com/employees/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(employeeData)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to save employee');
-                    }
-                    
-                    const data = await response.json();
-                    alert('Employee saved successfully!');
-                    employeeForm.reset();
-                    loadEmployees();
-                } catch (error) {
-                    console.error('Error saving employee:', error);
-                    alert('Failed to save employee. Please try again.');
-                } finally {
-                    const submitBtn = employeeForm.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                }
-            }
-
+    const employeeData = {
+        name: document.getElementById('employeeName').value.trim(),
+        nin: document.getElementById('employeeNIN').value.trim(),
+        dob: document.getElementById('employeeDOB').value,
+        qualification: document.getElementById('employeeQualification').value,
+        email: document.getElementById('employeeEmail').value.trim(),
+        phone: document.getElementById('employeePhone').value.trim(),
+        address: document.getElementById('employeeAddress').value.trim(),
+        status: 'active'
+    };
+    
+    const submitBtn = employeeForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    try {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        submitBtn.disabled = true;
+        
+        const response = await fetch('https://man-m681.onrender.com/employees/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(employeeData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Failed to save employee');
+        }
+        
+        const data = await response.json();
+        alert('Employee saved successfully!');
+        employeeForm.reset();
+        loadEmployees();
+    } catch (error) {
+        console.error('Error saving employee:', error);
+        alert(`Error: ${error.message}`);
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+}
             // Function to load employees
             async function loadEmployees() {
                 try {
