@@ -541,6 +541,19 @@
         .form-group textarea:invalid {
             border-color: var(--accent-color);
         }
+        .employee-avatar {
+    width: auto; /* Change from fixed width to auto */
+    height: 25px;
+    border-radius: 12.5px; /* Half of height */
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: var(--primary-color);
+    padding: 0 8px; /* Add padding for text */
+    white-space: nowrap; /* Prevent text wrapping */
+}
     </style>
 </head>
 <body>
@@ -1544,9 +1557,9 @@ async function loadWorkOpportunities() {
                     <div class="assigned-employees">
                         <span>Assigned:</span>
                         ${assignments.slice(0, 3).map(assignment => `
-                            <div class="employee-avatar" title="${assignment.employee_name}">
-                                ${getInitials(assignment.employee_name)}
-                            </div>
+                            `<div class="employee-avatar" title="${assignment.employee_name}">
+                                ${assignment.employee_name}
+                            </div>`
                         `).join('')}
                         ${assignments.length > 3 ? `<div class="employee-avatar">+${assignments.length - 3}</div>` : ''}
                         ${assignments.length === 0 ? '<span>None</span>' : ''}
