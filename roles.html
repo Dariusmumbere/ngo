@@ -1,4 +1,4 @@
-i want the name of the assigned person to show in full an avatar, i know its a small edit;<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -863,7 +863,7 @@ i want the name of the assigned person to show in full an avatar, i know its a s
         qualification: document.getElementById('employeeQualification').value,
         email: document.getElementById('employeeEmail').value.trim(),
         phone: document.getElementById('employeePhone').value.trim(),
-        address: document.getElementById('employeeAddress').value.trim(),
+        profession: document.getElementById('text').value.trim(), // Changed from address to profession
         status: 'active'
     };
     
@@ -874,6 +874,8 @@ i want the name of the assigned person to show in full an avatar, i know its a s
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
         submitBtn.disabled = true;
         
+        console.log('Sending employee data:', employeeData); // Debug log
+        
         const response = await fetch('https://man-m681.onrender.com/employees/', {
             method: 'POST',
             headers: {
@@ -882,12 +884,17 @@ i want the name of the assigned person to show in full an avatar, i know its a s
             body: JSON.stringify(employeeData)
         });
         
+        console.log('Response status:', response.status); // Debug log
+        
         if (!response.ok) {
             const errorData = await response.json();
+            console.error('Error response:', errorData); // Debug log
             throw new Error(errorData.detail || 'Failed to save employee');
         }
         
         const data = await response.json();
+        console.log('Success response:', data); // Debug log
+        
         alert('Employee saved successfully!');
         employeeForm.reset();
         loadEmployees();
