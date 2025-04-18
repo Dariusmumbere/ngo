@@ -1541,16 +1541,21 @@ async function loadWorkOpportunities() {
                 </div>
                 
                 <div class="opportunity-footer">
-                    `<div class="assigned-employees">
-    <span>Assigned:</span>
-    ${assignments.slice(0, 3).map(assignment => `
-        <div class="employee-avatar" title="${assignment.employee_name}">
-            ${assignment.employee_name}
-        </div>
-    `).join('')}
-    ${assignments.length > 3 ? `<div class="employee-avatar">${assignments.length} assigned</div>` : ''}
-    ${assignments.length === 0 ? '<span>None</span>' : ''}
-</div>`
+                    <div class="assigned-employees">
+                        <span>Assigned:</span>
+                        ${assignments.slice(0, 3).map(assignment => `
+                            <div class="employee-avatar" title="${assignment.employee_name}">
+                                ${getInitials(assignment.employee_name)}
+                            </div>
+                        `).join('')}
+                        ${assignments.length > 3 ? `<div class="employee-avatar">+${assignments.length - 3}</div>` : ''}
+                        ${assignments.length === 0 ? '<span>None</span>' : ''}
+                    </div>
+                    
+                    <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(${opportunity.id})">
+                        <i class="fas fa-plus"></i> Assign Employee
+                    </button>
+                </div>
             `;
             
             // Insert before the "Create New Opportunity" button
@@ -1564,6 +1569,11 @@ async function loadWorkOpportunities() {
         errorElement.textContent = 'Failed to load work opportunities';
         opportunitiesContainer.insertBefore(errorElement, document.getElementById('addOpportunityBtn'));
     }
+}
+
+// Helper function to get initials from name
+function getInitials(name) {
+    return name.split(' ').map(part => part[0]).join('').toUpperCase().substring(0, 2);
 }
     </script>
     
