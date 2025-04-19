@@ -596,6 +596,99 @@
                 margin: 10% auto;
             }
         }
+        .payment-section, .approval-section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-top: 30px;
+}
+
+.payment-actions, .approval-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.approval-filters {
+    gap: 15px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #555;
+}
+
+.filter-group select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.payment-history h3, .approval-list h3 {
+    margin-bottom: 15px;
+    color: var(--dark-color);
+}
+
+.payment-details {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    width: 120px;
+}
+
+.detail-value {
+    flex: 1;
+}
+
+.approval-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.status-badge.pending {
+    background-color: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+    border: 1px solid rgba(243, 156, 18, 0.2);
+}
+
+.status-badge.approved {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.status-badge.rejected {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+.status-badge.processed {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
     </style>
 </head>
 <body>
@@ -1695,6 +1788,193 @@
         function getInitials(name) {
             return name.split(' ').map(part => part[0]).join('').toUpperCase().substring(0, 2);
         }
+        document.addEventListener('DOMContentLoaded', function() {
+    // Initialize payment functionality if on HR dashboard
+    if (document.getElementById('createPaymentBtn')) {
+        initPaymentProcessing();
+    }
+    
+    // Initialize approval functionality if on Director dashboard
+    if (document.getElementById('approvalStatusFilter')) {
+        initPaymentApprovals();
+    }
+});
+
+function initPaymentProcessing() {
+    // Load employees for dropdown
+    loadEmployeesForPayments();
+    
+    // Load payment history
+    loadPaymentHistory();
+    
+    // Set up modal
+    const createPaymentModal = document.getElementById('createPaymentModal');
+    const createPaymentBtn = document.getElementById('createPaymentBtn');
+    const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+    
+    createPaymentBtn.addEventListener('click', function() {
+        createPaymentModal.style.display = 'block';
+    });
+    
+    cancelPaymentBtn.addEventListener('click', function() {
+        createPaymentModal.style.display = 'none';
+        document.getElementById('paymentForm').reset();
+    });
+    
+    // Handle form submission
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        createPaymentRequest();
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === createPaymentModal) {
+            createPaymentModal.style.display = 'none';
+            document.getElementById('paymentForm').reset();
+        }
+    });
+}
+
+async function loadEmployeesForPayments() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/employees/');
+        if (!response.ok) throw new Error('Failed to fetch employees');
+        
+        const data = await response.json();
+        const dropdown = document.getElementById('paymentEmployee');
+        dropdown.innerHTML = '<option value="">Select employee</option>';
+        
+        data.forEach(employee => {
+            const option = document.createElement('option');
+            option.value = employee.id;
+            option.textContent = employee.name;
+            dropdown.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading employees for payments:', error);
+        alert('Failed to load employees for payment form');
+    }
+}
+
+async function loadPaymentHistory() {
+    try {
+        const tbody = document.getElementById('paymentsTableBody');
+        tbody.innerHTML = '<tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr>';
+        
+        // In a real app, you would filter by current employee or HR's permissions
+        const response = await fetch('https://man-m681.onrender.com/payments/');
+        if (!response.ok) throw new Error('Failed to fetch payment history');
+        
+        const payments = await response.json();
+        tbody.innerHTML = '';
+        
+        if (payments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No payment history found</td></tr>';
+            return;
+        }
+        
+        payments.forEach(payment => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${payment.employee_name}</td>
+                <td>UGX ${payment.amount.toLocaleString()}</td>
+                <td>${payment.payment_period}</td>
+                <td>${payment.description || '-'}</td>
+                <td><span class="status-badge ${payment.status}">${payment.status}</span></td>
+                <td>${new Date(payment.created_at).toLocaleDateString()}</td>
+                <td>
+                    <button class="action-btn view-btn" onclick="viewPaymentDetails(${payment.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading payment history:', error);
+        document.getElementById('paymentsTableBody').innerHTML = 
+            '<tr><td colspan="7" style="text-align: center; color: red;">Failed to load payment history</td></tr>';
+    }
+}
+
+async function createPaymentRequest() {
+    // Reset errors
+    document.querySelectorAll('.validation-error').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // Validate form
+    const employeeId = document.getElementById('paymentEmployee').value;
+    const amount = document.getElementById('paymentAmount').value;
+    const period = document.getElementById('paymentPeriod').value.trim();
+    
+    let isValid = true;
+    
+    if (!employeeId) {
+        document.getElementById('employeeError').style.display = 'block';
+        isValid = false;
+    }
+    
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+        document.getElementById('amountError').style.display = 'block';
+        isValid = false;
+    }
+    
+    if (!period) {
+        document.getElementById('periodError').style.display = 'block';
+        isValid = false;
+    }
+    
+    if (!isValid) return;
+    
+    const paymentData = {
+        employee_id: parseInt(employeeId),
+        amount: parseFloat(amount),
+        payment_period: period,
+        description: document.getElementById('paymentDescription').value.trim()
+    };
+    
+    try {
+        const submitBtn = document.querySelector('#paymentForm button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+        
+        const response = await fetch('https://man-m681.onrender.com/payments/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(paymentData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Failed to create payment request');
+        }
+        
+        const data = await response.json();
+        alert('Payment request submitted successfully!');
+        
+        // Close modal and reset form
+        document.getElementById('createPaymentModal').style.display = 'none';
+        document.getElementById('paymentForm').reset();
+        
+        // Refresh payment history
+        loadPaymentHistory();
+    } catch (error) {
+        console.error('Error creating payment request:', error);
+        alert(`Error: ${error.message}`);
+    } finally {
+        const submitBtn = document.querySelector('#paymentForm button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+}
+
     </script>
 </body>
 </html>
