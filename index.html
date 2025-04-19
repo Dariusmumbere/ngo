@@ -5293,7 +5293,7 @@ function selectRole(role) {
             document.getElementById('createProjectModal').classList.add('show');
         });
     } 
-    else if (role === 'program_officer') {
+    else (role === 'program_officer') {
         document.getElementById('programOfficerDashboard').style.display = 'block';
         loadActivities();
         
@@ -5304,9 +5304,6 @@ function selectRole(role) {
             document.getElementById('createActivityModal').classList.add('show');
         });
     } 
-    else {
-        alert(`${role.replace('_', ' ').toUpperCase()} functionality will be implemented later`);
-    }
 }
 
 async function loadProjectsForActivities() {
