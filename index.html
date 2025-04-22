@@ -3377,8 +3377,57 @@
             </table>
         </div>
     </div>
-    <!-- Add this section to your director dashboard after the payment approvals section -->
-<div class="reports-section">
+</div>
+
+<!-- Approval Action Modal -->
+<div class="modal" id="approvalActionModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2><i class="fas fa-clipboard-check"></i> Review Payment</h2>
+        
+        <div class="payment-details">
+            <div class="detail-row">
+                <span class="detail-label">Employee:</span>
+                <span class="detail-value" id="approvalEmployeeName"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value" id="approvalAmount"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Period:</span>
+                <span class="detail-value" id="approvalPeriod"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Description:</span>
+                <span class="detail-value" id="approvalDescription"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Request Date:</span>
+                <span class="detail-value" id="approvalRequestDate"></span>
+            </div>
+        </div>
+        
+        <form id="approvalForm">
+            <input type="hidden" id="currentPaymentId">
+            
+            <div class="form-group">
+                <label for="approvalRemarks">Remarks</label>
+                <textarea id="approvalRemarks" rows="3" placeholder="Optional comments"></textarea>
+            </div>
+            
+            <div class="approval-actions">
+                <button type="button" class="btn btn-danger" id="rejectPaymentBtn">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+                <button type="button" class="btn btn-success" id="approvePaymentBtn">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+    <div class="reports-section">
     <h2 class="section-title">
         <i class="fas fa-file-alt"></i>
         Staff Reports
@@ -3524,56 +3573,6 @@
                 <i class="fas fa-save"></i> Save Changes
             </button>
         </div>
-    </div>
-</div>
-</div>
-
-<!-- Approval Action Modal -->
-<div class="modal" id="approvalActionModal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2><i class="fas fa-clipboard-check"></i> Review Payment</h2>
-        
-        <div class="payment-details">
-            <div class="detail-row">
-                <span class="detail-label">Employee:</span>
-                <span class="detail-value" id="approvalEmployeeName"></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Amount:</span>
-                <span class="detail-value" id="approvalAmount"></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Period:</span>
-                <span class="detail-value" id="approvalPeriod"></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Description:</span>
-                <span class="detail-value" id="approvalDescription"></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Request Date:</span>
-                <span class="detail-value" id="approvalRequestDate"></span>
-            </div>
-        </div>
-        
-        <form id="approvalForm">
-            <input type="hidden" id="currentPaymentId">
-            
-            <div class="form-group">
-                <label for="approvalRemarks">Remarks</label>
-                <textarea id="approvalRemarks" rows="3" placeholder="Optional comments"></textarea>
-            </div>
-            
-            <div class="approval-actions">
-                <button type="button" class="btn btn-danger" id="rejectPaymentBtn">
-                    <i class="fas fa-times"></i> Reject
-                </button>
-                <button type="button" class="btn btn-success" id="approvePaymentBtn">
-                    <i class="fas fa-check"></i> Approve
-                </button>
-            </div>
-        </form>
     </div>
 </div>
     <!-- Projects Table Section -->
