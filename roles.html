@@ -2020,7 +2020,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             const submitBtn = document.querySelector('#paymentRequestForm button[type="submit"]');
             if (submitBtn) {
-                submitBtn.innerHTML = originalText;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Request';
                 submitBtn.disabled = false;
             }
         }
@@ -2264,7 +2264,15 @@ async function processApproval(approve) {
     }
 }
 
-
+// Initialize payment tabs when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Set the first tab as active by default
+    document.querySelector('.payment-tab-btn').classList.add('active');
+    document.querySelector('.payment-tab-content').classList.add('active');
+    
+    // Load initial data for the first tab
+    loadEmployeesForPayment();
+});
     </script>
 </body>
 </html>
