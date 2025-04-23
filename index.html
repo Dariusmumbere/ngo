@@ -6877,7 +6877,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             showNotification('Loading report details...', 'info');
             
-            const response = await fetch(`${API_BASE_URL}/reports/${reportId}`);
+            const response = await fetch(`${API_BASE_URL}/reports/`);
             if (!response.ok) throw new Error('Failed to fetch report details');
             
             const report = await response.json();
