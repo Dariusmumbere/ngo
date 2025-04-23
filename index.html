@@ -6660,112 +6660,78 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPage = 1;
     let totalPages = 1;
     let currentFilters = {
-        status: 'all',
+        status: 'submitted',
         activity: 'all',
-        dateRange: 'all',
-        searchQuery: ''
+        searchQuery: '',
+        dateRange: 'all'
     };
 
-    // DOM Elements
-    const reportsSearch = document.getElementById('reportsSearch');
-    const reportStatusFilter = document.getElementById('reportStatusFilter');
-    const reportActivityFilter = document.getElementById('reportActivityFilter');
-    const reportDateFilter = document.getElementById('reportDateFilter');
-    const customDateRange = document.getElementById('customDateRange');
-    const reportStartDate = document.getElementById('reportStartDate');
-    const reportEndDate = document.getElementById('reportEndDate');
-    const exportReportsBtn = document.getElementById('exportReportsBtn');
-    const reportsTableBody = document.getElementById('reportsTableBody');
-    const prevPageBtn = document.getElementById('prevPageBtn');
-    const nextPageBtn = document.getElementById('nextPageBtn');
-    const pageInfo = document.getElementById('pageInfo');
-    const reportViewModal = document.getElementById('reportViewModal');
-    const closeModalBtn = reportViewModal.querySelector('.close-btn');
-    const reportModalTitle = document.getElementById('reportModalTitle');
-    const reportModalActivity = document.getElementById('reportModalActivity');
-    const reportModalAuthor = document.getElementById('reportModalAuthor');
-    const reportModalDate = document.getElementById('reportModalDate');
-    const reportModalStatus = document.getElementById('reportModalStatus');
-    const reportModalContent = document.getElementById('reportModalContent');
-    const reportAttachmentsList = document.getElementById('reportAttachmentsList');
-    const rejectReportBtn = document.getElementById('rejectReportBtn');
-    const approveReportBtn = document.getElementById('approveReportBtn');
-    const directorComments = document.getElementById('directorComments');
-    const saveReportStatusBtn = document.getElementById('saveReportStatusBtn');
-
-    // Initialize the reports section
-    initReportsSection();
-
-    function initReportsSection() {
-        // Load activities for filter
-        loadActivitiesForFilter();
-        
-        // Load initial reports
-        loadReports();
-        
-        // Set up event listeners
+    // Initialize reports functionality
+    function initReports() {
         setupReportsEventListeners();
+        loadActivitiesForFilter();
+        loadReports();
     }
 
     function setupReportsEventListeners() {
         // Search input
-        reportsSearch.addEventListener('input', debounce(() => {
-            currentFilters.searchQuery = reportsSearch.value;
+        document.getElementById('reportsSearch').addEventListener('input', debounce(() => {
+            currentFilters.searchQuery = document.getElementById('reportsSearch').value;
             currentPage = 1;
             loadReports();
         }, 300));
 
         // Status filter
-        reportStatusFilter.addEventListener('change', () => {
-            currentFilters.status = reportStatusFilter.value;
+        document.getElementById('reportStatusFilter').addEventListener('change', () => {
+            currentFilters.status = document.getElementById('reportStatusFilter').value;
             currentPage = 1;
             loadReports();
         });
 
         // Activity filter
-        reportActivityFilter.addEventListener('change', () => {
-            currentFilters.activity = reportActivityFilter.value;
+        document.getElementById('reportActivityFilter').addEventListener('change', () => {
+            currentFilters.activity = document.getElementById('reportActivityFilter').value;
             currentPage = 1;
             loadReports();
         });
 
         // Date range filter
-        reportDateFilter.addEventListener('change', () => {
-            currentFilters.dateRange = reportDateFilter.value;
+        document.getElementById('reportDateFilter').addEventListener('change', () => {
+            currentFilters.dateRange = document.getElementById('reportDateFilter').value;
             
-            if (reportDateFilter.value === 'custom') {
-                customDateRange.style.display = 'flex';
+            if (document.getElementById('reportDateFilter').value === 'custom') {
+                document.getElementById('customDateRange').style.display = 'flex';
             } else {
-                customDateRange.style.display = 'none';
+                document.getElementById('customDateRange').style.display = 'none';
                 currentPage = 1;
                 loadReports();
             }
         });
 
         // Custom date range inputs
-        reportStartDate.addEventListener('change', () => {
-            if (reportEndDate.value) {
+        document.getElementById('reportStartDate').addEventListener('change', () => {
+            if (document.getElementById('reportEndDate').value) {
                 currentPage = 1;
                 loadReports();
             }
         });
 
-        reportEndDate.addEventListener('change', () => {
-            if (reportStartDate.value) {
+        document.getElementById('reportEndDate').addEventListener('change', () => {
+            if (document.getElementById('reportStartDate').value) {
                 currentPage = 1;
                 loadReports();
             }
         });
 
         // Pagination buttons
-        prevPageBtn.addEventListener('click', () => {
+        document.getElementById('prevPageBtn').addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
                 loadReports();
             }
         });
 
-        nextPageBtn.addEventListener('click', () => {
+        document.getElementById('nextPageBtn').addEventListener('click', () => {
             if (currentPage < totalPages) {
                 currentPage++;
                 loadReports();
@@ -6773,23 +6739,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Export button
-        exportReportsBtn.addEventListener('click', exportReports);
+        document.getElementById('exportReportsBtn').addEventListener('click', exportReports);
 
         // Close modal button
-        closeModalBtn.addEventListener('click', () => {
-            reportViewModal.classList.remove('active');
+        document.querySelector('.close-btn').addEventListener('click', () => {
+            document.getElementById('reportViewModal').classList.remove('active');
         });
 
         // Report action buttons
-        rejectReportBtn.addEventListener('click', () => {
+        document.getElementById('rejectReportBtn').addEventListener('click', () => {
             updateReportStatus('rejected');
         });
 
-        approveReportBtn.addEventListener('click', () => {
+        document.getElementById('approveReportBtn').addEventListener('click', () => {
             updateReportStatus('approved');
         });
 
-        saveReportStatusBtn.addEventListener('click', saveReportStatus);
+        document.getElementById('saveReportStatusBtn').addEventListener('click', saveReportStatus);
     }
 
     async function loadActivitiesForFilter() {
@@ -6800,14 +6766,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const activities = await response.json();
             
             // Clear existing options
-            reportActivityFilter.innerHTML = '<option value="all">All Activities</option>';
+            const activityFilter = document.getElementById('reportActivityFilter');
+            activityFilter.innerHTML = '<option value="all">All Activities</option>';
             
             // Add activities to the select dropdown
             activities.forEach(activity => {
                 const option = document.createElement('option');
                 option.value = activity.id;
                 option.textContent = activity.name;
-                reportActivityFilter.appendChild(option);
+                activityFilter.appendChild(option);
             });
         } catch (error) {
             console.error('Error loading activities for filter:', error);
@@ -6836,14 +6803,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Handle date range filter
-            if (currentFilters.dateRange === 'custom' && reportStartDate.value && reportEndDate.value) {
-                params.append('start_date', reportStartDate.value);
-                params.append('end_date', reportEndDate.value);
+            if (currentFilters.dateRange === 'custom' && 
+                document.getElementById('reportStartDate').value && 
+                document.getElementById('reportEndDate').value) {
+                params.append('start_date', document.getElementById('reportStartDate').value);
+                params.append('end_date', document.getElementById('reportEndDate').value);
             } else if (currentFilters.dateRange !== 'all') {
                 params.append('date_range', currentFilters.dateRange);
             }
             
-            const response = await fetch(`${API_BASE_URL}/reports/?${params.toString()}`);
+            const response = await fetch(`${API_BASE_URL}/director/reports/?${params.toString()}`);
             if (!response.ok) throw new Error('Failed to fetch reports');
             
             const data = await response.json();
@@ -6854,6 +6823,7 @@ document.addEventListener('DOMContentLoaded', function() {
             updatePaginationControls();
             
             // Clear existing table rows
+            const reportsTableBody = document.getElementById('reportsTableBody');
             reportsTableBody.innerHTML = '';
             
             if (reports.length === 0) {
@@ -6913,15 +6883,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const report = await response.json();
             
             // Populate modal with report data
-            reportModalTitle.textContent = report.title;
-            reportModalActivity.textContent = report.activity_name || 'N/A';
-            reportModalAuthor.textContent = report.submitted_by_name || 'Staff Member';
-            reportModalDate.textContent = formatDate(report.created_at);
-            reportModalStatus.textContent = report.status;
-            reportModalStatus.className = 'meta-value status-badge ' + report.status;
-            reportModalContent.innerHTML = report.content;
+            document.getElementById('reportModalTitle').textContent = report.title;
+            document.getElementById('reportModalActivity').textContent = report.activity_name || 'N/A';
+            document.getElementById('reportModalAuthor').textContent = report.submitted_by_name || 'Staff Member';
+            document.getElementById('reportModalDate').textContent = formatDate(report.created_at);
+            document.getElementById('reportModalStatus').textContent = report.status;
+            document.getElementById('reportModalStatus').className = 'meta-value status-badge ' + report.status;
+            document.getElementById('reportModalContent').innerHTML = report.content;
             
             // Clear previous attachments
+            const reportAttachmentsList = document.getElementById('reportAttachmentsList');
             reportAttachmentsList.innerHTML = '';
             
             // Add attachments if any
@@ -6942,15 +6913,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Set current report ID on action buttons
-            rejectReportBtn.setAttribute('data-report-id', reportId);
-            approveReportBtn.setAttribute('data-report-id', reportId);
-            saveReportStatusBtn.setAttribute('data-report-id', reportId);
+            document.getElementById('rejectReportBtn').setAttribute('data-report-id', reportId);
+            document.getElementById('approveReportBtn').setAttribute('data-report-id', reportId);
+            document.getElementById('saveReportStatusBtn').setAttribute('data-report-id', reportId);
             
             // Load any existing comments
-            directorComments.value = report.director_comments || '';
+            document.getElementById('directorComments').value = report.director_comments || '';
             
             // Show modal
-            reportViewModal.classList.add('active');
+            document.getElementById('reportViewModal').classList.add('active');
             
             showNotification('Report details loaded', 'success');
         } catch (error) {
@@ -6961,7 +6932,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function updateReportStatus(status) {
         const reportId = document.querySelector('.status-actions button').getAttribute('data-report-id');
-        const comments = directorComments.value;
+        const comments = document.getElementById('directorComments').value;
         
         try {
             showNotification('Updating report status...', 'info');
@@ -6973,7 +6944,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({
                     status: status,
-                    director_comments: comments
+                    director_comments: comments,
+                    director_id: 1 // In a real app, this would be the logged-in director's ID
                 })
             });
             
@@ -6983,6 +6955,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loadReports();
             
             // Update the status in the modal
+            const reportModalStatus = document.getElementById('reportModalStatus');
             reportModalStatus.textContent = status;
             reportModalStatus.className = 'meta-value status-badge ' + status;
             
@@ -6994,8 +6967,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function saveReportStatus() {
-        const reportId = saveReportStatusBtn.getAttribute('data-report-id');
-        const comments = directorComments.value;
+        const reportId = document.getElementById('saveReportStatusBtn').getAttribute('data-report-id');
+        const comments = document.getElementById('directorComments').value;
         
         try {
             showNotification('Saving comments...', 'info');
@@ -7006,7 +6979,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    director_comments: comments
+                    director_comments: comments,
+                    director_id: 1 // In a real app, this would be the logged-in director's ID
                 })
             });
             
@@ -7039,9 +7013,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Handle date range filter
-            if (currentFilters.dateRange === 'custom' && reportStartDate.value && reportEndDate.value) {
-                params.append('start_date', reportStartDate.value);
-                params.append('end_date', reportEndDate.value);
+            if (currentFilters.dateRange === 'custom' && 
+                document.getElementById('reportStartDate').value && 
+                document.getElementById('reportEndDate').value) {
+                params.append('start_date', document.getElementById('reportStartDate').value);
+                params.append('end_date', document.getElementById('reportEndDate').value);
             } else if (currentFilters.dateRange !== 'all') {
                 params.append('date_range', currentFilters.dateRange);
             }
@@ -7057,9 +7033,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updatePaginationControls() {
-        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-        prevPageBtn.disabled = currentPage <= 1;
-        nextPageBtn.disabled = currentPage >= totalPages;
+        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+        document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
     }
 
     function getFileIcon(fileType) {
@@ -7098,7 +7074,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showNotification(message, type) {
-        // Your existing notification function
         const notification = document.getElementById('notification');
         notification.textContent = message;
         notification.className = `notification ${type}`;
@@ -7107,6 +7082,11 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             notification.style.display = 'none';
         }, 5000);
+    }
+
+    // Initialize reports when director dashboard loads
+    if (document.getElementById('directorDashboard')) {
+        initReports();
     }
 });
    
