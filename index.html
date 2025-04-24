@@ -2732,18 +2732,18 @@
                     </a>
                 </li>
                 <li>
-    <a href="#" id="reportsLink">
-        <i class="fas fa-file-alt"></i>
-        <span>Reports</span>
-        <i class="fas fa-chevron-down ml-auto" id="reportsArrow"></i>
-    </a>
-    <ul class="submenu" id="reportsSubmenu">
-        <li><a href="#" data-report-tab="all">All Reports</a></li>
-        <li><a href="#" data-report-tab="submitted">Submitted</a></li>
-        <li><a href="#" data-report-tab="approved">Approved</a></li>
-        <li><a href="#" data-report-tab="rejected">Rejected</a></li>
-    </ul>
-</li>
+                    <a href="#" id="reportsLink">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                        <i class="fas fa-chevron-down ml-auto" id="reportsArrow"></i>
+                    </a>
+                    <ul class="submenu" id="reportsSubmenu">
+                        <li><a href="#" data-report-tab="all">All Reports</a></li>
+                        <li><a href="#" data-report-tab="submitted">Submitted</a></li>
+                        <li><a href="#" data-report-tab="approved">Approved</a></li>
+                        <li><a href="#" data-report-tab="rejected">Rejected</a></li>
+                    </ul>
+                </li>
                 
             </ul>
         </aside>
@@ -6957,6 +6957,7 @@ reportsLink.addEventListener('click', function(e) {
     }
 });
 
+
 // Toggle reports submenu
 document.getElementById('reportsLink').addEventListener('click', function(e) {
     // Only prevent default if clicking the link itself (not the chevron)
@@ -6983,6 +6984,7 @@ document.getElementById('reportsLink').addEventListener('click', function(e) {
     loadReports();
     loadActivityFilter();
 });
+
 
 // Handle report submenu clicks
 document.querySelectorAll('#reportsSubmenu a').forEach(link => {
