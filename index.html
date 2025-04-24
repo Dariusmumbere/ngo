@@ -6958,23 +6958,28 @@ reportsLink.addEventListener('click', function(e) {
 });
 
 // Toggle reports submenu
-reportsLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+document.getElementById('reportsLink').addEventListener('click', function(e) {
+    // Only prevent default if clicking the link itself (not the chevron)
+    if (!e.target.classList.contains('fa-chevron-down') && !e.target.classList.contains('fa-chevron-up')) {
+        e.preventDefault();
+    }
     
     // Toggle submenu visibility
     const submenu = document.getElementById('reportsSubmenu');
-    const arrow = document.getElementById('reportsArrow');
+    const arrow = this.querySelector('.fa-chevron-down, .fa-chevron-up');
     submenu.classList.toggle('show');
-    arrow.classList.toggle('fa-chevron-down');
-    arrow.classList.toggle('fa-chevron-up');
+    
+    if (arrow) {
+        arrow.classList.toggle('fa-chevron-down');
+        arrow.classList.toggle('fa-chevron-up');
+    }
     
     // Show reports content
     document.querySelectorAll('.main-content > div').forEach(section => {
         section.style.display = 'none';
     });
-    reportsContent.style.display = 'block';
-    setActiveNavItem(reportsLink);
+    document.getElementById('reportsContent').style.display = 'block';
+    setActiveNavItem(this);
     loadReports();
     loadActivityFilter();
 });
@@ -6984,6 +6989,8 @@ document.querySelectorAll('#reportsSubmenu a').forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
         const status = this.getAttribute('data-report-tab');
+        
+        // Reset filters
         document.getElementById('reportSearch').value = '';
         document.getElementById('reportActivityFilter').value = '';
         document.getElementById('reportDateFilter').value = 'all';
@@ -6992,7 +6999,7 @@ document.querySelectorAll('#reportsSubmenu a').forEach(link => {
         loadReports(status);
     });
 });
-
+        
 // Date filter change handler
 document.getElementById('reportDateFilter').addEventListener('change', function() {
     if (this.value === 'custom') {
