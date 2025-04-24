@@ -2659,6 +2659,11 @@
         align-items: stretch;
     }
 }
+        .sidebar-menu li a i.fa-chevron-down,
+.sidebar-menu li a i.fa-chevron-up {
+    pointer-events: none; /* Let the parent <a> handle clicks */
+    margin-left: auto; /* Push to the right */
+}
     </style>
 </head>
 <body>
