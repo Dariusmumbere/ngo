@@ -6954,16 +6954,24 @@ reportsLink.addEventListener('click', function(e) {
 
 // Toggle reports submenu
 reportsLink.addEventListener('click', function(e) {
-    // Only toggle if clicking the arrow or the link itself
-    if (e.target === this || e.target.classList.contains('fa-chevron-down') || e.target.classList.contains('fa-chevron-up')) {
-        e.preventDefault();
-        e.stopPropagation();
-        const submenu = document.getElementById('reportsSubmenu');
-        const arrow = document.getElementById('reportsArrow');
-        submenu.classList.toggle('show');
-        arrow.classList.toggle('fa-chevron-down');
-        arrow.classList.toggle('fa-chevron-up');
-    }
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Toggle submenu visibility
+    const submenu = document.getElementById('reportsSubmenu');
+    const arrow = document.getElementById('reportsArrow');
+    submenu.classList.toggle('show');
+    arrow.classList.toggle('fa-chevron-down');
+    arrow.classList.toggle('fa-chevron-up');
+    
+    // Show reports content
+    document.querySelectorAll('.main-content > div').forEach(section => {
+        section.style.display = 'none';
+    });
+    reportsContent.style.display = 'block';
+    setActiveNavItem(reportsLink);
+    loadReports();
+    loadActivityFilter();
 });
 
 // Handle report submenu clicks
