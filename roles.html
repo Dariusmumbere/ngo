@@ -1253,42 +1253,6 @@
             // Load initial data
             loadEmployees();
             loadActivitiesForDeployment();
-            // Collapsible sections
-const opportunitiesHeading = document.getElementById('opportunitiesHeading');
-const opportunitiesContent = document.getElementById('opportunitiesContent');
-const deploymentsHeading = document.getElementById('deploymentsHeading');
-const deploymentsContent = document.getElementById('deploymentsContent');
-
-// Set initial state (collapsed)
-opportunitiesContent.style.maxHeight = '0';
-opportunitiesContent.style.overflow = 'hidden';
-opportunitiesContent.style.transition = 'max-height 0.3s ease-out';
-deploymentsContent.style.maxHeight = '0';
-deploymentsContent.style.overflow = 'hidden';
-deploymentsContent.style.transition = 'max-height 0.3s ease-out';
-
-// Toggle opportunities section
-opportunitiesHeading.addEventListener('click', function() {
-    if (opportunitiesContent.style.maxHeight === '0px' || !opportunitiesContent.style.maxHeight) {
-        // If collapsed, expand it
-        loadWorkOpportunities().then(() => {
-            opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
-        });
-    } else {
-        // If expanded, collapse it
-        opportunitiesContent.style.maxHeight = '0';
-    }
-});
-
-// Toggle deployments section
-deploymentsHeading.addEventListener('click', function() {
-    if (deploymentsContent.style.maxHeight === '0px' || !deploymentsContent.style.maxHeight) {
-        deploymentsContent.style.maxHeight = deploymentsContent.scrollHeight + 'px';
-        loadDeployments();
-    } else {
-        deploymentsContent.style.maxHeight = '0';
-    }
-});
             
             // Function to save employee
             async function saveEmployee() {
@@ -2270,6 +2234,41 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load initial data for the first tab
     loadEmployeesForPayment();
+});
+            const opportunitiesHeading = document.getElementById('opportunitiesHeading');
+const opportunitiesContent = document.getElementById('opportunitiesContent');
+const deploymentsHeading = document.getElementById('deploymentsHeading');
+const deploymentsContent = document.getElementById('deploymentsContent');
+
+// Set initial state (collapsed)
+opportunitiesContent.style.maxHeight = '0';
+opportunitiesContent.style.overflow = 'hidden';
+opportunitiesContent.style.transition = 'max-height 0.3s ease-out';
+deploymentsContent.style.maxHeight = '0';
+deploymentsContent.style.overflow = 'hidden';
+deploymentsContent.style.transition = 'max-height 0.3s ease-out';
+
+// Toggle opportunities section
+opportunitiesHeading.addEventListener('click', function() {
+    if (opportunitiesContent.style.maxHeight === '0px' || !opportunitiesContent.style.maxHeight) {
+        // If collapsed, expand it
+        loadWorkOpportunities().then(() => {
+            opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
+        });
+    } else {
+        // If expanded, collapse it
+        opportunitiesContent.style.maxHeight = '0';
+    }
+});
+
+// Toggle deployments section
+deploymentsHeading.addEventListener('click', function() {
+    if (deploymentsContent.style.maxHeight === '0px' || !deploymentsContent.style.maxHeight) {
+        deploymentsContent.style.maxHeight = deploymentsContent.scrollHeight + 'px';
+        loadDeployments();
+    } else {
+        deploymentsContent.style.maxHeight = '0';
+    }
 });
     </script>
 </body>
