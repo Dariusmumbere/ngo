@@ -484,6 +484,7 @@
         .collapsible-content {
             overflow: hidden;
             transition: max-height 0.3s ease-out;
+            max-height: 0;
         }
 
         /* Responsive adjustments */
@@ -1254,6 +1255,39 @@
             loadEmployees();
             loadActivitiesForDeployment();
             
+            // Collapsible sections
+            const opportunitiesHeading = document.getElementById('opportunitiesHeading');
+            const opportunitiesContent = document.getElementById('opportunitiesContent');
+            const deploymentsHeading = document.getElementById('deploymentsHeading');
+            const deploymentsContent = document.getElementById('deploymentsContent');
+            
+            // Set initial state (collapsed)
+            opportunitiesContent.style.maxHeight = '0';
+            deploymentsContent.style.maxHeight = '0';
+            
+            // Toggle opportunities section
+opportunitiesHeading.addEventListener('click', function() {
+    if (opportunitiesContent.style.maxHeight === '0px' || !opportunitiesContent.style.maxHeight) {
+        // Load and show content
+        loadWorkOpportunities().then(() => {
+            opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
+        });
+    } else {
+        // Hide content
+        opportunitiesContent.style.maxHeight = '0';
+    }
+});
+            
+            // Toggle deployments section
+            deploymentsHeading.addEventListener('click', function() {
+                if (deploymentsContent.style.maxHeight === '0px') {
+                    deploymentsContent.style.maxHeight = deploymentsContent.scrollHeight + 'px';
+                    loadDeployments();
+                } else {
+                    deploymentsContent.style.maxHeight = '0';
+                }
+            });
+            
             // Function to save employee
             async function saveEmployee() {
                 const employeeData = {
@@ -1707,6 +1741,7 @@
                 
                 const employee = await response.json();
                 
+                // Populate form
                 document.getElementById('employeeName').value = employee.name;
                 document.getElementById('employeeNIN').value = employee.nin;
                 document.getElementById('employeeDOB').value = employee.dob;
@@ -1777,6 +1812,9 @@
                 alert('Failed to delete deployment');
             }
         }
+
+        // Function to load work opportunities
+        // Function to load work opportunities
 async function loadWorkOpportunities() {
     try {
         const opportunitiesContainer = document.querySelector('.work-opportunities');
@@ -1899,6 +1937,7 @@ async function loadWorkOpportunities() {
         initPaymentApprovals();
     }
 });
+        // Payment Processing Functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Tab switching
     const tabBtns = document.querySelectorAll('.payment-tab-btn');
@@ -2234,41 +2273,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load initial data for the first tab
     loadEmployeesForPayment();
-});
-            const opportunitiesHeading = document.getElementById('opportunitiesHeading');
-const opportunitiesContent = document.getElementById('opportunitiesContent');
-const deploymentsHeading = document.getElementById('deploymentsHeading');
-const deploymentsContent = document.getElementById('deploymentsContent');
-
-// Set initial state (collapsed)
-opportunitiesContent.style.maxHeight = '0';
-opportunitiesContent.style.overflow = 'hidden';
-opportunitiesContent.style.transition = 'max-height 0.3s ease-out';
-deploymentsContent.style.maxHeight = '0';
-deploymentsContent.style.overflow = 'hidden';
-deploymentsContent.style.transition = 'max-height 0.3s ease-out';
-
-// Toggle opportunities section
-opportunitiesHeading.addEventListener('click', function() {
-    if (opportunitiesContent.style.maxHeight === '0px' || !opportunitiesContent.style.maxHeight) {
-        // If collapsed, expand it
-        loadWorkOpportunities().then(() => {
-            opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
-        });
-    } else {
-        // If expanded, collapse it
-        opportunitiesContent.style.maxHeight = '0';
-    }
-});
-
-// Toggle deployments section
-deploymentsHeading.addEventListener('click', function() {
-    if (deploymentsContent.style.maxHeight === '0px' || !deploymentsContent.style.maxHeight) {
-        deploymentsContent.style.maxHeight = deploymentsContent.scrollHeight + 'px';
-        loadDeployments();
-    } else {
-        deploymentsContent.style.maxHeight = '0';
-    }
 });
     </script>
 </body>
