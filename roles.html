@@ -484,7 +484,6 @@
         .collapsible-content {
             overflow: hidden;
             transition: max-height 0.3s ease-out;
-            max-height: 0;
         }
 
         /* Responsive adjustments */
@@ -1266,17 +1265,14 @@
             deploymentsContent.style.maxHeight = '0';
             
             // Toggle opportunities section
-opportunitiesHeading.addEventListener('click', function() {
-    if (opportunitiesContent.style.maxHeight === '0px' || !opportunitiesContent.style.maxHeight) {
-        // Load and show content
-        loadWorkOpportunities().then(() => {
-            opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
-        });
-    } else {
-        // Hide content
-        opportunitiesContent.style.maxHeight = '0';
-    }
-});
+            opportunitiesHeading.addEventListener('click', function() {
+                if (opportunitiesContent.style.maxHeight === '0px') {
+                    opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
+                    loadWorkOpportunities();
+                } else {
+                    opportunitiesContent.style.maxHeight = '0';
+                }
+            });
             
             // Toggle deployments section
             deploymentsHeading.addEventListener('click', function() {
@@ -1814,113 +1810,112 @@ opportunitiesHeading.addEventListener('click', function() {
         }
 
         // Function to load work opportunities
-        // Function to load work opportunities
-async function loadWorkOpportunities() {
-    try {
-        const opportunitiesContainer = document.querySelector('.work-opportunities');
-        
-        // Clear existing cards except the header and button
-        const existingCards = document.querySelectorAll('.opportunity-card');
-        existingCards.forEach(card => card.remove());
-        
-        // Show loading state
-        const loadingElement = document.createElement('div');
-        loadingElement.className = 'loading';
-        loadingElement.innerHTML = '<div class="spinner"></div>';
-        opportunitiesContainer.insertBefore(loadingElement, document.getElementById('addOpportunityBtn'));
-        
-        // Fetch opportunities
-        const response = await fetch('https://man-m681.onrender.com/work-opportunities/');
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch work opportunities');
-        }
-        
-        const opportunities = await response.json();
-        
-        // Remove loading element
-        loadingElement.remove();
-        
-        if (opportunities.length === 0) {
-            const noOpportunities = document.createElement('p');
-            noOpportunities.textContent = 'No work opportunities found';
-            opportunitiesContainer.insertBefore(noOpportunities, document.getElementById('addOpportunityBtn'));
-            return;
-        }
-        
-        // Load employees for dropdown
-        const employeesResponse = await fetch('https://man-m681.onrender.com/employees/');
-        if (!employeesResponse.ok) throw new Error('Failed to fetch employees');
-        const employees = await employeesResponse.json();
-        
-        // Populate assign employee dropdown
-        const assignDropdown = document.getElementById('employeeToAssign');
-        assignDropdown.innerHTML = '<option value="">Select employee</option>';
-        employees.forEach(employee => {
-            const option = document.createElement('option');
-            option.value = employee.id;
-            option.textContent = employee.name;
-            assignDropdown.appendChild(option);
-        });
-        
-        // Create cards for each opportunity
-        for (const opportunity of opportunities) {
-            // Get assignments for this opportunity
-            let assignments = [];
+        async function loadWorkOpportunities() {
             try {
-                const assignmentsResponse = await fetch(`https://man-m681.onrender.com/opportunity-assignments/${opportunity.id}`);
-                if (assignmentsResponse.ok) {
-                    assignments = await assignmentsResponse.json();
+                const opportunitiesContainer = document.querySelector('.work-opportunities');
+                
+                // Clear existing cards except the header and button
+                const existingCards = document.querySelectorAll('.opportunity-card');
+                existingCards.forEach(card => card.remove());
+                
+                // Show loading state
+                const loadingElement = document.createElement('div');
+                loadingElement.className = 'loading';
+                loadingElement.innerHTML = '<div class="spinner"></div>';
+                opportunitiesContainer.insertBefore(loadingElement, document.getElementById('addOpportunityBtn'));
+                
+                // Fetch opportunities
+                const response = await fetch('https://man-m681.onrender.com/work-opportunities/');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch work opportunities');
+                }
+                
+                const opportunities = await response.json();
+                
+                // Remove loading element
+                loadingElement.remove();
+                
+                if (opportunities.length === 0) {
+                    const noOpportunities = document.createElement('p');
+                    noOpportunities.textContent = 'No work opportunities found';
+                    opportunitiesContainer.insertBefore(noOpportunities, document.getElementById('addOpportunityBtn'));
+                    return;
+                }
+                
+                // Load employees for dropdown
+                const employeesResponse = await fetch('https://man-m681.onrender.com/employees/');
+                if (!employeesResponse.ok) throw new Error('Failed to fetch employees');
+                const employees = await employeesResponse.json();
+                
+                // Populate assign employee dropdown
+                const assignDropdown = document.getElementById('employeeToAssign');
+                assignDropdown.innerHTML = '<option value="">Select employee</option>';
+                employees.forEach(employee => {
+                    const option = document.createElement('option');
+                    option.value = employee.id;
+                    option.textContent = employee.name;
+                    assignDropdown.appendChild(option);
+                });
+                
+                // Create cards for each opportunity
+                for (const opportunity of opportunities) {
+                    // Get assignments for this opportunity
+                    let assignments = [];
+                    try {
+                        const assignmentsResponse = await fetch(`https://man-m681.onrender.com/opportunity-assignments/${opportunity.id}`);
+                        if (assignmentsResponse.ok) {
+                            assignments = await assignmentsResponse.json();
+                        }
+                    } catch (error) {
+                        console.error(`Error loading assignments for opportunity ${opportunity.id}:`, error);
+                    }
+                    
+                    const opportunityCard = document.createElement('div');
+                    opportunityCard.className = 'opportunity-card';
+                    opportunityCard.innerHTML = `
+                        <div class="opportunity-header">
+                            <h3 class="opportunity-title">${opportunity.title}</h3>
+                            <div class="opportunity-meta">
+                                <span><i class="fas fa-calendar-alt"></i> ${new Date(opportunity.created_at).toLocaleDateString()}</span>
+                                <span><i class="fas fa-circle" style="color: ${opportunity.status === 'open' ? '#2ecc71' : '#e74c3c'}"></i> ${opportunity.status}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="opportunity-description">
+                            ${opportunity.description}
+                        </div>
+                        
+                        <div class="opportunity-footer">
+                            <div class="assigned-employees">
+                                <span>Assigned:</span>
+                                ${assignments.slice(0, 3).map(assignment => `
+                                    <div class="employee-avatar" title="${assignment.employee_name}">
+                                        ${getInitials(assignment.employee_name)}
+                                    </div>
+                                `).join('')}
+                                ${assignments.length > 3 ? `<div class="employee-avatar">+${assignments.length - 3}</div>` : ''}
+                                ${assignments.length === 0 ? '<span>None</span>' : ''}
+                            </div>
+                            
+                            <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(${opportunity.id})">
+                                <i class="fas fa-plus"></i> Assign Employee
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Insert before the "Create New Opportunity" button
+                    opportunitiesContainer.insertBefore(opportunityCard, document.getElementById('addOpportunityBtn'));
                 }
             } catch (error) {
-                console.error(`Error loading assignments for opportunity ${opportunity.id}:`, error);
+                console.error('Error loading work opportunities:', error);
+                const opportunitiesContainer = document.querySelector('.work-opportunities');
+                const errorElement = document.createElement('p');
+                errorElement.style.color = 'red';
+                errorElement.textContent = 'Failed to load work opportunities';
+                opportunitiesContainer.insertBefore(errorElement, document.getElementById('addOpportunityBtn'));
             }
-            
-            const opportunityCard = document.createElement('div');
-            opportunityCard.className = 'opportunity-card';
-            opportunityCard.innerHTML = `
-                <div class="opportunity-header">
-                    <h3 class="opportunity-title">${opportunity.title}</h3>
-                    <div class="opportunity-meta">
-                        <span><i class="fas fa-calendar-alt"></i> ${new Date(opportunity.created_at).toLocaleDateString()}</span>
-                        <span><i class="fas fa-circle" style="color: ${opportunity.status === 'open' ? '#2ecc71' : '#e74c3c'}"></i> ${opportunity.status}</span>
-                    </div>
-                </div>
-                
-                <div class="opportunity-description">
-                    ${opportunity.description}
-                </div>
-                
-                <div class="opportunity-footer">
-                    <div class="assigned-employees">
-                        <span>Assigned:</span>
-                        ${assignments.slice(0, 3).map(assignment => `
-                            <div class="employee-avatar" title="${assignment.employee_name}">
-                                ${getInitials(assignment.employee_name)}
-                            </div>
-                        `).join('')}
-                        ${assignments.length > 3 ? `<div class="employee-avatar">+${assignments.length - 3}</div>` : ''}
-                        ${assignments.length === 0 ? '<span>None</span>' : ''}
-                    </div>
-                    
-                    <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(${opportunity.id})">
-                        <i class="fas fa-plus"></i> Assign Employee
-                    </button>
-                </div>
-            `;
-            
-            // Insert before the "Create New Opportunity" button
-            opportunitiesContainer.insertBefore(opportunityCard, document.getElementById('addOpportunityBtn'));
         }
-    } catch (error) {
-        console.error('Error loading work opportunities:', error);
-        const opportunitiesContainer = document.querySelector('.work-opportunities');
-        const errorElement = document.createElement('p');
-        errorElement.style.color = 'red';
-        errorElement.textContent = 'Failed to load work opportunities';
-        opportunitiesContainer.insertBefore(errorElement, document.getElementById('addOpportunityBtn'));
-    }
-}
 
         // Helper function to get initials from name
         function getInitials(name) {
