@@ -847,36 +847,54 @@
                         </h2>
                         
                         <div class="collapsible-content" id="opportunitiesContent">
-                            <div class="opportunity-card">
-                                <div class="opportunity-header">
-                                    <h3 class="opportunity-title">Field Officer - Agriculture Project</h3>
-                                    <div class="opportunity-meta">
-                                        <span><i class="fas fa-calendar-alt"></i> 15 Oct - 15 Dec 2023</span>
-                                        <span><i class="fas fa-map-marker-alt"></i> Kasese District</span>
-                                    </div>
+                            <div class="opportunity-form">
+                                <div class="form-group">
+                                    <label for="opportunityTitle">Title*</label>
+                                    <input type="text" id="opportunityTitle" required>
+                                    <div class="validation-error" id="opportunityTitleError">Please enter a title</div>
                                 </div>
                                 
-                                <div class="opportunity-description">
-                                    Coordinate field activities for the agriculture extension project, train farmers, and monitor project implementation.
+                                <div class="form-group">
+                                    <label for="opportunityDescription">Description*</label>
+                                    <textarea id="opportunityDescription" rows="4" required></textarea>
+                                    <div class="validation-error" id="opportunityDescError">Please enter a description</div>
                                 </div>
                                 
-                                <div class="opportunity-footer">
-                                    <div class="assigned-employees">
-                                        <span>Assigned:</span>
-                                        <div class="employee-avatar">JM</div>
-                                        <div class="employee-avatar">AM</div>
-                                        <div class="employee-avatar">+2</div>
-                                    </div>
-                                    
-                                    <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(1)">
-                                        <i class="fas fa-plus"></i> Assign Employee
-                                    </button>
-                                </div>
+                                <button class="btn btn-primary" id="createOpportunityBtn">
+                                    <i class="fas fa-plus"></i> Create Opportunity
+                                </button>
                             </div>
                             
-                            <button class="btn btn-secondary" id="addOpportunityBtn">
-                                <i class="fas fa-plus"></i> Create New Opportunity
-                            </button>
+                            <div class="opportunity-list" id="opportunityList">
+                                <h3>Current Opportunities</h3>
+                                
+                                <div class="opportunity-card">
+                                    <div class="opportunity-header">
+                                        <h3 class="opportunity-title">Field Officer - Agriculture Project</h3>
+                                        <div class="opportunity-meta">
+                                            <span><i class="fas fa-calendar-alt"></i> 15 Oct - 15 Dec 2023</span>
+                                            <span><i class="fas fa-map-marker-alt"></i> Kasese District</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="opportunity-description">
+                                        Coordinate field activities for the agriculture extension project, train farmers, and monitor project implementation.
+                                    </div>
+                                    
+                                    <div class="opportunity-footer">
+                                        <div class="assigned-employees">
+                                            <span>Assigned:</span>
+                                            <div class="employee-avatar">JM</div>
+                                            <div class="employee-avatar">AM</div>
+                                            <div class="employee-avatar">+2</div>
+                                        </div>
+                                        
+                                        <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(1)">
+                                            <i class="fas fa-plus"></i> Assign Employee
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -1124,34 +1142,6 @@
         </main>
     </div>
 
-    <!-- Create Opportunity Modal -->
-    <div class="modal" id="createOpportunityModal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2><i class="fas fa-briefcase"></i> Create New Opportunity</h2>
-            <form id="opportunityForm">
-                <div class="form-group">
-                    <label for="opportunityTitle">Title*</label>
-                    <input type="text" id="opportunityTitle" required>
-                    <div class="validation-error" id="opportunityTitleError">Please enter a title</div>
-                </div>
-                <div class="form-group">
-                    <label for="opportunityDescription">Description*</label>
-                    <textarea id="opportunityDescription" rows="4" required></textarea>
-                    <div class="validation-error" id="opportunityDescError">Please enter a description</div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelOpportunityBtn">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Opportunity
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Assign Employee Modal -->
     <div class="modal" id="assignEmployeeModal">
         <div class="modal-content">
@@ -1265,17 +1255,14 @@
             deploymentsContent.style.maxHeight = '0';
             
             // Toggle opportunities section
-             // Toggle opportunities section
-opportunitiesHeading.addEventListener('click', function() {
-    if (opportunitiesContent.style.maxHeight === '0px') {
-        loadWorkOpportunities().then(() => {
-            // After loading, set the max height to show content
-            opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
-        });
-    } else {
-        opportunitiesContent.style.maxHeight = '0';
-    }
-});
+            opportunitiesHeading.addEventListener('click', function() {
+                if (opportunitiesContent.style.maxHeight === '0px') {
+                    opportunitiesContent.style.maxHeight = opportunitiesContent.scrollHeight + 'px';
+                    loadWorkOpportunities();
+                } else {
+                    opportunitiesContent.style.maxHeight = '0';
+                }
+            });
             
             // Toggle deployments section
             deploymentsHeading.addEventListener('click', function() {
@@ -1284,6 +1271,65 @@ opportunitiesHeading.addEventListener('click', function() {
                     loadDeployments();
                 } else {
                     deploymentsContent.style.maxHeight = '0';
+                }
+            });
+            
+            // Create opportunity button
+            document.getElementById('createOpportunityBtn').addEventListener('click', async function() {
+                const title = document.getElementById('opportunityTitle').value.trim();
+                const description = document.getElementById('opportunityDescription').value.trim();
+                
+                // Reset errors
+                document.getElementById('opportunityTitleError').style.display = 'none';
+                document.getElementById('opportunityDescError').style.display = 'none';
+                
+                let isValid = true;
+                
+                if (!title) {
+                    document.getElementById('opportunityTitleError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (!description) {
+                    document.getElementById('opportunityDescError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    const btn = document.getElementById('createOpportunityBtn');
+                    const originalText = btn.innerHTML;
+                    
+                    try {
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                        btn.disabled = true;
+                        
+                        const response = await fetch('https://man-m681.onrender.com/work-opportunities/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                title: title,
+                                description: description
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to create opportunity');
+                        }
+                        
+                        const data = await response.json();
+                        alert('Opportunity created successfully!');
+                        document.getElementById('opportunityTitle').value = '';
+                        document.getElementById('opportunityDescription').value = '';
+                        loadWorkOpportunities();
+                    } catch (error) {
+                        console.error('Error creating opportunity:', error);
+                        alert('Failed to create opportunity. Please try again.');
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
                 }
             });
             
@@ -1412,6 +1458,16 @@ opportunitiesHeading.addEventListener('click', function() {
                     option.value = employee.id;
                     option.textContent = employee.name;
                     dropdown.appendChild(option);
+                });
+                
+                // Also populate the assign employee dropdown
+                const assignDropdown = document.getElementById('employeeToAssign');
+                assignDropdown.innerHTML = '<option value="">Select employee</option>';
+                employees.forEach(employee => {
+                    const option = document.createElement('option');
+                    option.value = employee.id;
+                    option.textContent = employee.name;
+                    assignDropdown.appendChild(option);
                 });
             }
 
@@ -1555,81 +1611,6 @@ opportunitiesHeading.addEventListener('click', function() {
 
             // Initialize with loading deployments
             loadDeployments();
-
-            // Create Opportunity Modal
-            const createOpportunityModal = document.getElementById('createOpportunityModal');
-            const createOpportunityBtn = document.getElementById('addOpportunityBtn');
-            const cancelOpportunityBtn = document.getElementById('cancelOpportunityBtn');
-            const opportunityForm = document.getElementById('opportunityForm');
-            
-            createOpportunityBtn.addEventListener('click', function() {
-                createOpportunityModal.style.display = 'block';
-            });
-            
-            cancelOpportunityBtn.addEventListener('click', function() {
-                createOpportunityModal.style.display = 'none';
-                opportunityForm.reset();
-            });
-            
-            opportunityForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const title = document.getElementById('opportunityTitle').value.trim();
-                const description = document.getElementById('opportunityDescription').value.trim();
-                
-                // Reset errors
-                document.getElementById('opportunityTitleError').style.display = 'none';
-                document.getElementById('opportunityDescError').style.display = 'none';
-                
-                let isValid = true;
-                
-                if (!title) {
-                    document.getElementById('opportunityTitleError').style.display = 'block';
-                    isValid = false;
-                }
-                
-                if (!description) {
-                    document.getElementById('opportunityDescError').style.display = 'block';
-                    isValid = false;
-                }
-                
-                if (isValid) {
-                    const submitBtn = opportunityForm.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerHTML;
-                    
-                    try {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                        submitBtn.disabled = true;
-                        
-                        const response = await fetch('https://man-m681.onrender.com/work-opportunities/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                title: title,
-                                description: description
-                            })
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error('Failed to create opportunity');
-                        }
-                        
-                        const data = await response.json();
-                        alert('Opportunity created successfully!');
-                        opportunityForm.reset();
-                        createOpportunityModal.style.display = 'none';
-                        loadWorkOpportunities();
-                    } catch (error) {
-                        console.error('Error creating opportunity:', error);
-                        alert('Failed to create opportunity. Please try again.');
-                    } finally {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                }
-            });
             
             // Assign Employee Modal
             const assignEmployeeModal = document.getElementById('assignEmployeeModal');
@@ -1697,24 +1678,18 @@ opportunitiesHeading.addEventListener('click', function() {
                 }
             });
             
-            // Close modals when clicking outside
+            // Close modal when clicking outside
             window.addEventListener('click', function(event) {
-                if (event.target === createOpportunityModal) {
-                    createOpportunityModal.style.display = 'none';
-                    opportunityForm.reset();
-                }
                 if (event.target === assignEmployeeModal) {
                     assignEmployeeModal.style.display = 'none';
                     assignEmployeeForm.reset();
                 }
             });
             
-            // Close modals with X button
+            // Close modal with X button
             document.querySelectorAll('.close-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    createOpportunityModal.style.display = 'none';
                     assignEmployeeModal.style.display = 'none';
-                    opportunityForm.reset();
                     assignEmployeeForm.reset();
                 });
             });
@@ -1813,113 +1788,94 @@ opportunitiesHeading.addEventListener('click', function() {
         }
 
         // Function to load work opportunities
-        // Function to load work opportunities
-async function loadWorkOpportunities() {
-    try {
-        const opportunitiesContainer = document.querySelector('.work-opportunities');
-        
-        // Clear existing cards except the header and button
-        const existingCards = document.querySelectorAll('.opportunity-card');
-        existingCards.forEach(card => card.remove());
-        
-        // Show loading state
-        const loadingElement = document.createElement('div');
-        loadingElement.className = 'loading';
-        loadingElement.innerHTML = '<div class="spinner"></div>';
-        opportunitiesContainer.insertBefore(loadingElement, document.getElementById('addOpportunityBtn'));
-        
-        // Fetch opportunities
-        const response = await fetch('https://man-m681.onrender.com/work-opportunities/');
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch work opportunities');
-        }
-        
-        const opportunities = await response.json();
-        
-        // Remove loading element
-        loadingElement.remove();
-        
-        if (opportunities.length === 0) {
-            const noOpportunities = document.createElement('p');
-            noOpportunities.textContent = 'No work opportunities found';
-            opportunitiesContainer.insertBefore(noOpportunities, document.getElementById('addOpportunityBtn'));
-            return;
-        }
-        
-        // Load employees for dropdown
-        const employeesResponse = await fetch('https://man-m681.onrender.com/employees/');
-        if (!employeesResponse.ok) throw new Error('Failed to fetch employees');
-        const employees = await employeesResponse.json();
-        
-        // Populate assign employee dropdown
-        const assignDropdown = document.getElementById('employeeToAssign');
-        assignDropdown.innerHTML = '<option value="">Select employee</option>';
-        employees.forEach(employee => {
-            const option = document.createElement('option');
-            option.value = employee.id;
-            option.textContent = employee.name;
-            assignDropdown.appendChild(option);
-        });
-        
-        // Create cards for each opportunity
-        for (const opportunity of opportunities) {
-            // Get assignments for this opportunity
-            let assignments = [];
+        async function loadWorkOpportunities() {
             try {
-                const assignmentsResponse = await fetch(`https://man-m681.onrender.com/opportunity-assignments/${opportunity.id}`);
-                if (assignmentsResponse.ok) {
-                    assignments = await assignmentsResponse.json();
+                const opportunityList = document.getElementById('opportunityList');
+                
+                // Clear existing cards except the header
+                opportunityList.innerHTML = '<h3>Current Opportunities</h3>';
+                
+                // Show loading state
+                const loadingElement = document.createElement('div');
+                loadingElement.className = 'loading';
+                loadingElement.innerHTML = '<div class="spinner"></div>';
+                opportunityList.appendChild(loadingElement);
+                
+                // Fetch opportunities
+                const response = await fetch('https://man-m681.onrender.com/work-opportunities/');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch work opportunities');
+                }
+                
+                const opportunities = await response.json();
+                
+                // Remove loading element
+                loadingElement.remove();
+                
+                if (opportunities.length === 0) {
+                    opportunityList.innerHTML += '<p>No work opportunities found</p>';
+                    return;
+                }
+                
+                // Create cards for each opportunity
+                for (const opportunity of opportunities) {
+                    // Get assignments for this opportunity
+                    let assignments = [];
+                    try {
+                        const assignmentsResponse = await fetch(`https://man-m681.onrender.com/opportunity-assignments/${opportunity.id}`);
+                        if (assignmentsResponse.ok) {
+                            assignments = await assignmentsResponse.json();
+                        }
+                    } catch (error) {
+                        console.error(`Error loading assignments for opportunity ${opportunity.id}:`, error);
+                    }
+                    
+                    const opportunityCard = document.createElement('div');
+                    opportunityCard.className = 'opportunity-card';
+                    opportunityCard.innerHTML = `
+                        <div class="opportunity-header">
+                            <h3 class="opportunity-title">${opportunity.title}</h3>
+                            <div class="opportunity-meta">
+                                <span><i class="fas fa-calendar-alt"></i> ${new Date(opportunity.created_at).toLocaleDateString()}</span>
+                                <span><i class="fas fa-circle" style="color: ${opportunity.status === 'open' ? '#2ecc71' : '#e74c3c'}"></i> ${opportunity.status}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="opportunity-description">
+                            ${opportunity.description}
+                        </div>
+                        
+                        <div class="opportunity-footer">
+                            <div class="assigned-employees">
+                                <span>Assigned:</span>
+                                ${assignments.slice(0, 3).map(assignment => `
+                                    <div class="employee-avatar" title="${assignment.employee_name}">
+                                        ${getInitials(assignment.employee_name)}
+                                    </div>
+                                `).join('')}
+                                ${assignments.length > 3 ? `<div class="employee-avatar">+${assignments.length - 3}</div>` : ''}
+                                ${assignments.length === 0 ? '<span>None</span>' : ''}
+                            </div>
+                            
+                            <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(${opportunity.id})">
+                                <i class="fas fa-plus"></i> Assign Employee
+                            </button>
+                        </div>
+                    `;
+                    
+                    opportunityList.appendChild(opportunityCard);
                 }
             } catch (error) {
-                console.error(`Error loading assignments for opportunity ${opportunity.id}:`, error);
+                console.error('Error loading work opportunities:', error);
+                const opportunityList = document.getElementById('opportunityList');
+                opportunityList.innerHTML = '<h3>Current Opportunities</h3>';
+                const errorElement = document.createElement('p');
+                errorElement.style.color = 'red';
+                errorElement.textContent = 'Failed to load work opportunities';
+                opportunityList.appendChild(errorElement);
             }
-            
-            const opportunityCard = document.createElement('div');
-            opportunityCard.className = 'opportunity-card';
-            opportunityCard.innerHTML = `
-                <div class="opportunity-header">
-                    <h3 class="opportunity-title">${opportunity.title}</h3>
-                    <div class="opportunity-meta">
-                        <span><i class="fas fa-calendar-alt"></i> ${new Date(opportunity.created_at).toLocaleDateString()}</span>
-                        <span><i class="fas fa-circle" style="color: ${opportunity.status === 'open' ? '#2ecc71' : '#e74c3c'}"></i> ${opportunity.status}</span>
-                    </div>
-                </div>
-                
-                <div class="opportunity-description">
-                    ${opportunity.description}
-                </div>
-                
-                <div class="opportunity-footer">
-                    <div class="assigned-employees">
-                        <span>Assigned:</span>
-                        ${assignments.slice(0, 3).map(assignment => `
-                            <div class="employee-avatar" title="${assignment.employee_name}">
-                                ${getInitials(assignment.employee_name)}
-                            </div>
-                        `).join('')}
-                        ${assignments.length > 3 ? `<div class="employee-avatar">+${assignments.length - 3}</div>` : ''}
-                        ${assignments.length === 0 ? '<span>None</span>' : ''}
-                    </div>
-                    
-                    <button class="btn btn-primary btn-sm" onclick="openAssignEmployeeModal(${opportunity.id})">
-                        <i class="fas fa-plus"></i> Assign Employee
-                    </button>
-                </div>
-            `;
-            
-            // Insert before the "Create New Opportunity" button
-            opportunitiesContainer.insertBefore(opportunityCard, document.getElementById('addOpportunityBtn'));
         }
-    } catch (error) {
-        console.error('Error loading work opportunities:', error);
-        const opportunitiesContainer = document.querySelector('.work-opportunities');
-        const errorElement = document.createElement('p');
-        errorElement.style.color = 'red';
-        errorElement.textContent = 'Failed to load work opportunities';
-        opportunitiesContainer.insertBefore(errorElement, document.getElementById('addOpportunityBtn'));
-    }
-}
 
         // Helper function to get initials from name
         function getInitials(name) {
