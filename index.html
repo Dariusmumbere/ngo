@@ -6583,9 +6583,14 @@ async function loadDashboardSummary() {
         
         const data = await response.json();
         
+        // Debug: Log the received data
+        console.log('Dashboard data:', data);
+        
         // Update main account card
-        document.querySelector('.main-bank-card .bank-card-balance').textContent = 
-            `UGX ${data.main_account_balance.toLocaleString()}`;
+        const mainAccountElement = document.querySelector('.main-bank-card .bank-card-balance');
+        if (mainAccountElement) {
+            mainAccountElement.textContent = `UGX ${data.main_account_balance?.toLocaleString() || '0'}`;
+        }
         
         // Update program area cards
         const programCards = {
@@ -6596,28 +6601,23 @@ async function loadDashboardSummary() {
         };
         
         for (const [programName, cardElement] of Object.entries(programCards)) {
-            if (data.program_balances[programName]) {
-                cardElement.textContent = `UGX ${data.program_balances[programName].toLocaleString()}`;
+            if (cardElement) {
+                const balance = data.program_balances?.[programName] || 0;
+                cardElement.textContent = `UGX ${balance.toLocaleString()}`;
             }
         }
         
         // Update total donations stat card
-        document.querySelector('.stat-card .stat-value').textContent = 
-            `UGX ${data.total_donations.toLocaleString()}`;
-            
+        const donationStatElement = document.querySelector('.stat-card .stat-value');
+        if (donationStatElement) {
+            donationStatElement.textContent = `UGX ${data.total_donations?.toLocaleString() || '0'}`;
+        }
+        
     } catch (error) {
         console.error('Error loading dashboard summary:', error);
-        alert('Failed to load dashboard data. Please try again.');
+        // Don't show alert to avoid interrupting user experience
     }
 }
-
-// Call this when the dashboard loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadDashboardSummary();
-    
-    // Refresh dashboard every 30 seconds
-    setInterval(loadDashboardSummary, 30000);
-});
  
     </script>
 </body>
