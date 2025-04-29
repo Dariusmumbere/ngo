@@ -4445,7 +4445,6 @@
     }
 
     try {
-        // Show loading state
         const submitBtn = document.querySelector('#addDonationModal .modal-footer .file-manager-btn');
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
@@ -4479,6 +4478,9 @@
 
         const data = await response.json();
         
+        // Refresh dashboard data
+        await loadDashboardSummary();
+        
         // Refresh donations table
         await loadDonations();
         
@@ -4508,7 +4510,7 @@
         submitBtn.disabled = false;
     }
 }
-
+        
 function generateReceipt(donation) {
     // Create receipt HTML with the enhanced format
     const receiptHTML = `
@@ -6629,7 +6631,50 @@ async function processPayment(paymentId) {
         alert(`Error: ${error.message}`);
     }
 }     
-  
+// Function to load dashboard summary
+async function loadDashboardSummary() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/dashboard-summary/');
+        if (!response.ok) throw new Error('Failed to fetch dashboard summary');
+        
+        const data = await response.json();
+        
+        // Update main account card
+        document.querySelector('.main-bank-card .bank-card-balance').textContent = 
+            `UGX ${data.main_account_balance.toLocaleString()}`;
+        
+        // Update program area cards
+        const programCards = {
+            'Women Empowerment': document.querySelector('.program-card-1 .bank-card-balance'),
+            'Vocational Education': document.querySelector('.program-card-2 .bank-card-balance'),
+            'Climate Change': document.querySelector('.program-card-3 .bank-card-balance'),
+            'Reproductive Health': document.querySelector('.program-card-4 .bank-card-balance')
+        };
+        
+        for (const [programName, cardElement] of Object.entries(programCards)) {
+            if (data.program_balances[programName]) {
+                cardElement.textContent = `UGX ${data.program_balances[programName].toLocaleString()}`;
+            }
+        }
+        
+        // Update total donations stat card
+        document.querySelector('.stat-card .stat-value').textContent = 
+            `UGX ${data.total_donations.toLocaleString()}`;
+            
+    } catch (error) {
+        console.error('Error loading dashboard summary:', error);
+        alert('Failed to load dashboard data. Please try again.');
+    }
+}
+
+// Call this when the dashboard loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardSummary();
+    
+    // Refresh dashboard every 30 seconds
+    setInterval(loadDashboardSummary, 30000);
+});
+ 
     </script>
 </body>
 </html>
