@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activity Budget Viewer | Finance</title>
+    <title>Activity Budget Viewer | RCDNET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -33,16 +33,93 @@
             overflow-x: hidden;
         }
 
+        /* Modern Header Styles */
+        .header {
+            background-color: white;
+            height: var(--header-height);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtext {
+            font-size: 0.9rem;
+            color: #777;
+            font-weight: 400;
+            margin-left: 5px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
         .container {
             display: flex;
             min-height: 100vh;
+            padding-top: var(--header-height);
         }
 
         /* Main Content Styles */
         .main-content {
             flex: 1;
             padding: 30px;
-            margin-top: var(--header-height);
         }
 
         .page-title {
@@ -243,6 +320,14 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
+            .header {
+                padding: 0 15px;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
             .main-content {
                 padding: 15px;
             }
@@ -258,6 +343,28 @@
     </style>
 </head>
 <body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div>
+                    <span class="logo-text">RCDNET</span>
+                    <span class="logo-subtext">Activity Budget Viewer</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="user-name">Admin</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <div class="container">
         <main class="main-content">
             <h1 class="page-title">
