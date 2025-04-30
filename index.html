@@ -3646,6 +3646,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardSummary();
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const reportsMenu = document.getElementById('reportsMenu');
@@ -6619,13 +6620,6 @@ async function loadDashboardSummary() {
     }
 }
 
-// Call this function when the dashboard loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadDashboardSummary();
-    
-    // Also refresh every 30 seconds to keep data fresh
-    setInterval(loadDashboardSummary, 30000);
-});
     </script>
 </body>
 </html>
