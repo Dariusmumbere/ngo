@@ -3229,7 +3229,7 @@
     <!-- Bank Cards Section -->
     <div class="bank-cards-container">
         <!-- Main Bank Card -->
-        <div class="bank-card main-bank-card">
+        <div class="bank-card main-bank-card" data-account-type="main">
             <div class="bank-card-header">
                 <div class="bank-card-title">Main Account</div>
                 <div class="bank-card-logo">
@@ -3240,7 +3240,7 @@
         </div>
         
         <!-- Program Area Cards -->
-        <div class="bank-card program-card-1">
+        <div class="bank-card program-card-1" data-account-type="Women Empowerment">
             <div class="bank-card-header">
                 <div class="bank-card-title">Women Empowerment</div>
                 <div class="bank-card-logo">
@@ -3250,7 +3250,7 @@
             <div class="bank-card-balance">0</div>
         </div>
         
-        <div class="bank-card program-card-2">
+        <div class="bank-card program-card-2" data-account-type="Vocational Education">
             <div class="bank-card-header">
                 <div class="bank-card-title">Vocational Education</div>
                 <div class="bank-card-logo">
@@ -3260,7 +3260,7 @@
             <div class="bank-card-balance">0</div>    
         </div>
         
-        <div class="bank-card program-card-3">
+        <div class="bank-card program-card-3" data-account-type="Climate Change">
             <div class="bank-card-header">
                 <div class="bank-card-title">Climate Change</div>
                 <div class="bank-card-logo">
@@ -3270,7 +3270,7 @@
             <div class="bank-card-balance">0</div>
         </div>
         
-        <div class="bank-card program-card-4">
+        <div class="bank-card program-card-4" data-account-type="Reproductive Health">
             <div class="bank-card-header">
                 <div class="bank-card-title">Reproductive Health</div>
                 <div class="bank-card-logo">
@@ -6577,51 +6577,45 @@ async function processPayment(paymentId) {
 
 async function loadDashboardSummary() {
     try {
+        // 1. Fetch data
         const response = await fetch('https://man-m681.onrender.com/dashboard-summary/');
-        if (!response.ok) throw new Error('Failed to fetch dashboard data');
-        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        console.log("Dashboard Data:", data); // Debug log
+        
+        console.log("Fetched Data:", data); // Debugging
 
-        // 1. Update Main Account Card
-        const mainAccountBalance = data.main_account_balance || 0;
-        document.querySelector('.main-bank-card .bank-card-balance').textContent = 
-            `UGX ${mainAccountBalance.toLocaleString()}`;
+        // 2. Update all bank cards using data attributes
+        document.querySelectorAll('.bank-card').forEach(card => {
+            const accountType = card.getAttribute('data-account-type');
+            let balance = 0;
+            
+            if (accountType === 'main') {
+                balance = data.main_account_balance || 0;
+            } 
+            else if (data.program_balances) {
+                balance = data.program_balances[accountType] || 0;
+            }
+            
+            const balanceElement = card.querySelector('.bank-card-balance');
+            if (balanceElement) {
+                balanceElement.textContent = `UGX ${balance.toLocaleString()}`;
+            }
+        });
 
-        // 2. Hardcoded Program Area Updates (Alternative 2)
-        const balances = data.program_balances || {};
-        
-        // Women Empowerment (Card 1)
-        document.querySelector('.program-card-1 .bank-card-balance').textContent = 
-            `UGX ${(balances['Women Empowerment'] || 0).toLocaleString()}`;
-        
-        // Vocational Education (Card 2)
-        document.querySelector('.program-card-2 .bank-card-balance').textContent = 
-            `UGX ${(balances['Vocational Education'] || 0).toLocaleString()}`;
-        
-        // Climate Change (Card 3)
-        document.querySelector('.program-card-3 .bank-card-balance').textContent = 
-            `UGX ${(balances['Climate Change'] || 0).toLocaleString()}`;
-        
-        // Reproductive Health (Card 4)
-        document.querySelector('.program-card-4 .bank-card-balance').textContent = 
-            `UGX ${(balances['Reproductive Health'] || 0).toLocaleString()}`;
-
-        // 3. Update Total Donations Stat Card
+        // 3. Update stats card
+        const totalDonations = data.total_donations || 0;
         document.querySelector('.stat-card .stat-value').textContent = 
-            `UGX ${(data.total_donations || 0).toLocaleString()}`;
+            `UGX ${totalDonations.toLocaleString()}`;
 
     } catch (error) {
-        console.error("Dashboard Error:", error);
-        // Optional: Show user-friendly error message
+        console.error("Failed to load dashboard:", error);
+        // Visual error indication
         document.querySelectorAll('.bank-card-balance').forEach(el => {
-            el.textContent = "Error loading";
+            el.textContent = "Failed to load";
+            el.style.color = "#e74c3c";
         });
     }
 }
-
-
-
     </script>
 </body>
 </html>
