@@ -6578,6 +6578,7 @@ async function processPayment(paymentId) {
     }
 }     
 // Function to load dashboard summary
+// Function to load dashboard summary
 async function loadDashboardSummary() {
     try {
         const response = await fetch('https://man-m681.onrender.com/dashboard-summary/');
@@ -6604,7 +6605,8 @@ async function loadDashboardSummary() {
         
         for (const [programName, cardElement] of Object.entries(programCards)) {
             if (cardElement) {
-                const balance = data.program_balances?.[programName] || 0;
+                // Check if program_balances exists and has the program name
+                const balance = data.program_balances && data.program_balances[programName] || 0;
                 cardElement.textContent = `UGX ${balance.toLocaleString()}`;
             }
         }
@@ -6621,6 +6623,13 @@ async function loadDashboardSummary() {
     }
 }
 
+// Call this function when the dashboard loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardSummary();
+    
+    // Also refresh every 30 seconds to keep data fresh
+    setInterval(loadDashboardSummary, 30000);
+});
     </script>
 </body>
 </html>
