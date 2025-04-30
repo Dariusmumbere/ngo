@@ -5177,14 +5177,7 @@ function selectRole(role) {
     document.getElementById('roleSelection').style.display = 'none';
     
     if (role === 'director') {
-        document.getElementById('directorDashboard').style.display = 'block';
-        loadProjects();
-        
-        // Add event listener for create project button
-        document.getElementById('createProjectBtn').addEventListener('click', function() {
-            document.getElementById('projectForm').reset();
-            document.getElementById('createProjectModal').classList.add('show');
-        });
+        showDirectorDashboard();
     } 
     else if(role === 'program_officer') {
         document.getElementById('programOfficerDashboard').style.display = 'block';
@@ -5201,7 +5194,7 @@ function selectRole(role) {
         alert(`${role.replace('_', ' ').toUpperCase()} functionality will be implemented later`);
     }
 }
-
+        
 async function loadProjectsForActivities() {
     try {
         const response = await fetch('https://man-m681.onrender.com/projects/');
@@ -6021,6 +6014,35 @@ async function processPayment(paymentId) {
         alert(`Error: ${error.message}`);
     }
 }     
+async function loadProgramAreaBalances() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/program-areas/');
+        if (!response.ok) throw new Error('Failed to fetch program areas');
+        
+        const programAreas = await response.json();
+        
+        // Update each program card with its balance
+        programAreas.forEach(area => {
+            const card = document.querySelector(`.program-card-${area.id}`);
+            if (card) {
+                const balanceElement = card.querySelector('.bank-card-balance');
+                if (balanceElement) {
+                    balanceElement.textContent = `UGX ${area.balance.toLocaleString()}`;
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading program area balances:', error);
+    }
+}
+
+// Call this function when the director dashboard is shown
+function showDirectorDashboard() {
+    document.getElementById('directorDashboard').style.display = 'block';
+    loadProgramAreaBalances();
+    loadProjects();
+    initPaymentApprovals();
+}
 async function loadDashboardSummary() {
     try {
         const response = await fetch('https://man-m681.onrender.com/dashboard-summary/');
@@ -6028,30 +6050,18 @@ async function loadDashboardSummary() {
         
         const data = await response.json();
         
-        // Update all bank cards in one go
-        const cards = {
-            'Main Account': document.querySelector('.main-bank-card .bank-card-balance'),
-            'Women Empowerment': document.querySelector('.program-card-1 .bank-card-balance'),
-            'Vocational Education': document.querySelector('.program-card-2 .bank-card-balance'),
-            'Climate Change': document.querySelector('.program-card-3 .bank-card-balance'),
-            'Reproductive Health': document.querySelector('.program-card-4 .bank-card-balance')
-        };
+        // Update main stats cards
+        document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = 
+            `UGX ${data.total_donations.toLocaleString()}`;
         
-        for (const [accountName, cardElement] of Object.entries(cards)) {
-            if (cardElement) {
-                const balance = accountName === 'Main Account' 
-                    ? data.main_account_balance 
-                    : data.program_balances?.[accountName] || 0;
-                cardElement.textContent = `UGX ${balance.toLocaleString()}`;
-            }
+        // Update program area balances if on director dashboard
+        if (document.getElementById('directorDashboard').style.display === 'block') {
+            loadProgramAreaBalances();
         }
-        
     } catch (error) {
         console.error('Error loading dashboard summary:', error);
-        // Silently fail - don't show error to user
     }
 }
- 
     </script>
 </body>
 </html>
