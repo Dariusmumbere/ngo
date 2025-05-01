@@ -785,44 +785,46 @@
                 font-size: 1rem;
             }
         }
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform var(--transition-speed);
+    }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform var(--transition-speed);
-            }
+    .sidebar.show {
+        transform: translateX(0);
+    }
 
-            .sidebar.show {
-                transform: translateX(0);
-            }
+    .sidebar.collapsed {
+        width: var(--sidebar-width);
+    }
 
-            .sidebar.collapsed {
-                width: var(--sidebar-width);
-            }
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .logo h1 {
+        display: none;
+    }
 
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .logo h1 {
-                display: none;
-            }
-        }
+    .file-manager-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    
+    .file-preview-content {
+        width: 95%;
+        height: 90vh;
+    }
 
-            .file-manager-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            }
-            
-            .file-preview-content {
-                width: 95%;
-                height: 90vh;
-            }
+    .file-manager-actions {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+}
 
-            .file-manager-actions {
-                flex-direction: column;
-                align-items: flex-end;
-            }
-        }
+
+
+        
                 /* Donations Page Styles */
         .donations-container {
             background-color: white;
