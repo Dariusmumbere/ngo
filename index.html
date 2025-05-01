@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+My humburger side bar nolonger toggles;<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -3697,43 +3697,6 @@
     loadDashboardSummary();
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
-    menuToggle.addEventListener('click', function() {
-        if (window.innerWidth <= 768) {
-            // Mobile view - toggle show/hide
-            sidebar.classList.toggle('show');
-        } else {
-            // Desktop view - toggle collapsed/expanded
-            sidebar.classList.toggle('collapsed');
-            
-            // Update menu toggle icon
-            const icon = menuToggle.querySelector('i');
-            if (sidebar.classList.contains('collapsed')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-indent');
-            } else {
-                icon.classList.remove('fa-indent');
-                icon.classList.add('fa-bars');
-            }
-        }
-    });
-    
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
-            if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                sidebar.classList.remove('show');
-            }
-        }
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            // Ensure sidebar is visible on desktop
-            sidebar.classList.remove('show');
-        }
-    });
-});
     const reportsMenu = document.getElementById('reportsMenu');
     const reportsSubmenu = document.getElementById('reportsSubmenu');
     const reportsArrow = document.getElementById('reportsArrow');
@@ -3778,29 +3741,43 @@
 
     // Toggle sidebar collapse/expand
     menuToggle.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.toggle('show');
-                } else {
-                    sidebar.classList.toggle('collapsed');
-                    
-                    const icon = menuToggle.querySelector('i');
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-indent');
-                    } else {
-                        icon.classList.remove('fa-indent');
-                        icon.classList.add('fa-bars');
-                    }
-                }
-            });
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
-                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                        sidebar.classList.remove('show');
-                    }
-                }
-            });
-
+        // Toggle sidebar on all screen sizes
+        sidebar.classList.toggle('collapsed');
+        
+        // For mobile screens (width <= 768px), also toggle the 'show' class
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('show');
+        }
+        
+        // Change the menu icon
+        const icon = menuToggle.querySelector('i');
+        if (sidebar.classList.contains('collapsed')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-indent');
+        } else {
+            icon.classList.remove('fa-indent');
+            icon.classList.add('fa-bars');
+        }
+    });
+    
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && 
+            !e.target.closest('.sidebar') && 
+            !e.target.closest('.menu-toggle') && 
+            sidebar.classList.contains('show')) {
+            sidebar.classList.remove('show');
+        }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            // On larger screens, ensure sidebar is visible (not hidden by mobile 'show' class)
+            sidebar.classList.remove('show');
+        }
+    });
+});
     // Toggle reports submenu
     reportsMenu.addEventListener('click', function(e) {
         e.preventDefault();
@@ -6380,7 +6357,6 @@ async function deleteBudgetItem(itemId, activityId) {
         alert('Failed to delete budget item');
     }
 }
-
     </script>
 </body>
-</html>return full javascript and any other code of the relevant parts,
+</html>
