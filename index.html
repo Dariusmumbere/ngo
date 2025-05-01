@@ -6347,5 +6347,394 @@ async function deleteBudgetItem(itemId, activityId) {
     <script src="sidebarToggle.js"></script>
     <script src="navNavigation.js"></script>
     <script src="roleNavigation.js"></script>
+    <!-- Chat Modal -->
+<div class="modal" id="chatModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1001;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0;">Chat with <span id="chatRecipientName"></span></h3>
+        <button onclick="closeChatModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+    <div id="chatMessages" style="height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 4px;"></div>
+    <div style="display: flex;">
+        <input type="text" id="chatMessageInput" style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="Type your message...">
+        <button onclick="sendChatMessage()" style="margin-left: 10px; padding: 8px 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Send</button>
+    </div>
+</div>
+
+<!-- User List Modal -->
+<div class="modal" id="userListModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1001;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0;">Select User to Chat With</h3>
+        <button onclick="closeUserListModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+    <div id="userList" style="max-height: 400px; overflow-y: auto;"></div>
+</div>
+
+<!-- Login/Register Modal -->
+<div class="modal" id="authModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1001;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0;" id="authModalTitle">Login</h3>
+        <button onclick="closeAuthModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+    <div id="authForm">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Username</label>
+            <input type="text" id="authUsername" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Password</label>
+            <input type="password" id="authPassword" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        <div id="authExtraFields" style="display: none; margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Full Name</label>
+            <input type="text" id="authFullName" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <label style="display: block; margin-bottom: 5px; margin-top: 10px;">Email</label>
+            <input type="email" id="authEmail" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <label style="display: block; margin-bottom: 5px; margin-top: 10px;">Role</label>
+            <select id="authRole" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <option value="staff">Staff</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <button onclick="submitAuth()" style="width: 100%; padding: 10px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
+        <p style="text-align: center; margin-top: 15px;">
+            <a href="#" onclick="toggleAuthMode()" style="color: var(--primary-color); text-decoration: none;" id="authModeToggle">Need to register?</a>
+        </p>
+    </div>
+</div>
+
+<script>
+// Chat system variables
+let currentUser = null;
+let authToken = null;
+let currentRecipient = null;
+let chatRefreshInterval = null;
+
+// Initialize chat system
+function initChatSystem() {
+    // Check for existing auth token in localStorage
+    const storedToken = localStorage.getItem('chatAuthToken');
+    const storedUser = localStorage.getItem('chatUser');
+    
+    if (storedToken && storedUser) {
+        authToken = storedToken;
+        currentUser = JSON.parse(storedUser);
+        setupChatUI();
+    } else {
+        showAuthModal('login');
+    }
+}
+
+// Show authentication modal
+function showAuthModal(mode = 'login') {
+    document.getElementById('authModalTitle').textContent = mode === 'login' ? 'Login' : 'Register';
+    document.getElementById('authExtraFields').style.display = mode === 'login' ? 'none' : 'block';
+    document.getElementById('authModeToggle').textContent = mode === 'login' ? 'Need to register?' : 'Already have an account?';
+    document.getElementById('authModal').style.display = 'block';
+}
+
+// Close authentication modal
+function closeAuthModal() {
+    document.getElementById('authModal').style.display = 'none';
+}
+
+// Toggle between login and register modes
+function toggleAuthMode() {
+    const currentTitle = document.getElementById('authModalTitle').textContent;
+    if (currentTitle === 'Login') {
+        showAuthModal('register');
+    } else {
+        showAuthModal('login');
+    }
+}
+
+// Submit authentication form
+async function submitAuth() {
+    const mode = document.getElementById('authModalTitle').textContent.toLowerCase();
+    const username = document.getElementById('authUsername').value;
+    const password = document.getElementById('authPassword').value;
+    
+    if (!username || !password) {
+        alert('Please enter both username and password');
+        return;
+    }
+    
+    if (mode === 'register') {
+        const fullName = document.getElementById('authFullName').value;
+        const email = document.getElementById('authEmail').value;
+        const role = document.getElementById('authRole').value;
+        
+        if (!fullName) {
+            alert('Please enter your full name');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                    role,
+                    full_name: fullName,
+                    email
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert('Registration successful! Please login.');
+                showAuthModal('login');
+            } else {
+                alert(data.detail || 'Registration failed');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('Registration failed. Please try again.');
+        }
+    } else {
+        try {
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                // Store token and user info
+                authToken = data.token;
+                currentUser = {
+                    id: data.user_id,
+                    username: data.username
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('chatAuthToken', authToken);
+                localStorage.setItem('chatUser', JSON.stringify(currentUser));
+                
+                // Close modal and setup chat UI
+                closeAuthModal();
+                setupChatUI();
+            } else {
+                alert(data.detail || 'Login failed');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed. Please try again.');
+        }
+    }
+}
+
+// Setup chat UI after login
+function setupChatUI() {
+    // Update UI to show logged in state
+    const chatLink = document.querySelector('.sidebar-menu a[href="#"]');
+    if (chatLink) {
+        chatLink.innerHTML = `<i class="fas fa-comments"></i><span>Chat (${currentUser.username})</span>`;
+        chatLink.onclick = showUserListModal;
+    }
+    
+    // Start polling for new messages
+    startMessagePolling();
+}
+
+// Show user list modal
+async function showUserListModal(e) {
+    e.preventDefault();
+    
+    try {
+        const response = await fetch('/api/users', {
+            headers: {
+                'Authorization': authToken
+            }
+        });
+        
+        const users = await response.json();
+        
+        if (response.ok) {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            
+            // Filter out current user
+            const otherUsers = users.filter(u => u.id !== currentUser.id);
+            
+            if (otherUsers.length === 0) {
+                userList.innerHTML = '<p>No other users available</p>';
+            } else {
+                otherUsers.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.style.padding = '10px';
+                    userElement.style.borderBottom = '1px solid #eee';
+                    userElement.style.cursor = 'pointer';
+                    userElement.textContent = user.full_name || user.username;
+                    userElement.onclick = () => startChatWithUser(user);
+                    userList.appendChild(userElement);
+                });
+            }
+            
+            document.getElementById('userListModal').style.display = 'block';
+        } else {
+            alert('Failed to fetch users');
+        }
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        alert('Failed to fetch users');
+    }
+}
+
+// Close user list modal
+function closeUserListModal() {
+    document.getElementById('userListModal').style.display = 'none';
+}
+
+// Start chat with a user
+function startChatWithUser(user) {
+    currentRecipient = user;
+    document.getElementById('chatRecipientName').textContent = user.full_name || user.username;
+    document.getElementById('chatModal').style.display = 'block';
+    closeUserListModal();
+    loadChatMessages();
+}
+
+// Close chat modal
+function closeChatModal() {
+    document.getElementById('chatModal').style.display = 'none';
+    currentRecipient = null;
+}
+
+// Load chat messages
+async function loadChatMessages() {
+    if (!currentRecipient) return;
+    
+    try {
+        const response = await fetch('/api/messages', {
+            headers: {
+                'Authorization': authToken
+            }
+        });
+        
+        const messages = await response.json();
+        
+        if (response.ok) {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            
+            // Filter messages for this conversation
+            const conversationMessages = messages.filter(msg => 
+                (msg.sender_id === currentUser.id && msg.recipient_id === currentRecipient.id) ||
+                (msg.sender_id === currentRecipient.id && msg.recipient_id === currentUser.id)
+            );
+            
+            // Sort by timestamp
+            conversationMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Display messages
+            conversationMessages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.style.marginBottom = '10px';
+                messageElement.style.padding = '8px';
+                messageElement.style.borderRadius = '4px';
+                messageElement.style.backgroundColor = msg.sender_id === currentUser.id ? '#e3f2fd' : '#f5f5f5';
+                messageElement.style.alignSelf = msg.sender_id === currentUser.id ? 'flex-end' : 'flex-start';
+                messageElement.style.maxWidth = '80%';
+                
+                const senderName = document.createElement('div');
+                senderName.style.fontWeight = 'bold';
+                senderName.style.marginBottom = '5px';
+                senderName.textContent = msg.sender_name;
+                
+                const content = document.createElement('div');
+                content.textContent = msg.content;
+                
+                const timestamp = document.createElement('div');
+                timestamp.style.fontSize = '0.8rem';
+                timestamp.style.color = '#666';
+                timestamp.style.textAlign = 'right';
+                timestamp.textContent = new Date(msg.timestamp).toLocaleString();
+                
+                messageElement.appendChild(senderName);
+                messageElement.appendChild(content);
+                messageElement.appendChild(timestamp);
+                
+                chatMessages.appendChild(messageElement);
+            });
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
+}
+
+// Send chat message
+async function sendChatMessage() {
+    if (!currentRecipient) return;
+    
+    const messageInput = document.getElementById('chatMessageInput');
+    const content = messageInput.value.trim();
+    
+    if (!content) return;
+    
+    try {
+        const response = await fetch('/api/messages/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authToken
+            },
+            body: JSON.stringify({
+                recipient_id: currentRecipient.id,
+                content
+            })
+        });
+        
+        if (response.ok) {
+            messageInput.value = '';
+            loadChatMessages();
+        } else {
+            const data = await response.json();
+            alert(data.detail || 'Failed to send message');
+        }
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Failed to send message');
+    }
+}
+
+// Start polling for new messages
+function startMessagePolling() {
+    if (chatRefreshInterval) {
+        clearInterval(chatRefreshInterval);
+    }
+    
+    chatRefreshInterval = setInterval(() => {
+        if (currentRecipient) {
+            loadChatMessages();
+        }
+    }, 5000); // Poll every 5 seconds
+}
+
+// Initialize chat system when DOM is loaded
+document.addEventListener('DOMContentLoaded', initChatSystem);
+
+// Handle Enter key in message input
+document.getElementById('chatMessageInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendChatMessage();
+    }
+});
+</script>
 </body>
 </html>
