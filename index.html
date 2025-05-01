@@ -110,7 +110,7 @@
             height: calc(100vh - var(--header-height));
             background-color: var(--dark-color);
             color: white;
-            transition: width var(--transition-speed);
+            transition: all var(--transition-speed);
             overflow: hidden;
             z-index: 99;
         }
@@ -201,6 +201,24 @@
             font-size: 1.5rem;
             cursor: pointer;
             padding: 10px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-speed);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar.collapsed {
+                width: var(--sidebar-width);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
         }
 
         /* Main Content Styles */
@@ -3694,6 +3712,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            // Toggle sidebar collapse/expand
+            menuToggle.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    // Mobile view - toggle show/hide
+                    sidebar.classList.toggle('show');
+                } else {
+                    // Desktop view - toggle collapsed/expanded
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Update menu toggle icon
+                    const icon = menuToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-indent');
+                    } else {
+                        icon.classList.remove('fa-indent');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    // On desktop, ensure sidebar is visible (not hidden)
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
     loadDashboardSummary();
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
