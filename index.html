@@ -3740,36 +3740,29 @@
     fileManagerContent.style.display = 'none';
 
     // Toggle sidebar collapse/expand
-    // Toggle sidebar collapse/expand
-menuToggle.addEventListener('click', function() {
-    sidebar.classList.toggle('collapsed');
-    sidebar.classList.toggle('show'); // For mobile view
-    
-    // Update the icon
-    const icon = menuToggle.querySelector('i');
-    if (sidebar.classList.contains('collapsed') {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-indent');
-    } else {
-        icon.classList.remove('fa-indent');
-        icon.classList.add('fa-bars');
-    }
-});
-
-// Close sidebar when clicking outside (for mobile)
-document.addEventListener('click', function(e) {
-    if (window.innerWidth <= 768 && 
-        !e.target.closest('.sidebar') && 
-        !e.target.closest('.menu-toggle') && 
-        sidebar.classList.contains('show')) {
-        sidebar.classList.remove('show');
-        
-        // Update the icon
-        const icon = menuToggle.querySelector('i');
-        icon.classList.remove('fa-indent');
-        icon.classList.add('fa-bars');
-    }
-});
+    menuToggle.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('show');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    const icon = menuToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-indent');
+                    } else {
+                        icon.classList.remove('fa-indent');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
 
     // Toggle reports submenu
     reportsMenu.addEventListener('click', function(e) {
