@@ -3695,8 +3695,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
     loadDashboardSummary();
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
+    menuToggle = document.getElementById('menuToggle');
+    sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', function() {
+        toggleSidebar();
+    });
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+            if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                closeSidebar();
+            }
+        }
+    });
     const reportsMenu = document.getElementById('reportsMenu');
     const reportsSubmenu = document.getElementById('reportsSubmenu');
     const reportsArrow = document.getElementById('reportsArrow');
@@ -3725,15 +3735,39 @@
     
     setActiveNavItem(this);
 });
+    function toggleSidebar() {
+    if (window.innerWidth <= 768) {
+        // Mobile behavior - simple show/hide
+        sidebar.classList.toggle('show');
+    } else {
+        // Desktop behavior - collapse/expand
+        sidebar.classList.toggle('collapsed');
+        
+        const icon = menuToggle.querySelector('i');
+        if (sidebar.classList.contains('collapsed')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-indent');
+        } else {
+            icon.classList.remove('fa-indent');
+            icon.classList.add('fa-bars');
+        }
+    }
+}
 
-    
-
+function closeSidebar() {
+    if (window.innerWidth <= 768) {
+        sidebar.classList.remove('show');
+    }
+}
+            
     // Initialize with saved path or empty
     let currentPath = loadCurrentPath();
     let currentFileId = null;
     let currentFileName = null;
     let currentFileType = null;
     let filesToUpload = [];
+    let menuToggle;
+    let sidebar;
 
     // Initialize by showing dashboard and hiding file manager
     dashboardContent.style.display = 'block';
