@@ -3740,30 +3740,7 @@
     fileManagerContent.style.display = 'none';
 
     // Toggle sidebar collapse/expand
-    menuToggle.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.toggle('show');
-                } else {
-                    sidebar.classList.toggle('collapsed');
-                    
-                    const icon = menuToggle.querySelector('i');
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-indent');
-                    } else {
-                        icon.classList.remove('fa-indent');
-                        icon.classList.add('fa-bars');
-                    }
-                }
-            });
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
-                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                        sidebar.classList.remove('show');
-                    }
-                }
-            });
-
+    
     // Toggle reports submenu
     reportsMenu.addEventListener('click', function(e) {
         e.preventDefault();
@@ -6343,6 +6320,30 @@ async function deleteBudgetItem(itemId, activityId) {
         alert('Failed to delete budget item');
     }
 }
+menuToggle.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('show');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    const icon = menuToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-indent');
+                    } else {
+                        icon.classList.remove('fa-indent');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+
     </script>
 </body>
 </html>return full code of the relevant part
