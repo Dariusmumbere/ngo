@@ -3694,7 +3694,6 @@ My humburger side bar nolonger toggles;<!DOCTYPE html>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    loadDashboardSummary();
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const reportsMenu = document.getElementById('reportsMenu');
@@ -3741,43 +3740,29 @@ My humburger side bar nolonger toggles;<!DOCTYPE html>
 
     // Toggle sidebar collapse/expand
     menuToggle.addEventListener('click', function() {
-        // Toggle sidebar on all screen sizes
-        sidebar.classList.toggle('collapsed');
-        
-        // For mobile screens (width <= 768px), also toggle the 'show' class
-        if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('show');
-        }
-        
-        // Change the menu icon
-        const icon = menuToggle.querySelector('i');
-        if (sidebar.classList.contains('collapsed')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-indent');
-        } else {
-            icon.classList.remove('fa-indent');
-            icon.classList.add('fa-bars');
-        }
-    });
-    
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 768 && 
-            !e.target.closest('.sidebar') && 
-            !e.target.closest('.menu-toggle') && 
-            sidebar.classList.contains('show')) {
-            sidebar.classList.remove('show');
-        }
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            // On larger screens, ensure sidebar is visible (not hidden by mobile 'show' class)
-            sidebar.classList.remove('show');
-        }
-    });
-});
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('show');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    const icon = menuToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-indent');
+                    } else {
+                        icon.classList.remove('fa-indent');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+
     // Toggle reports submenu
     reportsMenu.addEventListener('click', function(e) {
         e.preventDefault();
