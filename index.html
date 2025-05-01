@@ -3740,7 +3740,30 @@
     fileManagerContent.style.display = 'none';
 
     // Toggle sidebar collapse/expand
-    
+    menuToggle.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('show');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    const icon = menuToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-indent');
+                    } else {
+                        icon.classList.remove('fa-indent');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+
     // Toggle reports submenu
     reportsMenu.addEventListener('click', function(e) {
         e.preventDefault();
@@ -6320,30 +6343,48 @@ async function deleteBudgetItem(itemId, activityId) {
         alert('Failed to delete budget item');
     }
 }
-menuToggle.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.toggle('show');
-                } else {
-                    sidebar.classList.toggle('collapsed');
-                    
-                    const icon = menuToggle.querySelector('i');
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-indent');
-                    } else {
-                        icon.classList.remove('fa-indent');
-                        icon.classList.add('fa-bars');
-                    }
-                }
-            });
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
-                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                        sidebar.classList.remove('show');
-                    }
-                }
-            });
-
+        document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    // Toggle sidebar collapse/expand
+    menuToggle.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+            // Mobile view - toggle show/hide
+            sidebar.classList.toggle('show');
+        } else {
+            // Desktop view - toggle collapsed/expanded
+            sidebar.classList.toggle('collapsed');
+            
+            // Update menu toggle icon
+            const icon = menuToggle.querySelector('i');
+            if (sidebar.classList.contains('collapsed')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-indent');
+            } else {
+                icon.classList.remove('fa-indent');
+                icon.classList.add('fa-bars');
+            }
+        }
+    });
+    
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+            if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                sidebar.classList.remove('show');
+            }
+        }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            // Ensure sidebar is visible on desktop
+            sidebar.classList.remove('show');
+        }
+    });
+});
     </script>
 </body>
-</html>return full code of the relevant part
+</html>return full javascript and any other code of the relevant parts,
