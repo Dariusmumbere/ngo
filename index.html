@@ -6,6 +6,9 @@
     <title>NGO Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --primary-color: #3498db;
@@ -6347,5 +6350,73 @@ async function deleteBudgetItem(itemId, activityId) {
     <script src="sidebarToggle.js"></script>
     <script src="navNavigation.js"></script>
     <script src="roleNavigation.js"></script>
+    <!-- Login Modal -->
+<div class="login-modal" id="loginModal" style="display: block;">
+    <div class="login-content">
+        <div class="login-header">
+            <h2>RWENZORI COMMUNITY DEVELOPMENT NETWORK</h2>
+            <p>Please sign in to access the system</p>
+        </div>
+        <div class="login-body">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="login-btn">Sign In</button>
+                </div>
+            </form>
+            <div id="loginError" style="color: red; display: none;"></div>
+        </div>
+        <div class="login-footer" id="createAccountSection" style="display: none;">
+            <p>Don't have an account? <a href="#" id="showCreateAccount">Request access from director</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Create Account Modal (only visible to director) -->
+<div class="login-modal" id="createAccountModal" style="display: none;">
+    <div class="login-content">
+        <div class="login-header">
+            <h2>Create New Account</h2>
+        </div>
+        <div class="login-body">
+            <form id="createAccountForm">
+                <div class="form-group">
+                    <label for="newUserEmail">Email</label>
+                    <input type="email" id="newUserEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="newUserPassword">Password</label>
+                    <input type="password" id="newUserPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="newUserRole">Role</label>
+                    <select id="newUserRole" required>
+                        <option value="staff">Staff</option>
+                        <option value="program_officer">Program Officer</option>
+                        <option value="finance">Finance</option>
+                        <option value="director">Director</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newUserName">Full Name</label>
+                    <input type="text" id="newUserName" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="login-btn">Create Account</button>
+                    <button type="button" class="login-btn secondary" id="cancelCreateAccount">Cancel</button>
+                </div>
+            </form>
+            <div id="createAccountError" style="color: red; display: none;"></div>
+        </div>
+    </div>
+</div>
+    
 </body>
 </html>
