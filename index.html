@@ -3644,6 +3644,31 @@
         </div>
     </div>
 </div>
+<!-- Login Modal (add this near other modals) -->
+<div class="login-modal" id="loginModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Login to RCDNET System</h3>
+        </div>
+        <div class="modal-body">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="file-manager-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </div>
+    </div>
+</div>
             <!-- Budget Creation Modal -->
 <div class="project-modal" id="createBudgetModal">
     <div class="modal-content">
@@ -6347,5 +6372,6 @@ async function deleteBudgetItem(itemId, activityId) {
     <script src="sidebarToggle.js"></script>
     <script src="navNavigation.js"></script>
     <script src="roleNavigation.js"></script>
+    <script src="role.js"></script>
 </body>
 </html>
