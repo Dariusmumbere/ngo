@@ -28,7 +28,6 @@ const loginError = document.getElementById('loginError');
 const createAccountError = document.getElementById('createAccountError');
 const showCreateAccount = document.getElementById('showCreateAccount');
 const cancelCreateAccount = document.getElementById('cancelCreateAccount');
-const logoutBtn = document.getElementById('logoutBtn'); // Add this button to your HTML
 
 // Check auth state
 auth.onAuthStateChanged(async (user) => {
