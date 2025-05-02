@@ -1,224 +1,123 @@
-// Auth state management
-let currentUser = null;
-const authTokenKey = 'rcdnet_auth_token';
+const firebaseConfig = {
+        apiKey: "AIzaSyDXpGAW5oLd3SuL2ozfFNeXf2T-McyywjE",
+        authDomain: "authentication-88ed9.firebaseapp.com",
+        projectId: "authentication-88ed9",
+        storageBucket: "authentication-88ed9.firebasestorage.app",
+        messagingSenderId: "346539781265",
+        appId: "1:346539781265:web:db2d1c6c86944241d86330"
+    };
 
-// Check auth state on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem(authTokenKey);
-    if (token) {
-        verifyAuthToken(token);
-    } else {
-        showLoginModal();
-    }
-});
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-// Show login modal
-function showLoginModal() {
-    document.getElementById('loginModal').classList.add('show');
-    document.getElementById('container').style.display = 'none'; // Hide main content
-}
+    // Current user data
+    let currentUser = null;
 
-// Hide login modal
-function hideLoginModal() {
-    document.getElementById('loginModal').classList.remove('show');
-    document.getElementById('container').style.display = 'flex'; // Show main content
-}
-
-// Login function
-async function login() {
-    const username = document.getElementById('loginUsername').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    try {
-        const response = await fetch('https://man-m681.onrender.com/users/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
-        });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Login failed');
-        }
-        
-        const data = await response.json();
-        
-        // Store token and user data
-        localStorage.setItem(authTokenKey, data.access_token);
-        currentUser = data.user;
-        
-        // Hide login modal and show main content
-        hideLoginModal();
-        
-        // Update UI with user info
-        updateUserUI();
-        
-        // Load appropriate content based on role
-        loadRoleSpecificContent();
-        
-    } catch (error) {
-        console.error('Login error:', error);
-        alert('Login failed: ' + error.message);
-    }
-}
-
-// Verify auth token
-async function verifyAuthToken(token) {
-    try {
-        const response = await fetch('https://man-m681.onrender.com/users/verify', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Invalid token');
-        }
-        
-        const user = await response.json();
-        currentUser = user;
-        updateUserUI();
-        loadRoleSpecificContent();
-        hideLoginModal();
-        
-    } catch (error) {
-        console.error('Token verification failed:', error);
-        localStorage.removeItem(authTokenKey);
-        showLoginModal();
-    }
-}
-
-// Update UI with user info
-function updateUserUI() {
-    if (!currentUser) return;
-    
-    const userProfile = document.querySelector('.user-profile');
-    if (userProfile) {
-        const userName = userProfile.querySelector('.user-name');
-        const userRole = userProfile.querySelector('.user-role');
-        
-        if (userName) userName.textContent = currentUser.full_name || currentUser.username;
-        if (userRole) userRole.textContent = currentUser.role;
-    }
-    
-    // Show/hide admin features based on role
-    const adminFeatures = document.querySelectorAll('[data-role="director"]');
-    adminFeatures.forEach(feature => {
-        if (currentUser.role === 'director') {
-            feature.style.display = 'block';
+    // Check auth state
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // User is signed in
+            currentUser = user;
+            checkUserRole(user.uid);
         } else {
-            feature.style.display = 'none';
+            // No user is signed in
+            currentUser = null;
+            showLoginModal();
         }
     });
-}
 
-// Load content based on user role
-function loadRoleSpecificContent() {
-    if (!currentUser) return;
-    
-    // Example: Show different dashboards based on role
-    if (currentUser.role === 'director') {
-        document.getElementById('directorDashboard').style.display = 'block';
-    } else if (currentUser.role === 'program_officer') {
-        document.getElementById('programOfficerDashboard').style.display = 'block';
-    }
-}
+    // Login form handler
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            document.getElementById('loginError').style.display = 'none';
+        } catch (error) {
+            document.getElementById('loginError').textContent = error.message;
+            document.getElementById('loginError').style.display = 'block';
+        }
+    });
 
-// Logout function
-function logout() {
-    localStorage.removeItem(authTokenKey);
-    currentUser = null;
-    showLoginModal();
-    
-    // Reset the UI
-    document.getElementById('loginUsername').value = '';
-    document.getElementById('loginPassword').value = '';
-    
-    // Hide all dashboards
-    document.getElementById('directorDashboard').style.display = 'none';
-    document.getElementById('programOfficerDashboard').style.display = 'none';
-}
+    // Create account form handler (only for director)
+    document.getElementById('createAccountForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('newUserEmail').value;
+        const password = document.getElementById('newUserPassword').value;
+        const role = document.getElementById('newUserRole').value;
+        const name = document.getElementById('newUserName').value;
+        
+        try {
+            // First create the user in Firebase Auth
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            
+            // Then store additional user data in Firestore
+            await db.collection('users').doc(userCredential.user.uid).set({
+                email: email,
+                role: role,
+                name: name,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Hide the create account modal
+            document.getElementById('createAccountModal').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'block';
+        } catch (error) {
+            document.getElementById('createAccountError').textContent = error.message;
+            document.getElementById('createAccountError').style.display = 'block';
+        }
+    });
 
-// Add event listeners
-document.getElementById('loginBtn').addEventListener('click', login);
-document.getElementById('logoutBtn').addEventListener('click', logout); // Add logout button to your header
-// User management functions
-async function loadUsers() {
-    try {
-        const response = await fetch('https://man-m681.onrender.com/users/', {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem(authTokenKey)}`
+    // Check user role and show appropriate UI
+    async function checkUserRole(uid) {
+        const userDoc = await db.collection('users').doc(uid).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            
+            // Update UI with user info
+            document.querySelector('.user-name').textContent = userData.name;
+            document.querySelector('.user-role').textContent = userData.role;
+            
+            // Hide login modal
+            document.getElementById('loginModal').style.display = 'none';
+            
+            // Show create account option only for director
+            if (userData.role === 'director') {
+                document.getElementById('createAccountSection').style.display = 'block';
+                document.getElementById('showCreateAccount').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('loginModal').style.display = 'none';
+                    document.getElementById('createAccountModal').style.display = 'block';
+                });
             }
-        });
-        
-        if (!response.ok) throw new Error('Failed to load users');
-        
-        const users = await response.json();
-        const tbody = document.getElementById('usersTableBody');
-        tbody.innerHTML = '';
-        
-        users.forEach(user => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${user.username}</td>
-                <td>${user.full_name || '-'}</td>
-                <td>${user.role}</td>
-                <td>${user.email || '-'}</td>
-                <td>${user.is_active ? 'Active' : 'Inactive'}</td>
-                <td>
-                    <button class="action-btn edit-btn" onclick="editUser(${user.id})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteUser(${user.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error loading users:', error);
-        alert('Failed to load users');
+            
+            // Show the main content
+            document.querySelector('.container').style.display = 'flex';
+        } else {
+            // User document doesn't exist - sign them out
+            await auth.signOut();
+        }
     }
-}
 
-async function addUser() {
-    const userData = {
-        username: document.getElementById('newUsername').value,
-        password: document.getElementById('newPassword').value,
-        role: document.getElementById('newRole').value,
-        full_name: document.getElementById('newFullName').value || null,
-        email: document.getElementById('newEmail').value || null
-    };
+    // Show login modal and hide main content
+    function showLoginModal() {
+        document.getElementById('loginModal').style.display = 'block';
+        document.querySelector('.container').style.display = 'none';
+    }
+
+    // Cancel create account
+    document.getElementById('cancelCreateAccount').addEventListener('click', () => {
+        document.getElementById('createAccountModal').style.display = 'none';
+        document.getElementById('loginModal').style.display = 'block';
+    });
+
+    // Logout functionality (add this to your existing logout button or create one)
+    function logout() {
+        auth.signOut();
+    }
+
     
-    try {
-        const response = await fetch('https://man-m681.onrender.com/users/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem(authTokenKey)}`
-            },
-            body: JSON.stringify(userData)
-        });
-        
-        if (!response.ok) throw new Error('Failed to add user');
-        
-        alert('User added successfully');
-        closeModal('addUserModal');
-        loadUsers();
-    } catch (error) {
-        console.error('Error adding user:', error);
-        alert('Failed to add user: ' + error.message);
-    }
-}
-
-// Add event listener for user management button
-document.getElementById('addUserBtn').addEventListener('click', function() {
-    document.getElementById('userForm').reset();
-    document.getElementById('addUserModal').classList.add('show');
-});
