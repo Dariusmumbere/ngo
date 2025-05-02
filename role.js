@@ -127,8 +127,6 @@ function loadRoleSpecificContent() {
     } else if (currentUser.role === 'program_officer') {
         document.getElementById('programOfficerDashboard').style.display = 'block';
     }
-    
-    // You can add more role-specific logic here
 }
 
 // Logout function
@@ -149,3 +147,78 @@ function logout() {
 // Add event listeners
 document.getElementById('loginBtn').addEventListener('click', login);
 document.getElementById('logoutBtn').addEventListener('click', logout); // Add logout button to your header
+// User management functions
+async function loadUsers() {
+    try {
+        const response = await fetch('https://man-m681.onrender.com/users/', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem(authTokenKey)}`
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load users');
+        
+        const users = await response.json();
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '';
+        
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.username}</td>
+                <td>${user.full_name || '-'}</td>
+                <td>${user.role}</td>
+                <td>${user.email || '-'}</td>
+                <td>${user.is_active ? 'Active' : 'Inactive'}</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="editUser(${user.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteUser(${user.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading users:', error);
+        alert('Failed to load users');
+    }
+}
+
+async function addUser() {
+    const userData = {
+        username: document.getElementById('newUsername').value,
+        password: document.getElementById('newPassword').value,
+        role: document.getElementById('newRole').value,
+        full_name: document.getElementById('newFullName').value || null,
+        email: document.getElementById('newEmail').value || null
+    };
+    
+    try {
+        const response = await fetch('https://man-m681.onrender.com/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem(authTokenKey)}`
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        if (!response.ok) throw new Error('Failed to add user');
+        
+        alert('User added successfully');
+        closeModal('addUserModal');
+        loadUsers();
+    } catch (error) {
+        console.error('Error adding user:', error);
+        alert('Failed to add user: ' + error.message);
+    }
+}
+
+// Add event listener for user management button
+document.getElementById('addUserBtn').addEventListener('click', function() {
+    document.getElementById('userForm').reset();
+    document.getElementById('addUserModal').classList.add('show');
+});
