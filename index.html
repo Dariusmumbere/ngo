@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src = "fundraising.js"></script>
     <script src = "donations.js"></script>
-    <script src = "hrr.js"></script>
     
     <style>
         :root {
@@ -2789,6 +2788,29 @@
         grid-template-columns: 1fr;
     }
 }
+/* Add to your existing CSS */
+.role-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.role-card:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+.role-card.active {
+    border-color: var(--primary-color);
+    background-color: rgba(52, 152, 219, 0.1);
+}
     </style>
 </head>
 <body>
@@ -3518,41 +3540,42 @@
 
     <!-- Role Selection Section -->
     <div class="role-selection" id="roleSelection">
-        <h2>Select Your Role</h2>
-        <div class="role-cards">
-            <div class="role-card" onclick="selectRole('director')">
-                <div class="role-icon">
-                    <i class="fas fa-user-tie"></i>
-                </div>
-                <h3>Director</h3>
-                <p>Create projects, allocate funds, and oversee implementation</p>
+    <h2>Select Your Role</h2>
+    <div class="role-cards">
+        <div class="role-card" onclick="selectRole('director')" tabindex="0">
+            <div class="role-icon">
+                <i class="fas fa-user-tie"></i>
             </div>
-            
-            <div class="role-card" onclick="selectRole('program_officer')">
-                <div class="role-icon">
-                    <i class="fas fa-user-cog"></i>
-                </div>
-                <h3>Head of programs</h3>
-                <p>Manage project activities and coordinate implementation</p>
+            <h3>Director</h3>
+            <p>Create projects, allocate funds, and oversee implementation</p>
+        </div>
+        
+        <div class="role-card" onclick="selectRole('program_officer')" tabindex="0">
+            <div class="role-icon">
+                <i class="fas fa-user-cog"></i>
             </div>
-            
-            <div class="role-card" onclick="selectRole('human_resource')">
-                <div class="role-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <a href = "https://dariusmumbere.github.io/ngo/roles.html"><h3>Human Resource</h3></a>
-                <p>Manage staff assignments and project teams</p>
+            <h3>Head of programs</h3>
+            <p>Manage project activities and coordinate implementation</p>
+        </div>
+        
+        <div class="role-card" onclick="selectRole('human_resource')" tabindex="0">
+            <div class="role-icon">
+                <i class="fas fa-users"></i>
             </div>
-            
-            <div class="role-card" onclick="selectRole('finance')">
-                <div class="role-icon">
-                    <i class="fas fa-money-bill-wave"></i>
-                </div>
-                <a href = "https://dariusmumbere.github.io/ngo/finance.html"><h3>Finance</h3></a>
-                <p>Handle project budgets and financial reporting</p>
+            <h3>Human Resource</h3>
+            <p>Manage staff assignments and project teams</p>
+        </div>
+        
+        <div class="role-card" onclick="selectRole('finance')" tabindex="0">
+            <div class="role-icon">
+                <i class="fas fa-money-bill-wave"></i>
             </div>
+            <h3>Finance</h3>
+            <p>Handle project budgets and financial reporting</p>
         </div>
     </div>
+</div>
+                
 <div class="director-dashboard" id="directorDashboard" style="display: none;">
     <div class="director-dashboard-header">
         <h2 class="section-title">Director Dashboard</h2>
@@ -5508,7 +5531,16 @@ document.querySelector('.sidebar-menu a[href="#implementProject"]').addEventList
 });
 
 // Role Selection
+// Update your selectRole function
 function selectRole(role) {
+    // Remove active class from all role cards
+    document.querySelectorAll('.role-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    
+    // Add active class to the selected role card
+    event.currentTarget.classList.add('active');
+    
     // Hide all dashboards first
     document.getElementById('directorDashboard').style.display = 'none';
     document.getElementById('programOfficerDashboard').style.display = 'none';
@@ -5524,7 +5556,7 @@ function selectRole(role) {
             document.getElementById('createProjectModal').classList.add('show');
         });
     } 
-    else if(role === 'program_officer') {
+    else if (role === 'program_officer') {
         document.getElementById('programOfficerDashboard').style.display = 'block';
         loadActivities();
         
@@ -5535,11 +5567,18 @@ function selectRole(role) {
             document.getElementById('createActivityModal').classList.add('show');
         });
     } 
+    else if (role === 'human_resource') {
+        // Redirect to HR page
+        window.location.href = "https://dariusmumbere.github.io/ngo/roles.html";
+    }
+    else if (role === 'finance') {
+        // Redirect to Finance page
+        window.location.href = "https://dariusmumbere.github.io/ngo/finance.html";
+    }
     else {
         alert(`${role.replace('_', ' ').toUpperCase()} functionality will be implemented later`);
     }
 }
-
 async function loadProjectsForActivities() {
     try {
         const response = await fetch('https://man-m681.onrender.com/projects/');
