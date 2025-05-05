@@ -2429,6 +2429,81 @@
     font-weight: 600;
     background-color: #f8f9fa;
 }
+/* Toast messages */
+.toast-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.toast-message.show {
+    opacity: 1;
+}
+
+/* File upload items */
+.file-upload-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.file-upload-item i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.file-upload-item span:first-of-type {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.file-upload-item span:last-of-type {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+/* Loading states */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
+
+.empty-folder {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-style: italic;
+    grid-column: 1 / -1;
+}
+
+/* Unsupported preview */
+.unsupported-preview {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.unsupported-preview i {
+    font-size: 3rem;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.unsupported-preview p {
+    margin: 10px 0;
+    color: #555;
+}
     </style>
 </head>
 <body>
