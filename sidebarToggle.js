@@ -829,4 +829,3 @@ document.getElementById('createFolderBtn').addEventListener('click', function() 
     document.getElementById('newFolderName').value = '';
     document.getElementById('newFolderName').focus();
 });
-loadFolderContents();
