@@ -306,21 +306,22 @@ async function createNewFolder() {
         // Get current folder ID from breadcrumb
         const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
         const currentFolderId = breadcrumbItems.length > 0 ? 
-            breadcrumbItems[breadcrumbItems.length - 1].getAttribute('data-path') : null;
+            breadcrumbItems[breadcrumbItems.length - 1].getAttribute('data-path') || null : null;
+        
+        const formData = new FormData();
+        formData.append('name', folderName);
+        if (currentFolderId) {
+            formData.append('parent_id', currentFolderId);
+        }
         
         const response = await fetch('https://man-m681.onrender.com/folders/', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: folderName,
-                parent_id: currentFolderId || null
-            })
+            body: formData
         });
         
         if (!response.ok) {
-            throw new Error('Failed to create folder');
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Failed to create folder');
         }
         
         const folder = await response.json();
@@ -352,7 +353,7 @@ async function createNewFolder() {
         showToast('Folder created successfully');
     } catch (error) {
         console.error('Error creating folder:', error);
-        showToast('Failed to create folder', 'error');
+        showToast(`Failed to create folder: ${error.message}`, 'error');
     }
 }
 
