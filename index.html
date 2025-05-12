@@ -2811,6 +2811,37 @@
     border-color: var(--primary-color);
     background-color: rgba(52, 152, 219, 0.1);
 }
+/* File upload list styles */
+#fileUploadList {
+    margin-top: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.file-upload-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.file-upload-item i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.file-upload-item span:first-of-type {
+    flex: 1;
+    margin-right: 10px;
+    word-break: break-all;
+}
+
+.file-upload-item span:last-of-type {
+    color: #777;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
     </style>
 </head>
 <body>
