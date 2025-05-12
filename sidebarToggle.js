@@ -681,3 +681,145 @@ uploadArea.addEventListener('drop', function(e) {
         document.getElementById('startUploadBtn').disabled = false;
     }
 });
+
+// Handle file upload
+document.getElementById('uploadFilesBtn').addEventListener('click', function() {
+    document.getElementById('uploadModal').classList.add('show');
+});
+
+document.getElementById('browseFilesBtn').addEventListener('click', function() {
+    document.getElementById('fileUploadInput').click();
+});
+
+document.getElementById('fileUploadInput').addEventListener('change', function(e) {
+    filesToUpload = Array.from(e.target.files);
+    document.getElementById('startUploadBtn').disabled = filesToUpload.length === 0;
+    
+    // Show file names in upload area
+    const uploadArea = document.getElementById('uploadArea');
+    uploadArea.innerHTML = `
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Ready to upload ${filesToUpload.length} file(s)</p>
+        <div id="fileUploadList"></div>
+    `;
+    
+    const fileList = document.getElementById('fileUploadList');
+    filesToUpload.forEach(file => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-upload-item';
+        fileItem.innerHTML = `
+            <i class="fas fa-file"></i>
+            <span>${file.name}</span>
+            <span>${(file.size / 1024).toFixed(2)} KB</span>
+        `;
+        fileList.appendChild(fileItem);
+    });
+});
+
+document.getElementById('startUploadBtn').addEventListener('click', async function() {
+    if (filesToUpload.length === 0) return;
+    
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('progressBarFill');
+    const startUploadBtn = document.getElementById('startUploadBtn');
+    
+    uploadProgress.style.display = 'block';
+    startUploadBtn.disabled = true;
+    progressBar.style.width = '0%';
+    
+    // Get current folder ID from breadcrumb
+    const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
+    const currentFolderId = breadcrumbItems.length > 0 ? 
+        breadcrumbItems[breadcrumbItems.length - 1].getAttribute('data-path') || null : null;
+    
+    try {
+        const formData = new FormData();
+        filesToUpload.forEach(file => {
+            formData.append('files', file);
+        });
+        
+        if (currentFolderId) {
+            formData.append('folder_id', currentFolderId);
+        }
+        
+        const response = await fetch('https://man-m681.onrender.com/upload/', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to upload files');
+        }
+        
+        const data = await response.json();
+        
+        // Update progress bar
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 5;
+            progressBar.style.width = `${Math.min(progress, 100)}%`;
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+            }
+        }, 100);
+        
+        // Add uploaded files to the UI
+        data.uploadedFiles.forEach(file => {
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            let fileIcon = 'fa-file';
+            
+            if (['pdf'].includes(fileExt)) fileIcon = 'fa-file-pdf';
+            else if (['doc', 'docx'].includes(fileExt)) fileIcon = 'fa-file-word';
+            else if (['xls', 'xlsx'].includes(fileExt)) fileIcon = 'fa-file-excel';
+            else if (['ppt', 'pptx'].includes(fileExt)) fileIcon = 'fa-file-powerpoint';
+            else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExt)) fileIcon = 'fa-file-image';
+            else if (['zip', 'rar'].includes(fileExt)) fileIcon = 'fa-file-archive';
+            
+            const fileHTML = `
+                <div class="file-item" data-file-id="${file.id}" data-file-name="${file.name}">
+                    <div class="file-icon">
+                        <i class="fas ${fileIcon}"></i>
+                    </div>
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-actions-menu" onclick="toggleFileActions(event, '${file.id}')">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="file-actions-dropdown" id="file-actions-${file.id}">
+                        <div class="file-action-item" onclick="previewFile('${file.id}', '${file.name}', '${fileExt}')">
+                            <i class="fas fa-eye"></i> Preview
+                        </div>
+                        <div class="file-action-item" onclick="downloadFile('${file.id}', '${file.name}')">
+                            <i class="fas fa-download"></i> Download
+                        </div>
+                        <div class="file-action-item" onclick="renameFile('${file.id}', '${file.name}')">
+                            <i class="fas fa-pencil-alt"></i> Rename
+                        </div>
+                        <div class="file-action-item" onclick="deleteFile('${file.id}', '${file.name}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('fileManagerGrid').insertAdjacentHTML('beforeend', fileHTML);
+        });
+        
+        showToast('Files uploaded successfully');
+        setTimeout(() => {
+            closeUploadModal();
+            // Force reload of current folder to ensure consistency
+            loadFolderContents(currentFolderId);
+        }, 1000);
+    } catch (error) {
+        console.error('Error uploading files:', error);
+        showToast('Failed to upload files', 'error');
+        startUploadBtn.disabled = false;
+    }
+});
+
+// Fix for New Folder button
+document.getElementById('createFolderBtn').addEventListener('click', function() {
+    document.getElementById('folderCreateModal').classList.add('show');
+    document.getElementById('newFolderName').value = '';
+    document.getElementById('newFolderName').focus();
+});
