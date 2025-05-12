@@ -308,15 +308,20 @@ async function createNewFolder() {
         const currentFolderId = breadcrumbItems.length > 0 ? 
             breadcrumbItems[breadcrumbItems.length - 1].getAttribute('data-path') || null : null;
         
-        const formData = new FormData();
-        formData.append('name', folderName);
+        const requestData = {
+            name: folderName
+        };
+        
         if (currentFolderId) {
-            formData.append('parent_id', currentFolderId);
+            requestData.parent_id = currentFolderId;
         }
         
         const response = await fetch('https://man-m681.onrender.com/folders/', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
         });
         
         if (!response.ok) {
